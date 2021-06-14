@@ -66,9 +66,9 @@ public:
 		fastRandomFloat = ini.GetBoolValue("Experimental", "Fast RandomFloat()", false);
 		ini.SetBoolValue("Experimental", "Fast RandomFloat()", fastRandomFloat, ";Speeds up Utility.RandomFloat calls.", true);
 
-		ini.SaveFile(path);
-
 		fastScripts = fastGetPlayer || fastRandomInt || fastRandomFloat;
+
+		ini.SaveFile(path);
 	}
 
 	void LoadSnowyRegions()

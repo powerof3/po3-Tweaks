@@ -216,57 +216,77 @@ private:
 				return matObj != nullptr && matObj->directionalData.flags.all(RE::BSMaterialObject::DIRECTIONAL_DATA::Flag::kSnow) && stat->data.materialThresholdAngle >= 90.0f;
 			};
 
-			if (auto cell = get_directional_mat(a_ref) ? a_ref->GetParentCell() : nullptr; cell) {
-				auto sky = RE::Sky::GetSingleton();
-				bool applySnow = sky && sky->GetIsSnowing();
-				if (!applySnow) {
-					auto xRegion = cell->extraList.GetByType<RE::ExtraRegionList>();
-					auto regionList = xRegion ? xRegion->list : nullptr;
-					if (regionList) {
-						const auto& vec = Settings::GetSingleton()->getRegions();
-						for (auto& region : *regionList) {
-							if (std::ranges::find(vec, region) != vec.end()) {
-								applySnow = true;
-								break;
-							}
+			if (!get_directional_mat(a_ref)) {
+				return node;
+			}
+
+			RE::TESObjectCELL* cell = nullptr;
+			if (auto TES = RE::TES::GetSingleton(); TES) {
+				cell = TES->GetCell(a_ref->GetPosition());
+			}
+			if (!cell) {
+				cell = a_ref->GetParentCell();
+			}
+
+			if (!cell) {
+				return node;
+			}
+
+			auto sky = RE::Sky::GetSingleton();
+			std::uint32_t snowState = sky && sky->GetIsSnowing() ? 1 : 0;
+
+			if (snowState == 0) {
+				auto xRegion = cell->extraList.GetByType<RE::ExtraRegionList>();
+				auto regionList = xRegion ? xRegion->list : nullptr;
+				if (regionList) {
+					const auto& vec = Settings::GetSingleton()->getRegions();
+					for (auto& region : *regionList) {
+						if (region && std::ranges::find(vec, region) != vec.end()) {
+							snowState == 2;
+							break;
 						}
 					}
 				}
-				if (auto world = applySnow ? cell->GetbhkWorld() : nullptr; world) {
-					RE::BSWriteLockGuard locker(world->worldLock);
+			}
 
-					RE::BSVisit::TraverseScenegraphCollision(node, [&](RE::bhkNiCollisionObject* a_col) -> RE::BSVisit::BSVisitControl {
-						const auto body = a_col->body.get();
-						if (!body) {
-							return RE::BSVisit::BSVisitControl::kContinue;
-						}
+			if (snowState == 0) {
+				return node;
+			}
 
-						const auto hkpBody = static_cast<RE::hkpWorldObject*>(body->referencedObject.get());
-						const auto hkpShape = hkpBody ? hkpBody->GetShape() : nullptr;
+			if (auto world = cell->GetbhkWorld(); world) {
+				RE::BSWriteLockGuard locker(world->worldLock);
 
-						if (hkpShape && hkpShape->type == RE::hkpShapeType::kMOPP) {
-							const auto mopp = static_cast<const RE::hkpMoppBvTreeShape*>(hkpShape);
-							const auto childShape = mopp ? mopp->child.childShape : nullptr;
-							const auto compressedShape = childShape ? netimmerse_cast<RE::bhkCompressedMeshShape*>(childShape->userData) : nullptr;
-							const auto shapeData = compressedShape ? compressedShape->data.get() : nullptr;
+				RE::BSVisit::TraverseScenegraphCollision(node, [&](RE::bhkNiCollisionObject* a_col) -> RE::BSVisit::BSVisitControl {
+					const auto body = a_col->body.get();
+					if (!body) {
+						return RE::BSVisit::BSVisitControl::kContinue;
+					}
 
-							if (shapeData) {
-								for (auto& meshMaterial : shapeData->meshMaterials) {
-									if (std::ranges::find(blacklistedMat, meshMaterial.materialID) != blacklistedMat.end()) {
-										continue;
-									}
-									if (std::ranges::find(stairsMat, meshMaterial.materialID) != stairsMat.end()) {
-										meshMaterial.materialID = MAT::kSnowStairs;
-									} else {
-										meshMaterial.materialID = MAT::kSnow;
-									}
+					const auto hkpBody = static_cast<RE::hkpWorldObject*>(body->referencedObject.get());
+					const auto hkpShape = hkpBody ? hkpBody->GetShape() : nullptr;
+
+					if (hkpShape && hkpShape->type == RE::hkpShapeType::kMOPP) {
+						const auto mopp = static_cast<const RE::hkpMoppBvTreeShape*>(hkpShape);
+						const auto childShape = mopp ? mopp->child.childShape : nullptr;
+						const auto compressedShape = childShape ? netimmerse_cast<RE::bhkCompressedMeshShape*>(childShape->userData) : nullptr;
+						const auto shapeData = compressedShape ? compressedShape->data.get() : nullptr;
+
+						if (shapeData) {
+							for (auto& meshMaterial : shapeData->meshMaterials) {
+								if (std::ranges::find(blacklistedMat, meshMaterial.materialID) != blacklistedMat.end() || snowState == 2 && meshMaterial.materialID == MAT::kStone) {
+									continue;
+								}
+								if (std::ranges::find(stairsMat, meshMaterial.materialID) != stairsMat.end()) {
+									meshMaterial.materialID = MAT::kSnowStairs;
+								} else {
+									meshMaterial.materialID = MAT::kSnow;
 								}
 							}
 						}
+					}
 
-						return RE::BSVisit::BSVisitControl::kContinue;
-					});
-				}
+					return RE::BSVisit::BSVisitControl::kContinue;
+				});
 			}
 		}
 		return node;
