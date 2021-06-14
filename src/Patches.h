@@ -350,14 +350,17 @@ namespace Script
 
 		auto settings = Settings::GetSingleton();
 
+		if (settings->fastGetPlayer) {
+			a_vm->SetCallableFromTasklets("Game", "GetPlayer", true);
+			logger::info("patched Game.GetPlayer"sv);
+		}
 		if (settings->fastRandomInt) {
 			a_vm->SetCallableFromTasklets("Utility", "RandomInt", true);
+			logger::info("patched Utility.RandomInt"sv);
 		}
 		if (settings->fastRandomFloat) {
 			a_vm->SetCallableFromTasklets("Utility", "RandomFloat", true);
-		}
-		if (settings->fastGetPlayer) {
-			a_vm->SetCallableFromTasklets("Game", "GetPlayer", true);
+			logger::info("patched Utility.RandomFloat"sv);
 		}
 
 		return true;
