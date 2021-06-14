@@ -1,0 +1,14 @@
+{
+  "name": "po3tweaks",
+  "version-string": "1.0.0",
+  "description": "",
+  "homepage": "",
+  "license": "MIT",
+  "dependencies": [
+    "boost-atomic",
+    "boost-stl-interfaces",
+    "span-lite",
+    "spdlog",
+    "frozen"
+  ]
+}

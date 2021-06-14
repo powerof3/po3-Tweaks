@@ -1,0 +1,53 @@
+﻿{
+  "configurations": [
+    {
+      "name": "x64-Debug",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "",
+      "ctestCommandArgs": ""
+    },
+    {
+      "name": "x64-Release",
+      "generator": "Ninja",
+      "configurationType": "Release",
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "",
+      "ctestCommandArgs": "",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "variables": [
+        {
+          "name": "SKSE_SUPPORT_XBYAK",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "xbyak_DIR",
+          "value": "C:/Dev/vcpkg/installed/x64-windows-static-md/share/xbyak",
+          "type": "PATH"
+        },
+        {
+          "name": "SimpleINI_DIR",
+          "value": "C:/Dev/vcpkg/installed/x64-windows-static-md/share/simpleini",
+          "type": "PATH"
+        },
+        {
+          "name": "frozen_DIR",
+          "value": "C:/Dev/vcpkg/installed/x64-windows-static-md/share",
+          "type": "PATH"
+        },
+        {
+          "name": "PCG_INCLUDE_DIRS",
+          "value": "C:/Dev/vcpkg/installed/x64-windows-static-md/share/pcg",
+          "type": "PATH"
+        }
+      ]
+    }
+  ]
+}
