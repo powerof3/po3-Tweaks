@@ -7,7 +7,14 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_message)
 	switch (a_message->type) {
 	case SKSE::MessagingInterface::kDataLoaded:
 		{
-			Settings::GetSingleton()->LoadSnowyRegions();
+			const auto settings = Settings::GetSingleton();
+			if (settings->dynamicSnowMat) {
+				settings->LoadSnowyRegions();
+			}
+			if (settings->noConjurationAbsorb) {
+				logger::info("Installed no conjuration spell absorb fix");
+				SpellNoAbsorb::Fix();
+			}
 		}
 		break;
 	default:
@@ -17,9 +24,6 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_message)
 
 extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Query(const SKSE::QueryInterface* a_skse, SKSE::PluginInfo* a_info)
 {
-#ifndef NDEBUG
-	auto sink = std::make_shared<spdlog::sinks::msvc_sink_mt>();
-#else
 	auto path = logger::log_directory();
 	if (!path) {
 		return false;
@@ -27,16 +31,11 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Query(const SKSE::QueryInterface* a
 
 	*path /= "po3_Tweaks.log"sv;
 	auto sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(path->string(), true);
-#endif
 
 	auto log = std::make_shared<spdlog::logger>("global log"s, std::move(sink));
 
-#ifndef NDEBUG
-	log->set_level(spdlog::level::trace);
-#else
 	log->set_level(spdlog::level::info);
 	log->flush_on(spdlog::level::info);
-#endif
 
 	spdlog::set_default_logger(std::move(log));
 	spdlog::set_pattern("[%H:%M:%S] [%l] %v"s);
@@ -69,7 +68,7 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 
 	Settings::GetSingleton()->Load();
 
-	SKSE::AllocTrampoline(1 << 7);
+	SKSE::AllocTrampoline(140);
 
 	Fixes::Fix();
 	Patches::Patch();

@@ -9,15 +9,13 @@ namespace stl
 			{
 				Xbyak::Label dst;
 
-				jmp(ptr[rip + dst]);
-
-				L(dst);
-				dq(a_dst);
+				mov(rax, a_dst);
+				jmp(rax);
 			}
 		};
 	}
 
-	void asm_jump(std::uintptr_t a_from, std::size_t a_size, std::uintptr_t a_to)
+	void asm_jump(std::uintptr_t a_from, [[maybe_unused]] std::size_t a_size, std::uintptr_t a_to)
 	{
 		detail::asm_patch p{ a_to };
 		p.ready();

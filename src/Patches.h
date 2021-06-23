@@ -197,103 +197,118 @@ class DynamicSnowMaterial
 public:
 	static void Patch()
 	{
-		REL::Relocation<std::uintptr_t> vtbl{ RE::TESObjectREFR::VTABLE[0] };  //TESObjectREFR vtbl
-		_Load3D = vtbl.write_vfunc(0x6A, Load3D);
+		stl::write_vfunc<RE::TESObjectREFR, 0x6A, Load3D>();
 	}
 
 private:
 	using MAT = RE::MATERIAL_ID;
 
-	static RE::NiAVObject* Load3D(RE::TESObjectREFR* a_ref, bool a_backgroundLoading)
+	struct Load3D
 	{
-		auto node = _Load3D(a_ref, a_backgroundLoading);
-		if (node) {
-			auto get_directional_mat = [&](RE::TESObjectREFR* a_ref) {
-				const auto base = a_ref->GetBaseObject();
-				const auto stat = base ? base->As<RE::TESObjectSTAT>() : nullptr;
-				const auto matObj = stat ? stat->data.materialObj : nullptr;
+		static RE::NiAVObject* thunk(RE::TESObjectREFR* a_ref, bool a_backgroundLoading)
+		{
+			auto node = func(a_ref, a_backgroundLoading);
+			if (node) {
+				auto get_directional_mat = [&](RE::TESObjectREFR* a_ref) {
+					const auto base = a_ref->GetBaseObject();
+					const auto stat = base ? base->As<RE::TESObjectSTAT>() : nullptr;
+					const auto matObj = stat ? stat->data.materialObj : nullptr;
 
-				return matObj != nullptr && matObj->directionalData.flags.all(RE::BSMaterialObject::DIRECTIONAL_DATA::Flag::kSnow) && stat->data.materialThresholdAngle >= 90.0f;
-			};
-
-			if (!get_directional_mat(a_ref)) {
-				return node;
-			}
-
-			RE::TESObjectCELL* cell = nullptr;
-			if (auto TES = RE::TES::GetSingleton(); TES) {
-				cell = TES->GetCell(a_ref->GetPosition());
-			}
-			if (!cell) {
-				cell = a_ref->GetParentCell();
-			}
-
-			if (!cell) {
-				return node;
-			}
-
-			auto sky = RE::Sky::GetSingleton();
-			std::uint32_t snowState = sky && sky->GetIsSnowing() ? 1 : 0;
-
-			if (snowState == 0) {
-				auto xRegion = cell->extraList.GetByType<RE::ExtraRegionList>();
-				auto regionList = xRegion ? xRegion->list : nullptr;
-				if (regionList) {
-					const auto& vec = Settings::GetSingleton()->getRegions();
-					for (auto& region : *regionList) {
-						if (region && std::ranges::find(vec, region) != vec.end()) {
-							snowState == 2;
-							break;
-						}
-					}
-				}
-			}
-
-			if (snowState == 0) {
-				return node;
-			}
-
-			if (auto world = cell->GetbhkWorld(); world) {
-				RE::BSWriteLockGuard locker(world->worldLock);
-
-				RE::BSVisit::TraverseScenegraphCollision(node, [&](RE::bhkNiCollisionObject* a_col) -> RE::BSVisit::BSVisitControl {
-					const auto body = a_col->body.get();
-					if (!body) {
-						return RE::BSVisit::BSVisitControl::kContinue;
-					}
-
-					const auto hkpBody = static_cast<RE::hkpWorldObject*>(body->referencedObject.get());
-					const auto hkpShape = hkpBody ? hkpBody->GetShape() : nullptr;
-
-					if (hkpShape && hkpShape->type == RE::hkpShapeType::kMOPP) {
-						const auto mopp = static_cast<const RE::hkpMoppBvTreeShape*>(hkpShape);
-						const auto childShape = mopp ? mopp->child.childShape : nullptr;
-						const auto compressedShape = childShape ? netimmerse_cast<RE::bhkCompressedMeshShape*>(childShape->userData) : nullptr;
-						const auto shapeData = compressedShape ? compressedShape->data.get() : nullptr;
-
-						if (shapeData) {
-							for (auto& meshMaterial : shapeData->meshMaterials) {
-								if (std::ranges::find(blacklistedMat, meshMaterial.materialID) != blacklistedMat.end() || snowState == 2 && meshMaterial.materialID == MAT::kStone) {
-									continue;
-								}
-								if (std::ranges::find(stairsMat, meshMaterial.materialID) != stairsMat.end()) {
-									meshMaterial.materialID = MAT::kSnowStairs;
-								} else {
-									meshMaterial.materialID = MAT::kSnow;
+					auto result = matObj != nullptr && matObj->directionalData.flags.all(RE::BSMaterialObject::DIRECTIONAL_DATA::Flag::kSnow) && stat->data.materialThresholdAngle >= 90.0f;
+					if (!result && stat) {
+						//find statics with snow txst swap
+						if (auto model = stat->GetAsModelTextureSwap(); model && model->alternateTextures) {
+							std::span<RE::TESModelTextureSwap::AlternateTexture> span(model->alternateTextures, model->numAlternateTextures);
+							for (result != true; const auto& texture : span) {
+								if (auto txst = texture.textureSet; txst && boost::icontains(txst->textures[RE::BSTextureSet::Texture::kDiffuse].textureName.c_str(), "snow")) {
+									result = true;
+									break;
 								}
 							}
 						}
 					}
+					return result;
+				};
 
-					return RE::BSVisit::BSVisitControl::kContinue;
-				});
+				if (!get_directional_mat(a_ref)) {
+					return node;
+				}
+
+				RE::TESObjectCELL* cell = nullptr;
+				if (auto TES = RE::TES::GetSingleton(); TES) {
+					cell = TES->GetCell(a_ref->GetPosition());
+				}
+				if (!cell) {
+					cell = a_ref->GetParentCell();
+				}
+
+				if (!cell) {
+					return node;
+				}
+
+				auto sky = RE::Sky::GetSingleton();
+				std::uint32_t snowState = sky && sky->GetIsSnowing() ? 1 : 0;
+
+				if (snowState == 0) {
+					auto xRegion = cell->extraList.GetByType<RE::ExtraRegionList>();
+					auto regionList = xRegion ? xRegion->list : nullptr;
+					if (regionList) {
+						const auto& vec = Settings::GetSingleton()->getRegions();
+						for (auto& region : *regionList) {
+							if (region && std::ranges::find(vec, region) != vec.end()) {
+								snowState == 2;
+								break;
+							}
+						}
+					}
+				}
+
+				if (snowState == 0) {
+					return node;
+				}
+
+				if (auto world = cell->GetbhkWorld(); world) {
+					RE::BSWriteLockGuard locker(world->worldLock);
+
+					RE::BSVisit::TraverseScenegraphCollision(node, [&](RE::bhkNiCollisionObject* a_col) -> RE::BSVisit::BSVisitControl {
+						const auto body = a_col->body.get();
+						if (!body) {
+							return RE::BSVisit::BSVisitControl::kContinue;
+						}
+
+						const auto hkpBody = static_cast<RE::hkpWorldObject*>(body->referencedObject.get());
+						const auto hkpShape = hkpBody ? hkpBody->GetShape() : nullptr;
+
+						if (hkpShape && hkpShape->type == RE::hkpShapeType::kMOPP) {
+							const auto mopp = static_cast<const RE::hkpMoppBvTreeShape*>(hkpShape);
+							const auto childShape = mopp ? mopp->child.childShape : nullptr;
+							const auto compressedShape = childShape ? netimmerse_cast<RE::bhkCompressedMeshShape*>(childShape->userData) : nullptr;
+							const auto shapeData = compressedShape ? compressedShape->data.get() : nullptr;
+
+							if (shapeData) {
+								for (auto& meshMaterial : shapeData->meshMaterials) {
+									if (std::ranges::find(blacklistedMat, meshMaterial.materialID) != blacklistedMat.end() || snowState == 2 && meshMaterial.materialID == MAT::kStone) {
+										continue;  //some statics have snow directional mats in non-snowy areas
+									}
+									if (std::ranges::find(stairsMat, meshMaterial.materialID) != stairsMat.end()) {
+										meshMaterial.materialID = MAT::kSnowStairs;
+									} else {
+										meshMaterial.materialID = MAT::kSnow;
+									}
+								}
+							}
+						}
+
+						return RE::BSVisit::BSVisitControl::kContinue;
+					});
+				}
 			}
+			return node;
 		}
-		return node;
-	}
-	static inline REL::Relocation<decltype(Load3D)> _Load3D;
+		static inline REL::Relocation<decltype(thunk)> func;
+	};
 
-	static inline constexpr std::array<MAT, 7> blacklistedMat{ MAT::kSnow, MAT::kSnowStairs, MAT::kIce, MAT::kCloth, MAT::kGlass, MAT::kBone, MAT::kBarrel };
+	static inline constexpr std::array<MAT, 6> blacklistedMat{ MAT::kSnow, MAT::kSnowStairs, MAT::kCloth, MAT::kGlass, MAT::kBone, MAT::kBarrel };
 	static inline constexpr std::array<MAT, 7> stairsMat{ MAT::kStoneStairs, MAT::kStoneAsStairs, MAT::kStoneStairsBroken, MAT::kWoodAsStairs, MAT::kWoodStairs };
 };
 
@@ -303,8 +318,8 @@ class NoRipplesOnHover
 public:
 	static void Patch()
 	{
-		Player::Patch();
-		NPC::Patch();
+		stl::write_vfunc<RE::PlayerCharacter, 0x9C, ProcessInWater::Player>();
+		stl::write_vfunc<RE::Character, 0x9C, ProcessInWater::NPC>();
 	}
 
 private:
@@ -318,48 +333,213 @@ private:
 		return false;
 	}
 
-	struct Player
+	struct ProcessInWater
 	{
-		static void Patch()
+		struct Player
 		{
-			REL::Relocation<std::uintptr_t> vtbl{ RE::PlayerCharacter::VTABLE[0] };  //Player vtbl
-			_ProcessInWater = vtbl.write_vfunc(0x9C, ProcessInWater);
-		}
-
-		static bool ProcessInWater(RE::PlayerCharacter* a_actor, RE::hkpCollidable* a_collidable, float a_waterHeight, float a_deltaTime)
-		{
-			//30 - water surface
-			//36 - underwater
-
-			if (isLevitatingOnWater(a_actor, a_collidable)) {
-				return false;
+			static bool thunk(RE::PlayerCharacter* a_actor, RE::hkpCollidable* a_collidable, float a_waterHeight, float a_deltaTime)
+			{
+				if (isLevitatingOnWater(a_actor, a_collidable)) {
+					return false;
+				}
+				return func(a_actor, a_collidable, a_waterHeight, a_deltaTime);
 			}
-			return _ProcessInWater(a_actor, a_collidable, a_waterHeight, a_deltaTime);
-		}
-		static inline REL::Relocation<decltype(ProcessInWater)> _ProcessInWater;
-	};
+			static inline REL::Relocation<decltype(thunk)> func;
+		};
 
-	struct NPC
-	{
-		static void Patch()
+		struct NPC
 		{
-			REL::Relocation<std::uintptr_t> vtbl{ RE::Character::VTABLE[0] };  //Character vtbl
-			_ProcessInWater = vtbl.write_vfunc(0x9C, ProcessInWater);
-		}
-
-		static bool ProcessInWater(RE::Character* a_actor, RE::hkpCollidable* a_collidable, float a_waterHeight, float a_deltaTime)
-		{
-			if (isLevitatingOnWater(a_actor, a_collidable)) {
-				return false;
+			static bool thunk(RE::Character* a_actor, RE::hkpCollidable* a_collidable, float a_waterHeight, float a_deltaTime)
+			{
+				if (isLevitatingOnWater(a_actor, a_collidable)) {
+					return false;
+				}
+				return func(a_actor, a_collidable, a_waterHeight, a_deltaTime);
 			}
-			return _ProcessInWater(a_actor, a_collidable, a_waterHeight, a_deltaTime);
-		}
-		static inline REL::Relocation<decltype(ProcessInWater)> _ProcessInWater;
+			static inline REL::Relocation<decltype(thunk)> func;
+		};
 	};
 
 	static inline std::string_view isLevitating{ "isLevitating"sv };
 };
 
+//print screenshot notification to console
+namespace ScreenshotToConsole
+{
+	struct DebugNotification
+	{
+		static void thunk(const char* a_notification, const char* a_soundToPlay, bool a_cancelIfAlreadyQueued)
+		{
+			const auto log = RE::ConsoleLog::GetSingleton();
+			if (log) {
+				log->Print("%s", a_notification);
+			}
+		}
+		static inline REL::Relocation<decltype(thunk)> func;
+	};
+
+	inline void Patch()
+	{
+		REL::Relocation<std::uintptr_t> target{ REL::ID(35882), 0xA8 };
+		stl::write_thunk_call<DebugNotification>(target.address());
+	}
+}
+
+//suppress notifications
+namespace NoCritSneakMessage
+{
+	inline constexpr std::array ranges{
+		std::make_pair(0x20D, 0x220),  //crit
+		std::make_pair(0x2D3, 0x2E6),  //sneak
+	};
+
+	inline void Patch(std::uint32_t a_type)
+	{
+		REL::Relocation<std::uintptr_t> target{ REL::ID(37633) };
+
+		switch (a_type) {
+		case 1:
+			for (uintptr_t i = 0x20D; i < 0x220; ++i) {
+				REL::safe_write(target.address() + i, REL::NOP);
+			}
+			break;
+		case 2:
+			for (uintptr_t i = 0x2D3; i < 0x2E6; ++i) {
+				REL::safe_write(target.address() + i, REL::NOP);
+			}
+			break;
+		case 3:
+			for (const auto& [start, end] : ranges) {
+				for (uintptr_t i = start; i < end; ++i) {
+					REL::safe_write(target.address() + i, REL::NOP);
+				}
+			}
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+//sit 2 wait
+namespace SitToWait
+{
+	struct detail
+	{
+		static bool ProcessMenu(const RE::BSFixedString& a_menuName, RE::UI_MESSAGE_TYPE a_type, bool a_unk03)
+		{
+			using func_t = decltype(&ProcessMenu);
+			REL::Relocation<func_t> func{ REL::ID(80077) };
+			return func(a_menuName, a_type, a_unk03);
+		}
+
+		static bool can_sleep_wait(RE::PlayerCharacter* a_player, RE::TESObjectREFR* a_furniture)
+		{
+			using func_t = decltype(&can_sleep_wait);
+			REL::Relocation<func_t> func{ REL::ID(39371) };
+			return func(a_player, a_furniture);
+		}
+
+		static bool CanWait(RE::PlayerCharacter* a_player, RE::TESObjectREFR* a_furniture)
+		{
+			const auto result = can_sleep_wait(a_player, a_furniture);
+			if (result && a_player->GetSitSleepState() != RE::SIT_SLEEP_STATE::kIsSitting) {
+				RE::DebugNotification(Settings::GetSingleton()->sitToWaitMessage.c_str(), "UIMenuCancel");
+				return false;
+			}
+			return result;
+		}
+	};
+
+	struct HandleWaitRequest  //no way to determine menu type with just CanWait
+	{
+		static void thunk(bool a_sleep)
+		{
+			const auto intfc = RE::InterfaceStrings::GetSingleton();
+
+			if (RE::UI::GetSingleton()->IsMenuOpen(intfc->sleepWaitMenu)) {
+				RE::UIMessageQueue::GetSingleton()->AddMessage(intfc->sleepWaitMenu, RE::UI_MESSAGE_TYPE::kHide, nullptr);
+			} else if (detail::CanWait(RE::PlayerCharacter::GetSingleton(), nullptr)) {
+				detail::ProcessMenu(intfc->sleepWaitMenu, RE::UI_MESSAGE_TYPE::kShow, a_sleep);
+			}
+		}
+		static inline REL::Relocation<decltype(thunk)> func;
+	};
+
+	inline void Patch()
+	{
+		REL::Relocation<std::uintptr_t> target{ REL::ID(51400), 0x394 };
+		stl::write_thunk_call<HandleWaitRequest>(target.address());
+	}
+}
+
+namespace NoCheatMode
+{
+	class GodMode
+	{
+	public:
+		static void Patch()
+		{
+			REL::Relocation<std::uintptr_t> func{ REL::ID(22339) };
+			stl::asm_replace(func.address(), 0x4C, fixed_func);
+		}
+
+	private:
+		static bool fixed_func()
+		{
+			const auto log = RE::ConsoleLog::GetSingleton();
+			if (log && log->IsConsoleMode()) {
+				log->Print("God Mode disabled");
+			}
+			return true;
+		}
+	};
+
+	class ImmortalMode
+	{
+	public:
+		static void Patch()
+		{
+			REL::Relocation<std::uintptr_t> func{ REL::ID(22340) };
+			stl::asm_replace(func.address(), 0x4C, fixed_func);
+		}
+
+	private:
+		static bool fixed_func()
+		{
+			const auto log = RE::ConsoleLog::GetSingleton();
+			if (log && log->IsConsoleMode()) {
+				log->Print("Immortal Mode disabled");
+			}
+			return true;
+		}
+	};
+
+	inline void Patch(std::uint32_t a_type)
+	{
+		switch (a_type) {
+		case 1:
+			GodMode::Patch();
+			break;
+		case 2:
+			ImmortalMode::Patch();
+			break;
+		case 3:
+			{
+				GodMode::Patch();
+				ImmortalMode::Patch();
+			}
+			break;
+		default:
+			break;
+		}
+
+		GodMode::Patch();
+		ImmortalMode::Patch();
+	}
+}
+
+//experimental
 namespace Script
 {
 	inline bool Speedup(RE::BSScript::Internal::VirtualMachine* a_vm)
@@ -370,10 +550,6 @@ namespace Script
 
 		auto settings = Settings::GetSingleton();
 
-		if (settings->fastGetPlayer) {
-			a_vm->SetCallableFromTasklets("Game", "GetPlayer", true);
-			logger::info("patched Game.GetPlayer"sv);
-		}
 		if (settings->fastRandomInt) {
 			a_vm->SetCallableFromTasklets("Utility", "RandomInt", true);
 			logger::info("patched Utility.RandomInt"sv);

@@ -3,11 +3,11 @@
 
 void Fixes::Fix()
 {
-	auto settings = Settings::GetSingleton();
+	const auto settings = Settings::GetSingleton();
 
 	logger::info("{:*^30}", "FIXES"sv);
-	
-	if (settings->queuedRefCrash) {		
+
+	if (settings->queuedRefCrash) {
 		QueuedRefCrash::Fix();
 		logger::info("Installed queued ref crash fix"sv);
 	}
@@ -36,4 +36,12 @@ void Fixes::Fix()
 		Spells::ReapplyOnDeath::Fix();
 		logger::info("Installed no death dispel spell reapply fix"sv);
 	}
+	if (settings->furnitureAnimType) {
+		IsFurnitureAnimType::Fix();
+		logger::info("Installed IsFurnitureAnimType fix"sv);
+	}
+	if (settings->lightAttachCrash) {
+		AttachLightCrash::Fix();
+		logger::info("Installed light attach crash fix"sv);
+	}	
 }

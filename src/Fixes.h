@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Settings.h"
 
 namespace Fixes
@@ -6,7 +7,7 @@ namespace Fixes
 	void Fix();
 }
 
-//nullptr crash
+//nullptr crash re: QueuedReference
 namespace QueuedRefCrash
 {
 	inline void fixed_func(RE::TESObjectCELL* a_cell, RE::TESObjectREFR* a_ref)
@@ -22,7 +23,7 @@ namespace QueuedRefCrash
 	inline void Fix()
 	{
 		REL::Relocation<std::uintptr_t> func{ REL::ID(18642) };
-		stl::asm_replace(func.address(), 0x2D, reinterpret_cast<std::uintptr_t>(fixed_func));
+		stl::asm_replace(func.address(), 0x2D, fixed_func);
 	}
 }
 
@@ -156,45 +157,67 @@ namespace ProjectileRange
 //fixes combat dialogue
 namespace CombatDialogue
 {
+	struct SayCombatDialogue
+	{
+		static bool thunk(std::uintptr_t a_combatDialogueManager, RE::Actor* a_speaker, RE::Actor* a_target, RE::DIALOGUE_TYPE a_type, RE::DIALOGUE_DATA::Subtype a_subtype, bool a_ignoreSpeakingDone, RE::CombatController* a_combatController)
+		{
+			if (a_subtype == RE::DIALOGUE_DATA::Subtype::kLostToNormal && a_target->IsDead()) {
+				const auto combatGroup = a_speaker->GetCombatGroup();
+				if (combatGroup && combatGroup->searchState == 0) {
+					a_subtype = RE::DIALOGUE_DATA::Subtype::kCombatToNormal;
+				}
+			}
+			return func(a_combatDialogueManager, a_speaker, a_target, a_type, a_subtype, a_ignoreSpeakingDone, a_combatController);
+		}
+		static inline REL::Relocation<decltype(thunk)> func;
+	};
+
 	inline void Fix()
 	{
-		REL::Relocation<std::uintptr_t> target1{ REL::ID(43571), 0x123 };
-
-		constexpr std::array<std::uint8_t, 8> bytes{ 0xC7, 0x44, 0x24, 0x20, 0x3D, 0x00, 0x00, 0x00 };  //0x3F to 0x3D
-		REL::safe_write(target1.address(), std::span{ bytes.data(), bytes.size() });
+		REL::Relocation<std::uintptr_t> target{ REL::ID(43571), 0x135 };
+		stl::write_thunk_call<SayCombatDialogue>(target.address());
 	}
 }
 
-class GameHour  //TBD
+//TBD - update timers when incrementing game hour through SetValue
+namespace GameHour
 {
-public:
-	static void Fix()
+	struct detail
 	{
-		REL::Relocation<std::uintptr_t> func{ REL::ID(55352) };
-		stl::asm_replace(func.address(), 0x29, reinterpret_cast<std::uintptr_t>(fixed_func));
-	}
+		static void UpdateTimers(RE::PlayerCharacter* a_player)
+		{
+			using func_t = decltype(&UpdateTimers);
+			REL::Relocation<func_t> func{ REL::ID(39410) };
+			return func(a_player);
+		}
 
-private:
-	static void fixed_func(RE::BSScript::IVirtualMachine* a_vm, RE::VMStackID a_stackID, RE::TESGlobal* a_global, float a_value)
+		static bool& get_sleeping()
+		{
+			REL::Relocation<bool*> sleeping{ REL::ID(509271) };
+			return *sleeping;
+		}
+
+		static inline constexpr RE::FormID gameHour{ 0x38 };
+	};
+
+	inline void fixed_func(RE::BSScript::IVirtualMachine* a_vm, RE::VMStackID a_stackID, RE::TESGlobal* a_global, float a_value)
 	{
 		if ((a_global->formFlags & RE::TESForm::RecordFlags::kGlobalConstant) != 0) {
 			a_vm->TraceStack("Cannot set the value of a constant GlobalVariable", a_stackID, RE::BSScript::ErrorLogger::Severity::kError);
 		} else {
 			a_global->value = a_value;
-			if (a_global->GetFormID() == gameHour) {
-				UpdateTimers(RE::PlayerCharacter::GetSingleton());
+			if (a_global->GetFormID() == detail::gameHour) {
+				detail::get_sleeping() = false;
+				detail::UpdateTimers(RE::PlayerCharacter::GetSingleton());
 			}
 		}
 	}
 
-	static void UpdateTimers(RE::PlayerCharacter* a_player)
+	inline void Fix()
 	{
-		using func_t = decltype(&UpdateTimers);
-		REL::Relocation<func_t> func{ REL::ID(39410) };
-		return func(a_player);
+		REL::Relocation<std::uintptr_t> func{ REL::ID(55352) };
+		stl::asm_replace(func.address(), 0x29, fixed_func);
 	}
-
-	static inline RE::FormID gameHour{ 0x38 };
 };
 
 //fixes added spells not being reapplied on actor load
@@ -326,5 +349,131 @@ namespace Spells
 			REL::Relocation<std::uintptr_t> target{ REL::ID(36198), 0x12 };
 			stl::write_thunk_call<Load3D>(target.address());
 		}
+	}
+}
+
+//patches IsFurnitureAnimType to work on furniture references
+namespace IsFurnitureAnimType
+{
+	struct detail
+	{
+		static std::uint32_t GetEquippedFurnitureType(RE::Actor* a_actor)
+		{
+			using func_t = decltype(&GetEquippedFurnitureType);
+			REL::Relocation<func_t> func{ REL::ID(36720) };
+			return func(a_actor);
+		}
+
+		static std::uint32_t GetFurnitureType(RE::TESFurniture* a_furniture)
+		{
+			using FLAGS = RE::TESFurniture::ActiveMarker;
+
+			const auto flags = a_furniture->furnFlags;
+			if (flags.all(FLAGS::kCanSit)) {
+				return 1;
+			}
+			if (flags.all(FLAGS::kCanSleep)) {
+				return 2;
+			}
+			if (flags.all(FLAGS::kCanLean)) {
+				return 4;
+			}
+			return 0;
+		}
+	};
+
+	inline bool fixed_func(RE::TESObjectREFR* a_this, std::uint32_t a_type, [[maybe_unused]] void* a_param2, double& a_result)
+	{
+		a_result = 0.0;
+		if (!a_this) {
+			return true;
+		}
+
+		if (a_this->Is(RE::FormType::ActorCharacter)) {
+			const auto actor = static_cast<RE::Actor*>(a_this);
+			if (detail::GetEquippedFurnitureType(actor) == a_type) {
+				a_result = 1.0;
+			}
+		} else if (const auto base = a_this->GetBaseObject(); base && base->Is(RE::FormType::Furniture)) {
+			const auto furniture = static_cast<RE::TESFurniture*>(base);
+			if (detail::GetFurnitureType(furniture) == a_type) {
+				a_result = 1.0;
+			}
+		} else {
+			return true;
+		}
+
+		const auto log = RE::ConsoleLog::GetSingleton();
+		if (log && log->IsConsoleMode()) {
+			log->Print("IsFurnitureAnimType >> %0.2f", a_result);
+		}
+
+		return true;
+	}
+
+	inline void Fix()
+	{
+		REL::Relocation<std::uintptr_t> func{ REL::ID(21211) };
+		stl::asm_replace(func.address(), 0x87, fixed_func);
+	}
+}
+
+//nullptr crash re: AttachLightHitEffectVisitor
+namespace AttachLightCrash
+{
+	inline std::uint32_t fixed_func(RE::AttachLightHitEffectVisitor* a_this, RE::ReferenceEffect* a_hitEffect)
+	{
+		if (a_hitEffect->Unk_3D()) {
+			auto root = a_hitEffect->GetTargetRoot();
+			const auto attachLightObj = root ?
+                                            root->GetObjectByName(RE::FixedStrings::GetSingleton()->attachLight) :  //crash here because no null check
+                                            nullptr;
+			if (attachLightObj) {
+				root = attachLightObj;
+			}
+			if (root && root != a_this->actorRoot) {
+				a_this->attachLightNode = root;
+			}
+			if (a_this->attachLightNode) {
+				return 0;
+			}
+		} else {
+			a_this->unk18 = false;
+		}
+		return 1;
+	}
+
+	inline void Fix()
+	{
+		REL::Relocation<std::uintptr_t> func{ REL::ID(33610) };
+		stl::asm_replace(func.address(), 0x86, fixed_func);
+	}
+}
+
+//conjuration spell no absorb
+namespace SpellNoAbsorb
+{
+	struct Conjuration
+	{
+		static void Fix()
+		{
+			using Archetype = RE::EffectArchetypes::ArchetypeID;
+
+			const auto dataHandler = RE::TESDataHandler::GetSingleton();
+			if (dataHandler) {
+				for (auto& spell : dataHandler->GetFormArray<RE::SpellItem>()) {
+					if (spell && std::ranges::any_of(spell->effects, [](const auto& effect) {
+							return effect && effect->baseEffect && effect->baseEffect->HasArchetype(Archetype::kSummonCreature);
+						})) {
+						spell->data.flags.set(RE::SpellItem::SpellFlag::kNoAbsorb);
+					}
+				}
+			}
+		}
+	};
+
+	inline void Fix()
+	{
+		Conjuration::Fix();
 	}
 }
