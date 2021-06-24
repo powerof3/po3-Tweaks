@@ -533,9 +533,55 @@ namespace NoCheatMode
 		default:
 			break;
 		}
+	}
+}
 
-		GodMode::Patch();
-		ImmortalMode::Patch();
+namespace PSB
+{
+	inline bool fixed_func()
+	{
+		const auto dataHandler = RE::TESDataHandler::GetSingleton();
+		if (dataHandler) {
+			const auto player = RE::PlayerCharacter::GetSingleton();
+			std::uint32_t spells = 0;
+			for (const auto& book : dataHandler->GetFormArray<RE::TESObjectBOOK>()) {
+				if (book && book->data.flags.all(RE::OBJ_BOOK::Flag::kTeachesSpell)) {
+					auto spell = book->data.teaches.spell;
+					if (spell && player->AddSpell(spell)) {
+						spells++;
+					}
+				}
+			}
+			for (const auto& spell : dataHandler->GetFormArray<RE::SpellItem>()) {
+				if (spell && stl::is(spell->GetSpellType(), RE::MagicSystem::SpellType::kPower, RE::MagicSystem::SpellType::kLesserPower) && player->AddSpell(spell)) {
+					spells++;
+				}
+			}
+			std::uint32_t shouts = 0;
+			for (const auto& shout : dataHandler->GetFormArray<RE::TESShout>()) {
+				if (shout && player->AddShout(shout)) {					
+					shouts++;
+				}
+			}
+			std::uint32_t words = 0;
+			for (const auto& word : dataHandler->GetFormArray<RE::TESWordOfPower>()) {
+				if (word) {
+					player->UnlockWord(word);
+					words++;
+				}
+			}
+			const auto log = RE::ConsoleLog::GetSingleton();
+			if (log) {
+				log->Print("%d spells, %d shouts, %d words added to Player Character", spells, shouts, words);
+			}
+		}
+		return true;
+	}
+
+	inline void Patch()
+	{
+		REL::Relocation<std::uintptr_t> func{ REL::ID(22334) };
+		stl::asm_replace(func.address(), 0x1C3, fixed_func);
 	}
 }
 

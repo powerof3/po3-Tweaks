@@ -45,6 +45,9 @@ void Patches::Patch()
 	if (settings->noCheatMode != 0) {
 		NoCheatMode::Patch(settings->noCheatMode);
 	}
+	
+	//PSB::Patch();
+
 	if (settings->fastScripts) {
 		const auto papyrus = SKSE::GetPapyrusInterface();
 		papyrus->Register(Script::Speedup);

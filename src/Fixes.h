@@ -161,8 +161,8 @@ namespace CombatDialogue
 	{
 		static bool thunk(std::uintptr_t a_combatDialogueManager, RE::Actor* a_speaker, RE::Actor* a_target, RE::DIALOGUE_TYPE a_type, RE::DIALOGUE_DATA::Subtype a_subtype, bool a_ignoreSpeakingDone, RE::CombatController* a_combatController)
 		{
-			if (a_subtype == RE::DIALOGUE_DATA::Subtype::kLostToNormal && a_target->IsDead()) {
-				const auto combatGroup = a_speaker->GetCombatGroup();
+			if (a_subtype == RE::DIALOGUE_DATA::Subtype::kLostToNormal && a_target && a_target->IsDead()) {
+				const auto combatGroup = a_speaker ? a_speaker->GetCombatGroup() : nullptr;
 				if (combatGroup && combatGroup->searchState == 0) {
 					a_subtype = RE::DIALOGUE_DATA::Subtype::kCombatToNormal;
 				}
