@@ -1,6 +1,6 @@
 set(headers ${headers}
-	src/PCH.h
 	src/Fixes.h
-	src/Patches.h
+	src/PCH.h
 	src/Settings.h
+	src/Tweaks.h
 )

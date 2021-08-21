@@ -1,14 +1,13 @@
 {
   "name": "po3tweaks",
-  "version-string": "1.0.0",
-  "description": "",
-  "homepage": "",
+  "version-string": "1.2.0",
+  "description": "Collection of bug fixes and tweaks for Skyrim SE",
+  "homepage": "https://github.com/powerof3/po3-Tweaks/",
   "license": "MIT",
   "dependencies": [
-    "boost-atomic",
     "boost-stl-interfaces",
-    "span-lite",
+    "simpleini",
     "spdlog",
-    "frozen"
+    "xbyak"
   ]
 }

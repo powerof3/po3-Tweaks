@@ -8,7 +8,6 @@
 #pragma warning(push)
 #include <spdlog/sinks/basic_file_sink.h>
 #include <SimpleIni.h>
-#include <frozen/map.h>
 #include <xbyak/xbyak.h>
 #pragma warning(pop)
 
@@ -20,15 +19,15 @@ using namespace std::literals;
 namespace stl
 {
 	using SKSE::stl::adjust_pointer;
-	using SKSE::stl::is;
+	using SKSE::stl::is_in;
 	using SKSE::stl::to_underlying;
 
 	void asm_replace(std::uintptr_t a_from, std::size_t a_size, std::uintptr_t a_to);
 
-	template <class F>
-	void asm_replace(std::uintptr_t a_from, std::size_t a_size, F a_newFunc)
+	template <class T>
+	void asm_replace(std::uintptr_t a_from)
 	{
-		asm_replace(a_from, a_size, reinterpret_cast<std::uintptr_t>(a_newFunc));
+		asm_replace(a_from, T::size, reinterpret_cast<std::uintptr_t>(T::func));
 	}
 
 	template <class T>
@@ -38,11 +37,11 @@ namespace stl
 		T::func = trampoline.write_call<5>(a_src, T::thunk);
 	}
 
-	template <class F, std::size_t idx, class T>
+	template <class F, class T>
 	void write_vfunc()
 	{
 		REL::Relocation<std::uintptr_t> vtbl{ F::VTABLE[0] };
-		T::func = vtbl.write_vfunc(idx, T::thunk);
+		T::func = vtbl.write_vfunc(T::size, T::thunk);
 	}
 }
 

@@ -1,47 +1,37 @@
 #include "Fixes.h"
-#include "Settings.h"
 
-void Fixes::Fix()
+void Fixes::Install()
 {
-	const auto settings = Settings::GetSingleton();
+	const auto fixes = Settings::GetSingleton()->fixes;
 
 	logger::info("{:*^30}", "FIXES"sv);
 
-	if (settings->queuedRefCrash) {
-		QueuedRefCrash::Fix();
-		logger::info("Installed queued ref crash fix"sv);
+	if (fixes.queuedRefCrash) {
+		QueuedRefCrash::Install();
 	}
-	if (settings->mapMarker) {
-		MapMarker::Fix();
-		logger::info("Installed map marker placement fix"sv);
+	if (fixes.mapMarker) {
+		MapMarker::Install();
 	}
-	if (settings->dontTakeBookFlag) {
-		CantTakeBook::Fix();
-		logger::info("Installed 'Can't Be Taken' book flag fix"sv);
+	if (fixes.dontTakeBookFlag) {
+		CantTakeBook::Install();
 	}
-	if (settings->projectileRange) {
-		ProjectileRange::Fix();
-		logger::info("Installed projectile range fix"sv);
+	if (fixes.projectileRange) {
+		ProjectileRange::Install();
 	}
-	if (settings->combatDialogue) {
-		CombatDialogue::Fix();
-		logger::info("Installed combat dialogue fix"sv);
+	if (fixes.combatDialogue) {
+		CombatDialogue::Install();
 	}
-	if (settings->addedSpell) {
-		Spells::ReapplyAdded::Fix();
-		Spells::DispelAdded::Fix();
-		logger::info("Installed added spell reapply fix"sv);
+	if (fixes.addedSpell) {
+		Spells::ReapplyAdded::Install();
+		Spells::DispelAdded::Install();
 	}
-	if (settings->deathSpell) {
-		Spells::ReapplyOnDeath::Fix();
-		logger::info("Installed no death dispel spell reapply fix"sv);
+	if (fixes.deathSpell) {
+		Spells::ReapplyOnDeath::Install();
 	}
-	if (settings->furnitureAnimType) {
-		IsFurnitureAnimType::Fix();
-		logger::info("Installed IsFurnitureAnimType fix"sv);
+	if (fixes.furnitureAnimType) {
+		IsFurnitureAnimTypeFix::Install();
 	}
-	if (settings->lightAttachCrash) {
-		AttachLightCrash::Fix();
-		logger::info("Installed light attach crash fix"sv);
+	if (fixes.lightAttachCrash) {
+		AttachLightCrash::Install();
 	}	
 }

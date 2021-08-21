@@ -1,19 +1,17 @@
 #include "Fixes.h"
-#include "Patches.h"
+#include "Tweaks.h"
 #include "Settings.h"
 
 void MessageHandler(SKSE::MessagingInterface::Message* a_message)
 {
 	switch (a_message->type) {
 	case SKSE::MessagingInterface::kDataLoaded:
-		{
-			const auto settings = Settings::GetSingleton();
-			if (settings->dynamicSnowMat) {
-				settings->LoadSnowyRegions();
-			}
-			if (settings->noConjurationAbsorb) {
-				logger::info("Installed no conjuration spell absorb fix");
-				SpellNoAbsorb::Fix();
+		{	
+			SpellNoAbsorb::Install();
+			
+			auto tweaks = Settings::GetSingleton()->tweaks;
+			if (tweaks.grabbingIsStealing) {
+				GrabbingIsStealing::Install();
 			}
 		}
 		break;
@@ -29,7 +27,8 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Query(const SKSE::QueryInterface* a
 		return false;
 	}
 
-	*path /= "po3_Tweaks.log"sv;
+	*path /= Version::PROJECT;
+	*path += ".log"sv;
 	auto sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(path->string(), true);
 
 	auto log = std::make_shared<spdlog::logger>("global log"s, std::move(sink));
@@ -38,7 +37,7 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Query(const SKSE::QueryInterface* a
 	log->flush_on(spdlog::level::info);
 
 	spdlog::set_default_logger(std::move(log));
-	spdlog::set_pattern("[%H:%M:%S] [%l] %v"s);
+	spdlog::set_pattern("[%H:%M:%S:%e] %v"s);
 
 	logger::info(FMT_STRING("{} v{}"), Version::PROJECT, Version::NAME);
 
@@ -68,10 +67,10 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 
 	Settings::GetSingleton()->Load();
 
-	SKSE::AllocTrampoline(140);
+	SKSE::AllocTrampoline(188);
 
-	Fixes::Fix();
-	Patches::Patch();
+	Fixes::Install();
+	Tweaks::Install();
 
 	auto messaging = SKSE::GetMessagingInterface();
 	messaging->RegisterListener(MessageHandler);
