@@ -40,9 +40,9 @@ namespace MapMarker
 	{
 		static bool thunk(RE::PlayerCharacter* a_this, bool a_hideNotification)
 		{
-            const auto enabled = func(a_this, a_hideNotification);
+			const auto enabled = func(a_this, a_hideNotification);
 			if (!enabled) {
-                const auto UI = RE::UI::GetSingleton();
+				const auto UI = RE::UI::GetSingleton();
 				auto mapMenu = UI ? UI->GetMenu<RE::MapMenu>() : nullptr;
 
 				if (mapMenu) {
@@ -94,7 +94,7 @@ namespace CantTakeBook
 		}
 	}
 
-    namespace Prompt
+	namespace Prompt
 	{
 		struct ProcessMessage
 		{
@@ -124,7 +124,7 @@ namespace CantTakeBook
 		}
 	}
 
-    inline void Install()
+	inline void Install()
 	{
 		Button::Install();
 		Prompt::Install();
@@ -193,51 +193,6 @@ namespace CombatDialogue
 	}
 }
 
-//TBD - update timers when incrementing game hour through SetValue
-namespace GameHour
-{
-	struct detail
-	{
-		static void UpdateTimers(RE::PlayerCharacter* a_player)
-		{
-			using func_t = decltype(&UpdateTimers);
-			REL::Relocation<func_t> func{ REL::ID(39410) };
-			return func(a_player);
-		}
-
-		static bool& get_sleeping()
-		{
-			REL::Relocation<bool*> sleeping{ REL::ID(509271) };
-			return *sleeping;
-		}
-
-		static inline constexpr RE::FormID gameHour{ 0x38 };
-	};
-
-	struct SetGlobal
-	{
-		static void func(RE::BSScript::IVirtualMachine* a_vm, RE::VMStackID a_stackID, RE::TESGlobal* a_global, float a_value)
-		{
-			if ((a_global->formFlags & RE::TESForm::RecordFlags::kGlobalConstant) != 0) {
-				a_vm->TraceStack("Cannot set the value of a constant GlobalVariable", a_stackID, RE::BSScript::ErrorLogger::Severity::kError);
-			} else {
-				a_global->value = a_value;
-				if (a_global->GetFormID() == detail::gameHour) {
-					detail::get_sleeping() = false;
-					detail::UpdateTimers(RE::PlayerCharacter::GetSingleton());
-				}
-			}
-		}
-		static inline constexpr std::size_t size = 0x29;
-	};
-
-	inline void Install()
-	{
-		REL::Relocation<std::uintptr_t> func{ REL::ID(55352) };
-		stl::asm_replace<SetGlobal>(func.address());
-	}
-}
-
 //fixes added spells not being reapplied on actor load
 //fixes no death dispel spells from not being reapplied on actor load
 namespace Spells
@@ -270,8 +225,8 @@ namespace Spells
 		{
 			static RE::ExtraAliasInstanceArray* thunk(RE::ExtraDataList* a_list)
 			{
-                const auto actor = stl::adjust_pointer<RE::Character>(a_list, -0x70);
-                const auto caster = actor && !actor->IsPlayerRef() && !actor->addedSpells.empty() ?
+				const auto actor = stl::adjust_pointer<RE::Character>(a_list, -0x70);
+				const auto caster = actor && !actor->IsPlayerRef() && !actor->addedSpells.empty() ?
                                         actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
                                         nullptr;
 				if (caster) {
@@ -299,7 +254,7 @@ namespace Spells
 		{
 			static RE::ExtraAliasInstanceArray* thunk(RE::ExtraDataList* a_list)
 			{
-                const auto actor = stl::adjust_pointer<RE::Character>(a_list, -0x70);
+				const auto actor = stl::adjust_pointer<RE::Character>(a_list, -0x70);
 				if (actor && !actor->IsPlayerRef() && !actor->addedSpells.empty()) {
 					auto handle = RE::ActorHandle{};
 					for (const auto& spell : actor->addedSpells) {
@@ -326,8 +281,8 @@ namespace Spells
 		{
 			static RE::NiAVObject* thunk(RE::Actor* a_actor, bool a_backgroundLoading)
 			{
-                const auto node = func(a_actor, a_backgroundLoading);
-                const auto caster = node && a_actor->IsDead() && !a_actor->IsPlayerRef() ?
+				const auto node = func(a_actor, a_backgroundLoading);
+				const auto caster = node && a_actor->IsDead() && !a_actor->IsPlayerRef() ?
                                         a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
                                         nullptr;
 				if (caster) {
@@ -341,18 +296,18 @@ namespace Spells
 						});
 					};
 
-                    const auto npc = a_actor->GetActorBase();
-                    const auto actorEffects = npc ? npc->actorEffects : nullptr;
+					const auto npc = a_actor->GetActorBase();
+					const auto actorEffects = npc ? npc->actorEffects : nullptr;
 					if (actorEffects && actorEffects->spells) {
 						const std::span span(actorEffects->spells, actorEffects->numSpells);
 						for (const auto& spell : span) {
 							if (spell && has_no_dispel_flag(*spell)) {
-                                ApplySpell(applier, spell);
+								ApplySpell(applier, spell);
 							}
 						}
 					}
 
-					if (Settings::GetSingleton()->fixes.addedSpell) {
+					if (Settings::GetSingleton()->fixes.addedSpell.value) {
 						for (const auto& spell : a_actor->addedSpells) {
 							if (spell && has_no_dispel_flag(*spell)) {
 								ApplySpell(applier, spell);
@@ -456,7 +411,7 @@ namespace AttachLightCrash
 	{
 		static std::uint32_t func(RE::AttachLightHitEffectVisitor* a_this, RE::ReferenceEffect* a_hitEffect)
 		{
-			if (a_hitEffect->Unk_3D()) {
+			if (a_hitEffect->IsModelAttached()) {
 				auto root = a_hitEffect->GetTargetRoot();
 				const auto attachLightObj = root ?
                                                 root->GetObjectByName(RE::FixedStrings::GetSingleton()->attachLight) :  //crash here because no null check
@@ -498,8 +453,8 @@ namespace SpellNoAbsorb
 		const auto dataHandler = RE::TESDataHandler::GetSingleton();
 		if (dataHandler) {
 			const auto settings = Settings::GetSingleton();
-			const auto noConj = settings->fixes.noConjurationAbsorb;
-			const auto noHostile = settings->tweaks.noHostileAbsorb;
+			const auto noConj = settings->fixes.noConjurationAbsorb.value;
+			const auto noHostile = settings->tweaks.noHostileAbsorb.value;
 
 			if (!noConj && !noHostile) {
 				return;
@@ -523,5 +478,401 @@ namespace SpellNoAbsorb
 				}
 			}
 		}
+	}
+}
+
+//patches GetEquipped to work with left hand
+namespace GetEquippedFix
+{
+	struct GetEquipped
+	{
+		struct detail
+		{
+			static bool get_worn(RE::Actor* a_actor, RE::TESForm* a_item)
+			{
+				auto inv = a_actor->GetInventory();
+				return std::ranges::any_of(inv, [a_item](const auto& itemData) {
+					const auto& [item, data] = itemData;
+					if (item == a_item) {
+						const auto& [count, entry] = data;
+						return count > 0 && entry->IsWorn();
+					}
+					return false;
+				});
+			}
+		};
+
+		static bool func(RE::TESObjectREFR* a_this, RE::TESForm* a_item, void*, double& a_result)
+		{
+			a_result = 0.0;
+
+			if (const auto actor = a_this ? a_this->As<RE::Actor>() : nullptr; actor && a_item) {
+				if (const auto list = a_item->As<RE::BGSListForm>(); list) {
+					auto result = std::ranges::any_of(list->forms, [&](const auto& form) {
+						return form->IsBoundObject() && detail::get_worn(actor, form);
+					});
+					if (!result && list->scriptAddedTempForms) {
+						result = std::ranges::any_of(*list->scriptAddedTempForms, [&](const auto& formID) {
+							auto form = RE::TESForm::LookupByID(formID);
+							return form && form->IsBoundObject() && detail::get_worn(actor, form);
+						});
+					}
+					if (result) {
+						a_result = 1.0;
+					}
+				} else if (a_item->IsBoundObject() && detail::get_worn(actor, a_item)) {
+					a_result = 1.0;
+				}
+			}
+
+			const auto log = RE::ConsoleLog::GetSingleton();
+			if (log && log->IsConsoleMode()) {
+				log->Print("GetEquipped >> %0.2f", a_result);
+			}
+
+			return true;
+		}
+		static inline constexpr std::size_t size = 0xEF;
+	};
+
+	inline void Install()
+	{
+		REL::Relocation<std::uintptr_t> func{ REL::ID(21086) };
+		stl::asm_replace<GetEquipped>(func.address());
+
+		logger::info("Installed GetEquipped fix"sv);
+	}
+}
+
+//fixes z buffer flag for non-detect life shaders
+namespace EffectShaderZBufferFix
+{
+	inline void Install()
+	{
+		REL::Relocation<std::uintptr_t> target{ REL::ID(501401), 0x1C };
+
+		constexpr std::uint8_t zeroes[] = { 0x0, 0x0, 0x0, 0x0 };
+		REL::safe_write(target.address(), zeroes, 4);
+
+		logger::info("Installed effect shader z buffer fix"sv);
+	}
+}
+
+//nullptr crash re: QueuedReference
+namespace ToggleCollisionFix
+{
+	const auto no_collision_flag = static_cast<std::uint32_t>(RE::CFilter::Flag::kNoCollision);
+	
+	struct ToggleCollision
+	{
+		struct detail
+		{
+			static void ToggleGlobalCollision()
+			{
+				using func_t = decltype(&ToggleGlobalCollision);
+				REL::Relocation<func_t> func{ REL::ID(13224) };
+				return func();
+			}
+
+			static bool& get_collision_state()
+			{
+				REL::Relocation<bool*> collision_state{ REL::ID(514184) };
+				return *collision_state;
+			}
+		};
+		
+		static bool func(void*, void*, RE::TESObjectREFR* a_ref)
+		{
+			if (a_ref) {
+				bool hasCollision = a_ref->HasCollision();
+				bool isActor = a_ref->Is(RE::FormType::ActorCharacter);
+
+				if (!isActor) {
+					const auto root = a_ref->Get3D();
+					if (root) {
+						const auto cell = a_ref->GetParentCell();
+						const auto world = cell ? cell->GetbhkWorld() : nullptr;
+
+						if (world) {
+							RE::BSWriteLockGuard locker(world->worldLock);
+
+							RE::BSVisit::TraverseScenegraphCollision(root, [&](RE::bhkNiCollisionObject* a_col) -> RE::BSVisit::BSVisitControl {
+								auto body = a_col->body;
+								auto hkpBody = body ? static_cast<RE::hkpWorldObject*>(body->referencedObject.get()) : nullptr;
+								if (hkpBody) {
+									auto& filter = hkpBody->collidable.broadPhaseHandle.collisionFilterInfo;
+									if (hasCollision) {
+										filter |= no_collision_flag;
+									} else {
+										filter &= ~no_collision_flag;
+									}
+								}
+								return RE::BSVisit::BSVisitControl::kContinue;
+							});
+						}
+					}
+				}
+
+				a_ref->SetCollision(!hasCollision);
+
+				const auto log = RE::ConsoleLog::GetSingleton();
+				if (log && log->IsConsoleMode()) {
+					const char* result = hasCollision ? "off" : "on";
+					log->Print("%s collision %s", a_ref->GetName(), result);
+				}
+			} else {
+				detail::ToggleGlobalCollision();
+
+				const auto log = RE::ConsoleLog::GetSingleton();
+				if (log && log->IsConsoleMode()) {
+					const char* result = detail::get_collision_state() ? "Off" : "On";
+					log->Print("Collision -> %s", result);
+				}
+			}
+
+			return true;
+		}
+		static inline constexpr std::size_t size = 0x83;
+	};
+
+	struct ApplyMovementDelta
+	{
+		struct detail
+		{
+			static bool should_disable_collision(RE::Actor* a_actor, float a_delta)
+			{
+				auto controller = a_actor->GetCharController();
+				if (!controller) {
+					return false;
+				}
+
+				auto collisionObj = controller->bumpedCharCollisionObject;
+				if (!collisionObj) {
+					return false;
+				}
+
+				auto& filter = collisionObj->collidable.broadPhaseHandle.collisionFilterInfo;
+				if (filter & no_collision_flag) {
+					return false;
+				}
+
+				auto colRef = RE::TESHavokUtilities::FindCollidableRef(collisionObj->collidable);
+				if (colRef && colRef->HasCollision()) {
+					return false;
+				}
+
+				filter |= no_collision_flag;
+
+				func(a_actor, a_delta);
+
+				filter &= ~no_collision_flag;
+
+				return true;
+			}
+		};
+
+		static void thunk(RE::Actor* a_actor, float a_delta)
+		{
+			if (!detail::should_disable_collision(a_actor, a_delta)) {
+				return func(a_actor, a_delta);
+			}
+		}
+		static inline REL::Relocation<decltype(thunk)> func;
+	};
+
+	inline void Install()
+	{
+		REL::Relocation<std::uintptr_t> target{ REL::ID(36359), 0xF0 };
+		stl::write_thunk_call<ApplyMovementDelta>(target.address());
+
+		REL::Relocation<std::uintptr_t> func{ REL::ID(22350) };
+		stl::asm_replace<ToggleCollision>(func.address());
+
+		logger::info("Installed toggle collision fix"sv);
+	}
+}
+
+namespace LoadFormEditorIDs
+{
+	struct detail
+	{
+		static void add_to_game_map(RE::TESForm* a_form, const char* a_str)
+		{
+			const auto& [map, lock] = RE::TESForm::GetAllFormsByEditorID();
+			const RE::BSWriteLockGuard locker{ lock };
+			if (map) {
+				map->emplace(a_str, a_form);
+			}
+		}
+	};
+
+	struct SetFormEditorID
+	{
+		static bool thunk(RE::TESForm* a_this, const char* a_str)
+		{
+			if (!string::is_empty(a_str)) {
+				detail::add_to_game_map(a_this, a_str);
+			}
+
+			return func(a_this, a_str);
+		}
+		static inline REL::Relocation<decltype(thunk)> func;
+
+		static inline size_t size = 0x33;
+	};
+
+	struct SetFormEditorID_REFR
+	{
+		static bool thunk(RE::TESForm* a_this, const char* a_str)
+		{
+			if (!string::is_empty(a_str) && !a_this->IsDynamicForm()) {
+				detail::add_to_game_map(a_this, a_str);
+			}
+
+			return func(a_this, a_str);
+		}
+		static inline REL::Relocation<decltype(thunk)> func;
+
+		static inline size_t size = 0x33;
+	};
+
+	inline void Install()
+	{
+		//stl::write_vfunc<RE::TESForm, SetFormEditorID>();
+		//stl::write_vfunc<RE::BGSKeyword, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSLocationRefType, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSAction, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSTextureSet, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSMenuIcon, SetFormEditorID>();
+		//stl::write_vfunc<RE::TESGlobal, SetFormEditorID>();
+		stl::write_vfunc<RE::TESClass, SetFormEditorID>();
+		stl::write_vfunc<RE::TESFaction, SetFormEditorID>();
+		//stl::write_vfunc<RE::BGSHeadPart, SetFormEditorID>();
+		stl::write_vfunc<RE::TESEyes, SetFormEditorID>();
+		//stl::write_vfunc<RE::TESRace, SetFormEditorID>();
+		//stl::write_vfunc<RE::TESSound, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSAcousticSpace, SetFormEditorID>();
+		stl::write_vfunc<RE::EffectSetting, SetFormEditorID>();
+		stl::write_vfunc<RE::Script, SetFormEditorID>();
+		stl::write_vfunc<RE::TESLandTexture, SetFormEditorID>();
+		stl::write_vfunc<RE::EnchantmentItem, SetFormEditorID>();
+		stl::write_vfunc<RE::SpellItem, SetFormEditorID>();
+		stl::write_vfunc<RE::ScrollItem, SetFormEditorID>();
+		stl::write_vfunc<RE::TESObjectACTI, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSTalkingActivator, SetFormEditorID>();
+		stl::write_vfunc<RE::TESObjectARMO, SetFormEditorID>();
+		stl::write_vfunc<RE::TESObjectBOOK, SetFormEditorID>();
+		stl::write_vfunc<RE::TESObjectCONT, SetFormEditorID>();
+		stl::write_vfunc<RE::TESObjectDOOR, SetFormEditorID>();
+		stl::write_vfunc<RE::IngredientItem, SetFormEditorID>();
+		stl::write_vfunc<RE::TESObjectLIGH, SetFormEditorID>();
+		stl::write_vfunc<RE::TESObjectMISC, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSApparatus, SetFormEditorID>();
+		stl::write_vfunc<RE::TESObjectSTAT, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSStaticCollection, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSMovableStatic, SetFormEditorID>();
+		stl::write_vfunc<RE::TESGrass, SetFormEditorID>();
+		stl::write_vfunc<RE::TESObjectTREE, SetFormEditorID>();
+		stl::write_vfunc<RE::TESFlora, SetFormEditorID>();
+		stl::write_vfunc<RE::TESFurniture, SetFormEditorID>();
+		stl::write_vfunc<RE::TESObjectWEAP, SetFormEditorID>();
+		stl::write_vfunc<RE::TESAmmo, SetFormEditorID>();
+		stl::write_vfunc<RE::TESNPC, SetFormEditorID>();
+		stl::write_vfunc<RE::TESLevCharacter, SetFormEditorID>();
+		stl::write_vfunc<RE::TESKey, SetFormEditorID>();
+		stl::write_vfunc<RE::AlchemyItem, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSIdleMarker, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSNote, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSConstructibleObject, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSProjectile, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSHazard, SetFormEditorID>();
+		stl::write_vfunc<RE::TESSoulGem, SetFormEditorID>();
+		stl::write_vfunc<RE::TESLevItem, SetFormEditorID>();
+		stl::write_vfunc<RE::TESWeather, SetFormEditorID>();
+		stl::write_vfunc<RE::TESClimate, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSShaderParticleGeometryData, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSReferenceEffect, SetFormEditorID>();
+		stl::write_vfunc<RE::TESRegion, SetFormEditorID>();
+		stl::write_vfunc<RE::NavMeshInfoMap, SetFormEditorID>();
+		//stl::write_vfunc<RE::TESObjectCELL, SetFormEditorID>();
+
+		stl::write_vfunc<RE::TESObjectREFR, SetFormEditorID_REFR>();
+		stl::write_vfunc<RE::Actor, SetFormEditorID_REFR>();
+		stl::write_vfunc<RE::Character, SetFormEditorID_REFR>();
+		stl::write_vfunc<RE::PlayerCharacter, SetFormEditorID_REFR>();
+		stl::write_vfunc<RE::MissileProjectile, SetFormEditorID_REFR>();
+		stl::write_vfunc<RE::ArrowProjectile, SetFormEditorID_REFR>();
+		stl::write_vfunc<RE::GrenadeProjectile, SetFormEditorID_REFR>();
+		stl::write_vfunc<RE::BeamProjectile, SetFormEditorID_REFR>();
+		stl::write_vfunc<RE::FlameProjectile, SetFormEditorID_REFR>();
+		stl::write_vfunc<RE::ConeProjectile, SetFormEditorID_REFR>();
+		stl::write_vfunc<RE::BarrierProjectile, SetFormEditorID_REFR>();
+		stl::write_vfunc<RE::Hazard, SetFormEditorID_REFR>();
+
+		//stl::write_vfunc<RE::TESWorldSpace, SetFormEditorID>();
+		stl::write_vfunc<RE::TESObjectLAND, SetFormEditorID>();
+		stl::write_vfunc<RE::NavMesh, SetFormEditorID>();
+		//stl::write_vfunc<RE::TESTopic, SetFormEditorID>();
+		stl::write_vfunc<RE::TESTopicInfo, SetFormEditorID>();
+		//stl::write_vfunc<RE::TESQuest, SetFormEditorID>();
+		//stl::write_vfunc<RE::TESIdleForm, SetFormEditorID>();
+		stl::write_vfunc<RE::TESPackage, SetFormEditorID>();
+		stl::write_vfunc<RE::DialoguePackage, SetFormEditorID>();
+		stl::write_vfunc<RE::TESCombatStyle, SetFormEditorID>();
+		stl::write_vfunc<RE::TESLoadScreen, SetFormEditorID>();
+		stl::write_vfunc<RE::TESLevSpell, SetFormEditorID>();
+		//stl::write_vfunc<RE::TESObjectANIO, SetFormEditorID>();
+		stl::write_vfunc<RE::TESWaterForm, SetFormEditorID>();
+		stl::write_vfunc<RE::TESEffectShader, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSExplosion, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSDebris, SetFormEditorID>();
+		stl::write_vfunc<RE::TESImageSpace, SetFormEditorID>();
+		//stl::write_vfunc<RE::TESImageSpaceModifier, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSListForm, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSPerk, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSBodyPartData, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSAddonNode, SetFormEditorID>();
+		stl::write_vfunc<RE::ActorValueInfo, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSCameraShot, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSCameraPath, SetFormEditorID>();
+		//stl::write_vfunc<RE::BGSVoiceType, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSMaterialType, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSImpactData, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSImpactDataSet, SetFormEditorID>();
+		stl::write_vfunc<RE::TESObjectARMA, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSEncounterZone, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSLocation, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSMessage, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSRagdoll, SetFormEditorID>();
+		//stl::write_vfunc<RE::BGSDefaultObjectManager, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSLightingTemplate, SetFormEditorID>();
+		//stl::write_vfunc<RE::BGSMusicType, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSFootstep, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSFootstepSet, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSStoryManagerBranchNode, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSStoryManagerQuestNode, SetFormEditorID>();
+		//stl::write_vfunc<RE::BGSStoryManagerEventNode, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSDialogueBranch, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSMusicTrackFormWrapper, SetFormEditorID>();
+		stl::write_vfunc<RE::TESWordOfPower, SetFormEditorID>();
+		stl::write_vfunc<RE::TESShout, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSEquipSlot, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSRelationship, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSScene, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSAssociationType, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSOutfit, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSArtObject, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSMaterialObject, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSMovementType, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSSoundDescriptorForm, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSDualCastData, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSSoundCategory, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSSoundOutput, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSCollisionLayer, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSColorForm, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSReverbParameters, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSLensFlare, SetFormEditorID>();
+
+		logger::info("Installed editorID cache"sv);
 	}
 }

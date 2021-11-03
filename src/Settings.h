@@ -9,8 +9,10 @@ public:
 		return std::addressof(singleton);
 	}
 
-	void Load()
+	size_t Load()
 	{
+		size_t trampolineSpace = 0;
+
 		constexpr auto path = L"Data/SKSE/Plugins/po3_Tweaks.ini";
 
 		CSimpleIniA ini;
@@ -20,134 +22,121 @@ public:
 
 		CSimpleIniA::TNamesDepend patchesSection;
 		ini.GetAllKeys("Patches", patchesSection);
-        const bool usesOldPatches = !patchesSection.empty();
+		const bool usesOldPatches = !patchesSection.empty();
 
 		//FIXES
-		fixes.Load(ini);
+		fixes.Load(ini, trampolineSpace);
 
 		//TWEAKS
-		tweaks.Load(ini, usesOldPatches);
+		tweaks.Load(ini, trampolineSpace, usesOldPatches);
 
 		//EXPERIMENTAL
-		experimental.Load(ini, usesOldPatches);
+		experimental.Load(ini, trampolineSpace, usesOldPatches);
 
 		ini.SaveFile(path);
+
+		return trampolineSpace;
 	}
 
 	//members
-	struct fixes
+	template <class T>
+	struct data
 	{
-		void Load(CSimpleIniA& a_ini)
+		T value;
+		size_t space;
+	};
+
+	struct
+	{
+		void Load(CSimpleIniA& a_ini, size_t& a_trampolineSpace)
 		{
-			queuedRefCrash = a_ini.GetBoolValue("Fixes", "Queued Ref Crash", true);
-			a_ini.SetBoolValue("Fixes", "Queued Ref Crash", queuedRefCrash, ";Fixes crash caused by faulty ref loading.", true);
+			static const char* section = "Fixes";
 
-			mapMarker = a_ini.GetBoolValue("Fixes", "Map Marker Placement Fix", true);
-			a_ini.SetBoolValue("Fixes", "Map Marker Placement Fix", mapMarker, ";Allows placing map markers near fast travel destinations when fast travel is disabled", true);
+			a_trampolineSpace += detail::get_data(a_ini, queuedRefCrash, section, "Queued Ref Crash", ";Fixes crash caused by faulty ref loading.");
 
-			dontTakeBookFlag = a_ini.GetBoolValue("Fixes", "Restore 'Can't Be Taken Book' Flag", true);
-			a_ini.SetBoolValue("Fixes", "Restore 'Can't Be Taken Book' Flag", dontTakeBookFlag, ";Enables 'Can't be taken' book flag functionality.", true);
+			a_trampolineSpace += detail::get_data(a_ini, mapMarker, section, "Map Marker Placement Fix", ";Allows placing map markers near fast travel destinations when fast travel is disabled");
 
-			projectileRange = a_ini.GetBoolValue("Fixes", "Projectile Range Fix", true);
-			a_ini.SetBoolValue("Fixes", "Projectile Range Fix", projectileRange, ";Adjusts range of projectile fired while moving for consistent lifetime.", true);
+			a_trampolineSpace += detail::get_data(a_ini, dontTakeBookFlag, section, "Restore 'Can't Be Taken Book' Flag", ";Enables 'Can't be taken' book flag functionality.");
 
-			combatDialogue = a_ini.GetBoolValue("Fixes", "CombatToNormal Dialogue Fix", true);
-			a_ini.SetBoolValue("Fixes", "CombatToNormal Dialogue Fix", combatDialogue, ";Fixes bug where NPCs were using LostToNormal dialogue in place of CombatToNormal.", true);
+			a_trampolineSpace += detail::get_data(a_ini, projectileRange, section, "Projectile Range Fix", ";Adjusts range of projectile fired while moving for consistent lifetime.");
 
-			addedSpell = a_ini.GetBoolValue("Fixes", "Cast Added Spells on Load", true);
-			a_ini.SetBoolValue("Fixes", "Cast Added Spells on Load", addedSpell, ";Recasts added spell effects on actors.", true);
+			a_trampolineSpace += detail::get_data(a_ini, combatDialogue, section, "CombatToNormal Dialogue Fix", ";Fixes bug where NPCs were using LostToNormal dialogue in place of CombatToNormal.");
 
-			deathSpell = a_ini.GetBoolValue("Fixes", "Cast No-Death-Dispel Spells on Load", true);
-			a_ini.SetBoolValue("Fixes", "Cast No-Death-Dispel Spells on Load", deathSpell, ";Recasts no-death-dispel spell effects on dead actors.", true);
+			a_trampolineSpace += detail::get_data(a_ini, addedSpell, section, "Cast Added Spells on Load", ";Recasts added spell effects on actors.");
 
-			furnitureAnimType = a_ini.GetBoolValue("Fixes", "IsFurnitureAnimType Fix", true);
-			a_ini.SetBoolValue("Fixes", "IsFurnitureAnimType Fix", furnitureAnimType, ";Patches IsFurnitureAnimType condition/console function to work on furniture references", true);
+			a_trampolineSpace += detail::get_data(a_ini, deathSpell, section, "Cast No-Death-Dispel Spells on Load", ";Recasts no-death-dispel spell effects on dead actors.");
 
-			lightAttachCrash = a_ini.GetBoolValue("Fixes", "Light Attach Crash", true);
-			a_ini.SetBoolValue("Fixes", "Light Attach Crash", lightAttachCrash, ";Fixes crash caused by lights attaching on unloaded characters", true);
+			a_trampolineSpace += detail::get_data(a_ini, furnitureAnimType, section, "IsFurnitureAnimType Fix", ";Patches IsFurnitureAnimType condition/console function to work on furniture references");
 
-			noConjurationAbsorb = a_ini.GetBoolValue("Fixes", "No Conjuration Spell Absorb", true);
-			a_ini.SetBoolValue("Fixes", "No Conjuration Spell Absorb", noConjurationAbsorb, ";Adds NoAbsorb flag to all conjuration spells missing this flag", true);
+			a_trampolineSpace += detail::get_data(a_ini, lightAttachCrash, section, "Light Attach Crash", ";Fixes crash caused by lights attaching on unloaded characters");
+
+			a_trampolineSpace += detail::get_data(a_ini, noConjurationAbsorb, section, "No Conjuration Spell Absorb", ";Adds NoAbsorb flag to all conjuration spells missing this flag");
+
+			a_trampolineSpace += detail::get_data(a_ini, getEquipped, section, "GetEquipped Fix", ";Patches GetEquipped console/condition function to work with left hand equipped items");
+
+			a_trampolineSpace += detail::get_data(a_ini, effectShaderZBuffer, section, "EffectShader Z-Buffer Fix", ";Fixes effect shader z-buffer rendering so particles can show through objects");
+
+			a_trampolineSpace += detail::get_data(a_ini, collisionToggleFix, section, "ToggleCollision Fix", ";Patches ToggleCollision to toggle object collision if selected in console");
+
+			a_trampolineSpace += detail::get_data(a_ini, loadEditorIDs, section, "Load EditorIDs", ";Loads editorIDs for skipped forms at runtime");
 		}
 
-		bool queuedRefCrash;
-		bool mapMarker;
-		bool dontTakeBookFlag;
-		bool projectileRange;
-		bool combatDialogue;
-		bool addedSpell;
-		bool deathSpell;
-		bool furnitureAnimType;
-		bool lightAttachCrash;
-		bool noConjurationAbsorb;
+		data<bool> queuedRefCrash{ true };
+		data<bool> mapMarker{ true, 1 };
+		data<bool> dontTakeBookFlag{ true, 1 };
+		data<bool> projectileRange{ true, 1 };
+		data<bool> combatDialogue{ true, 1 };
+		data<bool> addedSpell{ true, 2 };
+		data<bool> deathSpell{ true, 1 };
+		data<bool> furnitureAnimType{ true };
+		data<bool> lightAttachCrash{ true };
+		data<bool> noConjurationAbsorb{ true };
+		data<bool> getEquipped{ true };
+		data<bool> effectShaderZBuffer{ true };
+		data<bool> collisionToggleFix{ true, 1 };
+		data<bool> loadEditorIDs{ true };
 
 	} fixes;
 
-	struct tweaks
+	struct
 	{
-		void Load(CSimpleIniA& a_ini, bool a_clearOld)
+		void Load(CSimpleIniA& a_ini, size_t& a_trampolineSpace, bool a_clearOld)
 		{
 			const char* section = a_clearOld ? "Patches" : "Tweaks";
 
-			factionStealing = a_ini.GetBoolValue(section, "Faction Stealing", false);
-			a_ini.SetBoolValue("Tweaks", "Faction Stealing", factionStealing, ";Items will be marked stolen until player is friendly with all present members of faction.", false);
+			a_trampolineSpace += detail::get_data(a_ini, factionStealing, section, "Faction Stealing", ";Items will be marked stolen until player is friendly with all present members of faction.");
 
-			aiFadeOut = a_ini.GetBoolValue(section, "Load Door Fade Out", false);
-			a_ini.SetBoolValue("Tweaks", "Load Door Fade Out", aiFadeOut, ";Stops NPCs from fading out when using load doors.", true);
+			a_trampolineSpace += detail::get_data(a_ini, aiFadeOut, section, "Load Door Fade Out", ";Stops NPCs from fading out when using load doors.");
 
-			voiceModulationValue = static_cast<float>(a_ini.GetDoubleValue(section, "Voice Modulation", 1.0));
-			a_ini.SetDoubleValue("Tweaks", "Voice Modulation", static_cast<double>(voiceModulationValue), ";Applies voice distortion effect on NPCs wearing face covering helmets. A value of 1.0 has no effect.\n;Pitch is directly proportional to value. Recommended setting (0.85-0.90).", true);
+			a_trampolineSpace += detail::get_data(a_ini, voiceModulationValue, section, "Voice Modulation", ";Applies voice distortion effect on NPCs wearing face covering helmets. A value of 1.0 has no effect.\n;Pitch is directly proportional to value. Recommended setting (0.85-0.90).");
 
-			dopplerShift = a_ini.GetBoolValue(section, "Game Time Affects Sounds", false);
-			a_ini.SetBoolValue("Tweaks", "Game Time Affects Sounds", dopplerShift, ";Scales sound pitch with time speed, eg. Slow Time will massively decrease pitch of all sounds", true);
+			a_trampolineSpace += detail::get_data(a_ini, dopplerShift, section, "Game Time Affects Sounds", ";Scales sound pitch with time speed, eg. Slow Time will massively decrease pitch of all sounds");
 
-			dynamicSnowMat = a_ini.GetBoolValue(section, "Dynamic Snow Material", false);
-			a_ini.SetBoolValue("Tweaks", "Dynamic Snow Material", dynamicSnowMat, ";Applies snow material to all statics with directional snow", true);
+			a_trampolineSpace += detail::get_data(a_ini, dynamicSnowMat, section, "Dynamic Snow Material", ";Applies snow collision material to all statics with directional snow");
 
-			noWaterPhysicsOnHover = a_ini.GetBoolValue(section, "Disable Water Ripples On Hover", false);
-			a_ini.SetBoolValue("Tweaks", "Disable Water Ripples On Hover", noWaterPhysicsOnHover, ";Hovering NPCs will not trigger water ripples", true);
+			a_trampolineSpace += detail::get_data(a_ini, noWaterPhysicsOnHover, section, "Disable Water Ripples On Hover", ";Hovering NPCs will not trigger water ripples");
 
-			screenshotToConsole = a_ini.GetBoolValue(section, "Screenshot Notification To Console", false);
-			a_ini.SetBoolValue("Tweaks", "Screenshot Notification To Console", screenshotToConsole, ";Displays screenshot notification as a console message", true);
+			a_trampolineSpace += detail::get_data(a_ini, screenshotToConsole, section, "Screenshot Notification To Console", ";Displays screenshot notification as a console message");
 
-			try {
-				noCritSneakMsg = string::lexical_cast<std::uint32_t>(a_ini.GetValue(section, "No Attack Messages", "0"));
-				a_ini.SetValue("Tweaks", "No Attack Messages", std::to_string(noCritSneakMsg).c_str(), ";Disables critical and sneak hit messages.\n;0 - off, 1 - only crit, 2 - only sneak, 3 - both", true);
-			} catch (...) {
-				noCritSneakMsg = 0;
-			}
+			a_trampolineSpace += detail::get_data(a_ini, noCritSneakMsg, section, "No Attack Messages", ";Disables critical and sneak hit messages.\n;0 - off, 1 - only crit, 2 - only sneak, 3 - both");
 
-			sitToWait.active = a_ini.GetBoolValue(section, "Sit To Wait", false);
-			a_ini.SetBoolValue("Tweaks", "Sit To Wait", sitToWait.active, ";Player can only wait when sitting down", true);
+			a_trampolineSpace += detail::get_data(a_ini, sitToWait.active, section, "Sit To Wait", ";Player can only wait when sitting down");
 
-			sitToWait.message = a_ini.GetValue(section, "Sit To Wait Message", "You cannot wait while standing.");
-			a_ini.SetValue("Tweaks", "Sit To Wait Message", sitToWait.message.c_str(), nullptr, true);
+			a_trampolineSpace += detail::get_data(a_ini, sitToWait.message, section, "Sit To Wait Message", nullptr);
 
-			try {
-				noCheatMode = string::lexical_cast<std::uint32_t>(a_ini.GetValue(section, "Disable God Mode", "0"));
-				a_ini.SetValue("Tweaks", "Disable God Mode", std::to_string(noCheatMode).c_str(), ";Disables god/immortal mod.\n;0 - off, 1 - only god mode, 2 - only immortal mode, 3 - both", true);
-			} catch (...) {
-				noCheatMode = 0;
-			}
+			a_trampolineSpace += detail::get_data(a_ini, noCheatMode, section, "Disable God Mode", ";Disables god/immortal mod.\n;0 - off, 1 - only god mode, 2 - only immortal mode, 3 - both");
 
-			noHostileAbsorb = a_ini.GetBoolValue("Tweaks", "No Hostile Spell Absorb", false);
-			a_ini.SetBoolValue("Tweaks", "No Hostile Spell Absorb", noHostileAbsorb, ";Adds NoAbsorb flag to all non-hostile and non-detrimental spells", true);
+			a_trampolineSpace += detail::get_data(a_ini, noHostileAbsorb, section, "No Hostile Spell Absorb", ";Adds NoAbsorb flag to all non-hostile and non-detrimental spells");
 
-			grabbingIsStealing = a_ini.GetBoolValue("Tweaks", "Grabbing Is Stealing", false);
-			a_ini.SetBoolValue("Tweaks", "Grabbing Is Stealing", grabbingIsStealing, ";Grabbing owned items will count as stealing", true);
+			a_trampolineSpace += detail::get_data(a_ini, grabbingIsStealing, section, "Grabbing Is Stealing", ";Grabbing owned items will count as stealing");
 
-			try {
-				loadDoorPrompt.type = string::lexical_cast<std::uint32_t>(a_ini.GetValue("Tweaks", "Load Door Activate Prompt", "0"));
-				a_ini.SetValue("Tweaks", "Load Door Activate Prompt", std::to_string(loadDoorPrompt.type).c_str(), ";Replaces load door activate prompts with Enter and Exit\n;0 - off, 1 - replaces prompt (Open Skyrim -> Enter Skyrim), 2 - replaces prompt and cell name when moving from interior to exterior (Open Skyrim -> Exit Sleeping Giant Inn)", true);
-			} catch (...) {
-				loadDoorPrompt.type = 0;
-			}
+			a_trampolineSpace += detail::get_data(a_ini, loadDoorPrompt.type, section, "Load Door Activate Prompt", ";Replaces load door activate prompts with Enter and Exit\n;0 - off, 1 - replaces prompt (Open Skyrim -> Enter Skyrim), 2 - replaces prompt and cell name when moving from interior to exterior (Open Skyrim -> Exit Sleeping Giant Inn)");
 
-			loadDoorPrompt.enter = a_ini.GetValue("Tweaks", "Enter Label", "Enter");
-			a_ini.SetValue("Tweaks", "Enter Label", loadDoorPrompt.enter.c_str(), nullptr, true);
+			a_trampolineSpace += detail::get_data(a_ini, loadDoorPrompt.enter, section, "Enter Label", nullptr);
 
-			loadDoorPrompt.exit = a_ini.GetValue("Tweaks", "Exit Label", "Exit");
-			a_ini.SetValue("Tweaks", "Exit Label", loadDoorPrompt.exit.c_str(), nullptr, true);
+			a_trampolineSpace += detail::get_data(a_ini, loadDoorPrompt.exit, section, "Exit Label", nullptr);
+
+			a_trampolineSpace += detail::get_data(a_ini, noPoisonPrompt, section, "No Poison Prompt", ";Disables poison confirmation messages.\n;0 - off, 1 - disable confirmation, 2 - show other messages as notifications (may clip with inventory menu), 3 - both");
 
 			if (a_clearOld) {
 				logger::info("Replacing old Patches section with Tweaks");
@@ -155,56 +144,101 @@ public:
 			}
 		}
 
-		bool factionStealing;
-		bool aiFadeOut;
-		float voiceModulationValue;
-		bool dopplerShift;
-		bool dynamicSnowMat;
-		bool noWaterPhysicsOnHover;
-		bool screenshotToConsole;
-		std::uint32_t noCritSneakMsg;
+		data<bool> factionStealing{ false };
+		data<bool> aiFadeOut{ false, 1 };
+		data<float> voiceModulationValue{ 1.0f, 1 };
+		data<bool> dopplerShift{ false };
+		data<bool> dynamicSnowMat{ false };
+		data<bool> noWaterPhysicsOnHover{ false };
+		data<bool> screenshotToConsole{ false, 1 };
+		data<std::uint32_t> noCritSneakMsg{ 0 };
 
 		struct
 		{
-			bool active;
-			std::string message;
+			data<bool> active{ false, 1 };
+			std::string message{ "You cannot wait while standing." };
 
 		} sitToWait;
 
-		std::uint32_t noCheatMode;
-		bool noHostileAbsorb;
-		bool grabbingIsStealing;
+		data<std::uint32_t> noCheatMode{ 0 };
+		data<bool> noHostileAbsorb{ false };
+		data<bool> grabbingIsStealing{ false };
 
 		struct
 		{
-			std::uint32_t type;
-			std::string enter;
-			std::string exit;
+			data<std::uint32_t> type{ 0, 2 };
+			std::string enter{ "Enter" };
+			std::string exit{ "Exit" };
 
 		} loadDoorPrompt;
 
+		data<std::uint32_t> noPoisonPrompt{ 0, 2 };
+
 	} tweaks;
 
-	struct experimental
+	struct
 	{
-		void Load(CSimpleIniA& a_ini, bool a_clearOld)
+		void Load(CSimpleIniA& a_ini, size_t& a_trampolineSpace, bool a_clearOld)
 		{
 			//1.1 - remove GetPlayer()
 			a_ini.Delete("Experimental", "Fast GetPlayer()", true);
-
-			fastRandomInt = a_ini.GetBoolValue("Experimental", "Fast RandomInt()", false);
-			fastRandomFloat = a_ini.GetBoolValue("Experimental", "Fast RandomFloat()", false);
-
 			if (a_clearOld) {
 				a_ini.Delete("Experimental", nullptr, true);  //delete and recreate it below tweaks section
 			}
 
-			a_ini.SetBoolValue("Experimental", "Fast RandomInt()", fastRandomInt, ";Speeds up Utility.RandomInt calls.", true);
-			a_ini.SetBoolValue("Experimental", "Fast RandomFloat()", fastRandomFloat, ";Speeds up Utility.RandomFloat calls.", true);
+			a_trampolineSpace += detail::get_data(a_ini, fastRandomInt, "Experimental", "Fast RandomInt()", ";Speeds up Utility.RandomInt calls.");
+
+			a_trampolineSpace += detail::get_data(a_ini, fastRandomFloat, "Experimental", "Fast RandomFloat()", ";Speeds up Utility.RandomFloat calls.");
+
+			a_trampolineSpace += detail::get_data(a_ini, orphanedAEFix, "Experimental", "Clean Orphaned ActiveEffects", ";Removes active effects from NPCs with missing ability perks.");
+
+			a_trampolineSpace += detail::get_data(a_ini, updateGameTimers, "Experimental", "Update GameHour Timers", ";Updates game timers when advancing time using GameHour.SetValue");
 		}
 
-		bool fastRandomInt;
-		bool fastRandomFloat;
+		data<bool> fastRandomInt{ false };
+		data<bool> fastRandomFloat{ false };
+		data<bool> orphanedAEFix{ false };
+		data<bool> updateGameTimers{ false };
 
 	} experimental;
+
+private:
+	struct detail
+	{
+		static size_t get_data(CSimpleIniA& a_ini, data<std::uint32_t>& a_data, const char* a_section, const char* a_key, const char* a_comment)
+		{
+			try {
+				a_data.value = string::lexical_cast<std::uint32_t>(a_ini.GetValue(a_section, a_key, "0"));
+				a_ini.SetValue(a_section, a_key, std::to_string(a_data.value).c_str(), a_comment);
+
+				return a_data.value != 0 ? a_data.space : 0;
+			} catch (...) {
+				return 0;
+			}
+		}
+
+		static size_t get_data(CSimpleIniA& a_ini, data<float>& a_data, const char* a_section, const char* a_key, const char* a_comment)
+		{
+			a_data.value = static_cast<float>(a_ini.GetDoubleValue(a_section, a_key, a_data.value));
+			a_ini.SetDoubleValue(a_section, a_key, a_data.value, a_comment);
+
+			return a_data.value != 1.0f ? a_data.space : 0;
+		}
+
+		static size_t get_data(CSimpleIniA& a_ini, data<bool>& a_data, const char* a_section, const char* a_key, const char* a_comment)
+		{
+			a_data.value = a_ini.GetBoolValue(a_section, a_key, a_data.value);
+			a_ini.SetBoolValue(a_section, a_key, a_data.value, a_comment);
+
+			return a_data.value ? a_data.space : 0;
+		};
+
+		static size_t get_data(CSimpleIniA& a_ini, std::string& a_data, const char* a_section, const char* a_key, const char* a_comment)
+		{
+			a_data = a_ini.GetValue(a_section, a_key, a_data.c_str());
+			a_ini.SetValue(a_section, a_key, a_data.c_str(), a_comment);
+
+			return 0;
+		};
+	};
 };

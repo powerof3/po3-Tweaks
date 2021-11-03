@@ -1,3 +1,4 @@
+#include "Experimental.h"
 #include "Fixes.h"
 #include "Tweaks.h"
 #include "Settings.h"
@@ -10,7 +11,7 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_message)
 			SpellNoAbsorb::Install();
 			
 			auto tweaks = Settings::GetSingleton()->tweaks;
-			if (tweaks.grabbingIsStealing) {
+			if (tweaks.grabbingIsStealing.value) {
 				GrabbingIsStealing::Install();
 			}
 		}
@@ -65,12 +66,16 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 
 	SKSE::Init(a_skse);
 
-	Settings::GetSingleton()->Load();
+	auto trampolineSize = Settings::GetSingleton()->Load();
+	SKSE::AllocTrampoline(trampolineSize * 14);
 
-	SKSE::AllocTrampoline(188);
-
+	logger::info("{:*^30}", "PATCH START"sv);
+	
 	Fixes::Install();
 	Tweaks::Install();
+	Experimental::Install();
+
+	logger::info("{:*^30}", "PATCHES FINISH"sv);
 
 	auto messaging = SKSE::GetMessagingInterface();
 	messaging->RegisterListener(MessageHandler);

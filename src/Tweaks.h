@@ -46,11 +46,12 @@ namespace FactionStealing
 			}
 
 			if (const auto faction = a_owner->As<RE::TESFaction>(); faction) {
-				if (a_player->IsInFaction(faction)) {
+				if (a_player->IsInFaction(faction) || faction->IgnoresStealing() || faction->IgnoresPickpocket()) {
 					return true;
 				}
 
-				if (const auto processLists = RE::ProcessLists::GetSingleton(); processLists && processLists->numberHighActors > 0) {
+				const auto processLists = RE::ProcessLists::GetSingleton();
+				if (processLists && processLists->numberHighActors > 0) {
 					std::vector<RE::TESNPC*> vec;
 					for (auto& handle : processLists->highActorHandles) {
 						const auto actor = handle.get();
@@ -122,7 +123,7 @@ namespace VoiceModulation
 			const auto biped = user ? user->GetBiped() : nullptr;
 
 			if (biped && biped->objects[RE::BIPED_OBJECT::kHead].partClone.get()) {
-				a_handle.SetFrequency(Settings::GetSingleton()->tweaks.voiceModulationValue);
+				a_handle.SetFrequency(Settings::GetSingleton()->tweaks.voiceModulationValue.value);
 			}
 		}
 		static inline REL::Relocation<decltype(thunk)> func;
@@ -144,7 +145,7 @@ namespace DopplerShift
 	{
 		static bool PlayHandle(RE::BSSoundHandle& a_handle, std::function<void(std::int32_t a_soundID)> func)
 		{
-            const auto soundID = a_handle.soundID;
+			const auto soundID = a_handle.soundID;
 			if (soundID == -1) {
 				return false;
 			}
@@ -409,7 +410,7 @@ namespace NoRipplesOnHover
 		};
 	};
 
-	static void Install()
+	inline void Install()
 	{
 		stl::write_vfunc<RE::PlayerCharacter, ProcessInWater::Player>();
 		stl::write_vfunc<RE::Character, ProcessInWater::NPC>();
@@ -677,8 +678,8 @@ namespace LoadDoorPrompt
 					const auto linkedRef = linkedDoor.get();
 					const auto linkedCell = linkedRef ? linkedRef->GetSaveParentCell() : nullptr;
 					if (linkedCell && linkedCell->IsExteriorCell()) {
-                        const auto prompt = Settings::GetSingleton()->tweaks.loadDoorPrompt;
-						return { kInterior, prompt.type == 2 ?
+						const auto prompt = Settings::GetSingleton()->tweaks.loadDoorPrompt;
+						return { kInterior, prompt.type.value == 2 ?
                                                 cell->GetName() :
                                                 a_cellName };
 					}
@@ -695,7 +696,7 @@ namespace LoadDoorPrompt
 				return enter;
 			}
 			if (a_type == kInterior) {
-				return type == 2 ?
+				return type.value == 2 ?
                            exit :
                            enter;
 			}
@@ -708,7 +709,7 @@ namespace LoadDoorPrompt
 		static int thunk(RE::BSString* a_dest, const char* a_format, const char* a_openLbl, const char* a_cellName)
 		{
 			auto [result, cellName] = detail::GetName(a_cellName);
-            const auto doorLabel = detail::GetDoorLabel(result, a_openLbl);
+			const auto doorLabel = detail::GetDoorLabel(result, a_openLbl);
 			return func(a_dest, a_format, doorLabel.c_str(), cellName);
 		}
 		static inline REL::Relocation<decltype(thunk)> func;
@@ -735,26 +736,49 @@ namespace LoadDoorPrompt
 	}
 }
 
-//experimental
-namespace Script
+//disable poison confirmation messagebox
+namespace NoPoisonPrompt
 {
-	inline bool Speedup(RE::BSScript::Internal::VirtualMachine* a_vm)
+	struct ShowPoisonConfirmationPrompt
 	{
-		if (!a_vm) {
-			return false;
+		static void thunk(char*, void (*PoisonWeapon)(std::uint8_t a_result), std::uint8_t a_result, std::uint32_t, std::int32_t, char*, char*)
+		{
+			PoisonWeapon(a_result);
+		}
+		static inline REL::Relocation<decltype(thunk)> func;
+	};
+
+	struct ShowPoisonInformationPrompt
+	{
+		static void thunk(char* a_message, void (*PoisonWeapon)(std::uint8_t a_result), std::uint8_t a_result, std::uint32_t, std::int32_t, char*, char*)
+		{
+			RE::DebugNotification(a_message, "UIMenuCancel");
+			PoisonWeapon(a_result);
+		}
+		static inline REL::Relocation<decltype(thunk)> func;
+	};
+
+	inline void Install(std::uint32_t a_type)
+	{
+		REL::Relocation<std::uintptr_t> target{ REL::ID(39406) };
+
+		switch (a_type) {
+		case 1:
+			stl::write_thunk_call<ShowPoisonConfirmationPrompt>(target.address() + 0x10B);
+			break;
+		case 2:
+			stl::write_thunk_call<ShowPoisonInformationPrompt>(target.address() + 0x143);
+			break;
+		case 3:
+			{
+				stl::write_thunk_call<ShowPoisonConfirmationPrompt>(target.address() + 0x10B);
+				stl::write_thunk_call<ShowPoisonInformationPrompt>(target.address() + 0x143);
+			}
+			break;
+		default:
+			break;
 		}
 
-		auto experimental = Settings::GetSingleton()->experimental;
-
-		if (experimental.fastRandomInt) {
-			a_vm->SetCallableFromTasklets("Utility", "RandomInt", true);
-			logger::info("patched Utility.RandomInt"sv);
-		}
-		if (experimental.fastRandomFloat) {
-			a_vm->SetCallableFromTasklets("Utility", "RandomFloat", true);
-			logger::info("patched Utility.RandomFloat"sv);
-		}
-
-		return true;
+		logger::info("Installed no poison message tweak"sv);
 	}
 }

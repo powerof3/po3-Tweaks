@@ -1,5 +1,7 @@
 #pragma once
 
+#define NOMMNOSOUND
+
 #include "RE/Skyrim.h"
 #include "SKSE/SKSE.h"
 
