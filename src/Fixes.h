@@ -509,7 +509,7 @@ namespace GetEquippedFix
 			if (const auto actor = a_this ? a_this->As<RE::Actor>() : nullptr; actor && a_item) {
 				if (const auto list = a_item->As<RE::BGSListForm>(); list) {
 					auto result = std::ranges::any_of(list->forms, [&](const auto& form) {
-						return form->IsBoundObject() && detail::get_worn(actor, form);
+						return form && form->IsBoundObject() && detail::get_worn(actor, form);
 					});
 					if (!result && list->scriptAddedTempForms) {
 						result = std::ranges::any_of(*list->scriptAddedTempForms, [&](const auto& formID) {
