@@ -740,10 +740,10 @@ namespace LoadFormEditorIDs
 	{
 		//stl::write_vfunc<RE::TESForm, SetFormEditorID>();
 		//stl::write_vfunc<RE::BGSKeyword, SetFormEditorID>();
-		stl::write_vfunc<RE::BGSLocationRefType, SetFormEditorID>();
-		stl::write_vfunc<RE::BGSAction, SetFormEditorID>();
+		//stl::write_vfunc<RE::BGSLocationRefType, SetFormEditorID>();
+		//stl::write_vfunc<RE::BGSAction, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSTextureSet, SetFormEditorID>();
-		stl::write_vfunc<RE::BGSMenuIcon, SetFormEditorID>();
+		//stl::write_vfunc<RE::BGSMenuIcon, SetFormEditorID>();
 		//stl::write_vfunc<RE::TESGlobal, SetFormEditorID>();
 		stl::write_vfunc<RE::TESClass, SetFormEditorID>();
 		stl::write_vfunc<RE::TESFaction, SetFormEditorID>();
@@ -753,7 +753,7 @@ namespace LoadFormEditorIDs
 		//stl::write_vfunc<RE::TESSound, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSAcousticSpace, SetFormEditorID>();
 		stl::write_vfunc<RE::EffectSetting, SetFormEditorID>();
-		stl::write_vfunc<RE::Script, SetFormEditorID>();
+		//stl::write_vfunc<RE::Script, SetFormEditorID>();
 		stl::write_vfunc<RE::TESLandTexture, SetFormEditorID>();
 		stl::write_vfunc<RE::EnchantmentItem, SetFormEditorID>();
 		stl::write_vfunc<RE::SpellItem, SetFormEditorID>();
@@ -769,8 +769,8 @@ namespace LoadFormEditorIDs
 		stl::write_vfunc<RE::TESObjectMISC, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSApparatus, SetFormEditorID>();
 		stl::write_vfunc<RE::TESObjectSTAT, SetFormEditorID>();
-		stl::write_vfunc<RE::BGSStaticCollection, SetFormEditorID>();
-		stl::write_vfunc<RE::BGSMovableStatic, SetFormEditorID>();
+		//stl::write_vfunc<RE::BGSStaticCollection, SetFormEditorID>();
+		//stl::write_vfunc<RE::BGSMovableStatic, SetFormEditorID>();
 		stl::write_vfunc<RE::TESGrass, SetFormEditorID>();
 		stl::write_vfunc<RE::TESObjectTREE, SetFormEditorID>();
 		stl::write_vfunc<RE::TESFlora, SetFormEditorID>();
@@ -793,7 +793,7 @@ namespace LoadFormEditorIDs
 		stl::write_vfunc<RE::BGSShaderParticleGeometryData, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSReferenceEffect, SetFormEditorID>();
 		stl::write_vfunc<RE::TESRegion, SetFormEditorID>();
-		stl::write_vfunc<RE::NavMeshInfoMap, SetFormEditorID>();
+		//stl::write_vfunc<RE::NavMeshInfoMap, SetFormEditorID>();
 		//stl::write_vfunc<RE::TESObjectCELL, SetFormEditorID>();
 
 		stl::write_vfunc<RE::TESObjectREFR, SetFormEditorID_REFR>();
@@ -810,8 +810,8 @@ namespace LoadFormEditorIDs
 		stl::write_vfunc<RE::Hazard, SetFormEditorID_REFR>();
 
 		//stl::write_vfunc<RE::TESWorldSpace, SetFormEditorID>();
-		stl::write_vfunc<RE::TESObjectLAND, SetFormEditorID>();
-		stl::write_vfunc<RE::NavMesh, SetFormEditorID>();
+		//stl::write_vfunc<RE::TESObjectLAND, SetFormEditorID>();
+		//stl::write_vfunc<RE::NavMesh, SetFormEditorID>();
 		//stl::write_vfunc<RE::TESTopic, SetFormEditorID>();
 		stl::write_vfunc<RE::TESTopicInfo, SetFormEditorID>();
 		//stl::write_vfunc<RE::TESQuest, SetFormEditorID>();
@@ -843,14 +843,14 @@ namespace LoadFormEditorIDs
 		stl::write_vfunc<RE::BGSEncounterZone, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSLocation, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSMessage, SetFormEditorID>();
-		stl::write_vfunc<RE::BGSRagdoll, SetFormEditorID>();
+		//stl::write_vfunc<RE::BGSRagdoll, SetFormEditorID>();
 		//stl::write_vfunc<RE::BGSDefaultObjectManager, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSLightingTemplate, SetFormEditorID>();
 		//stl::write_vfunc<RE::BGSMusicType, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSFootstep, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSFootstepSet, SetFormEditorID>();
-		stl::write_vfunc<RE::BGSStoryManagerBranchNode, SetFormEditorID>();
-		stl::write_vfunc<RE::BGSStoryManagerQuestNode, SetFormEditorID>();
+		//stl::write_vfunc<RE::BGSStoryManagerBranchNode, SetFormEditorID>();
+		//stl::write_vfunc<RE::BGSStoryManagerQuestNode, SetFormEditorID>();
 		//stl::write_vfunc<RE::BGSStoryManagerEventNode, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSDialogueBranch, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSMusicTrackFormWrapper, SetFormEditorID>();
