@@ -488,10 +488,9 @@ namespace GetEquippedFix
 	{
 		struct detail
 		{
-			static bool get_worn(RE::Actor* a_actor, RE::TESForm* a_item)
+			static bool get_worn(const RE::TESObjectREFR::InventoryItemMap& a_inventory, RE::TESForm* a_item)
 			{
-				auto inv = a_actor->GetInventory();
-				return std::ranges::any_of(inv, [a_item](const auto& itemData) {
+				return std::ranges::any_of(a_inventory, [a_item](const auto& itemData) {
 					const auto& [item, data] = itemData;
 					if (item == a_item) {
 						const auto& [count, entry] = data;
@@ -506,21 +505,25 @@ namespace GetEquippedFix
 		{
 			a_result = 0.0;
 
-			if (const auto actor = a_this ? a_this->As<RE::Actor>() : nullptr; actor && a_item) {
-				if (const auto list = a_item->As<RE::BGSListForm>(); list) {
+			const auto actor = a_this ? a_this->As<RE::Actor>() : nullptr; 
+			if (actor && a_item) {
+				auto inventory = actor->GetInventory();
+				
+				const auto list = a_item->As<RE::BGSListForm>(); 
+				if (list) {
 					auto result = std::ranges::any_of(list->forms, [&](const auto& form) {
-						return form && form->IsBoundObject() && detail::get_worn(actor, form);
+						return form && form->IsBoundObject() && detail::get_worn(inventory, form);
 					});
 					if (!result && list->scriptAddedTempForms) {
 						result = std::ranges::any_of(*list->scriptAddedTempForms, [&](const auto& formID) {
 							auto form = RE::TESForm::LookupByID(formID);
-							return form && form->IsBoundObject() && detail::get_worn(actor, form);
+							return form && form->IsBoundObject() && detail::get_worn(inventory, form);
 						});
 					}
 					if (result) {
 						a_result = 1.0;
 					}
-				} else if (a_item->IsBoundObject() && detail::get_worn(actor, a_item)) {
+				} else if (a_item->IsBoundObject() && detail::get_worn(inventory, a_item)) {
 					a_result = 1.0;
 				}
 			}
@@ -562,7 +565,7 @@ namespace EffectShaderZBufferFix
 namespace ToggleCollisionFix
 {
 	const auto no_collision_flag = static_cast<std::uint32_t>(RE::CFilter::Flag::kNoCollision);
-	
+
 	struct ToggleCollision
 	{
 		struct detail
@@ -580,7 +583,7 @@ namespace ToggleCollisionFix
 				return *collision_state;
 			}
 		};
-		
+
 		static bool func(void*, void*, RE::TESObjectREFR* a_ref)
 		{
 			if (a_ref) {
@@ -597,7 +600,7 @@ namespace ToggleCollisionFix
 							RE::BSWriteLockGuard locker(world->worldLock);
 
 							RE::BSVisit::TraverseScenegraphCollision(root, [&](RE::bhkNiCollisionObject* a_col) -> RE::BSVisit::BSVisitControl {
-								auto body = a_col->body;
+								auto& body = a_col->body;
 								auto hkpBody = body ? static_cast<RE::hkpWorldObject*>(body->referencedObject.get()) : nullptr;
 								if (hkpBody) {
 									auto& filter = hkpBody->collidable.broadPhaseHandle.collisionFilterInfo;
@@ -646,7 +649,7 @@ namespace ToggleCollisionFix
 					return false;
 				}
 
-				auto collisionObj = controller->bumpedCharCollisionObject;
+				auto& collisionObj = controller->bumpedCharCollisionObject;
 				if (!collisionObj) {
 					return false;
 				}
