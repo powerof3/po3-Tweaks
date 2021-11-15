@@ -492,11 +492,9 @@ namespace GetEquippedFix
 			{
 				return std::ranges::any_of(a_inventory, [a_item](const auto& itemData) {
 					const auto& [item, data] = itemData;
-					if (item == a_item) {
-						const auto& [count, entry] = data;
-						return count > 0 && entry->IsWorn();
-					}
-					return false;
+					const auto& [count, entry] = data;
+					
+					return item == a_item ? entry->IsWorn() : false;
 				});
 			}
 		};
