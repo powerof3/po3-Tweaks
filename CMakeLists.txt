@@ -33,7 +33,7 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>" CACHE STR
 
 project(
 	po3_Tweaks
-	VERSION 1.3.0
+	VERSION 1.4.0
 	LANGUAGES CXX
 )
 
