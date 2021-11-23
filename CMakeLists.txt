@@ -33,7 +33,7 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>" CACHE STR
 
 project(
 	po3_Tweaks
-	VERSION 1.4.0
+	VERSION 1.4.1
 	LANGUAGES CXX
 )
 
@@ -87,9 +87,6 @@ else ()
 		"Variable CommonLibSSEPath is not set."
 	)
 endif ()
-
-find_package(spdlog REQUIRED CONFIG)
-find_package(xbyak REQUIRED CONFIG)
 
 find_path(SIMPLEINI_INCLUDE_DIRS "ConvertUTF.c")
 
@@ -149,8 +146,6 @@ target_link_libraries(
 	${PROJECT_NAME}
 	PRIVATE
 		CommonLibSSE::CommonLibSSE
-		spdlog::spdlog
-		xbyak::xbyak
 )
 
 target_precompile_headers(
