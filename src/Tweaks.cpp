@@ -2,8 +2,7 @@
 
 void Tweaks::Install()
 {
-	const auto tweaks = Settings::GetSingleton()->tweaks;
-	const auto experimental = Settings::GetSingleton()->experimental;
+	const auto& tweaks = Settings::GetSingleton()->tweaks;
 
 	logger::info("{:*^30}", "TWEAKS"sv);
 
@@ -11,7 +10,7 @@ void Tweaks::Install()
 		FactionStealing::Install();
 	}
 	if (tweaks.aiFadeOut.value) {
-		AIFadeOut::Install();
+		//AIFadeOut::Install();
 	}
 	if (tweaks.voiceModulationValue.value != 1.0f) {
 		VoiceModulation::Install();

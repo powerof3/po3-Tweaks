@@ -35,7 +35,7 @@ void Fixes::Install()
 		AttachLightCrash::Install();
 	}
 	if (fixes.getEquipped.value) {
-		GetEquippedFix::Install();
+		//GetEquippedFix::Install();
 	}
 	if (fixes.effectShaderZBuffer.value) {
 		EffectShaderZBufferFix::Install();
