@@ -1,15 +1,15 @@
 #include "Experimental.h"
 #include "Fixes.h"
-#include "Tweaks.h"
 #include "Settings.h"
+#include "Tweaks.h"
 
 void MessageHandler(SKSE::MessagingInterface::Message* a_message)
 {
 	switch (a_message->type) {
 	case SKSE::MessagingInterface::kDataLoaded:
-		{	
+		{
 			SpellNoAbsorb::Install();
-			
+
 			auto tweaks = Settings::GetSingleton()->tweaks;
 			if (tweaks.grabbingIsStealing.value) {
 				GrabbingIsStealing::Install();
@@ -52,7 +52,13 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Query(const SKSE::QueryInterface* a
 	}
 
 	const auto ver = a_skse->RuntimeVersion();
-	if (ver < SKSE::RUNTIME_1_5_39) {
+	if (ver <
+#ifndef SKYRIMVR
+		SKSE::RUNTIME_1_5_39
+#else
+		SKSE::RUNTIME_VR_1_4_15
+#endif
+	) {
 		logger::critical(FMT_STRING("Unsupported runtime version {}"), ver.string());
 		return false;
 	}
@@ -70,7 +76,7 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 	SKSE::AllocTrampoline(trampolineSize * 14);
 
 	logger::info("{:*^30}", "PATCH START"sv);
-	
+
 	Fixes::Install();
 	Tweaks::Install();
 	Experimental::Install();

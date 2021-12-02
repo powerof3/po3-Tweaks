@@ -18,7 +18,11 @@ namespace QueuedRefCrash
 			const auto fadeNode = root ? root->AsFadeNode() : nullptr;
 
 			if (fadeNode) {
+#ifndef SKYRIMVR
 				fadeNode->unk144 = 0;
+#else
+				fadeNode->unk16C = 0;
+#endif
 			}
 		}
 		static inline constexpr std::size_t size = 0x2D;
@@ -56,7 +60,13 @@ namespace MapMarker
 
 	inline void Install()
 	{
-		REL::Relocation<std::uintptr_t> target{ REL::ID(52208), 0x2C5 };
+		REL::Relocation<std::uintptr_t> target{ REL::ID(52208),
+#ifndef SKYRIMVR
+			0x2C5
+#else
+			0x358
+#endif
+		};
 		stl::write_thunk_call<IsFastTravelEnabled>(target.address());
 
 		logger::info("Installed map marker placement fix"sv);
@@ -89,7 +99,13 @@ namespace CantTakeBook
 
 		inline void Install()
 		{
-			REL::Relocation<std::uintptr_t> target{ REL::ID(50126), 0x634 };
+			REL::Relocation<std::uintptr_t> target{ REL::ID(50126),
+#ifndef SKYRIMVR
+				0x634
+#else
+				0x64a
+#endif
+			};
 			stl::write_thunk_call<ShowTakeButton>(target.address());
 		}
 	}
@@ -159,7 +175,13 @@ namespace ProjectileRange
 
 	inline void Install()
 	{
-		REL::Relocation<std::uintptr_t> target{ REL::ID(43030), 0x3CB };
+		REL::Relocation<std::uintptr_t> target{ REL::ID(43030),
+#ifndef SKYRIMVR
+			0x3CB
+#else
+			0x3A8
+#endif
+		};
 		stl::write_thunk_call<UpdateCombatThreat>(target.address());
 
 		logger::info("Installed projectile range fix"sv);
@@ -493,7 +515,7 @@ namespace GetEquippedFix
 				return std::ranges::any_of(a_inventory, [a_item](const auto& itemData) {
 					const auto& [item, data] = itemData;
 					const auto& [count, entry] = data;
-					
+
 					return item == a_item ? entry->IsWorn() : false;
 				});
 			}
@@ -503,11 +525,11 @@ namespace GetEquippedFix
 		{
 			a_result = 0.0;
 
-			const auto actor = a_this ? a_this->As<RE::Actor>() : nullptr; 
+			const auto actor = a_this ? a_this->As<RE::Actor>() : nullptr;
 			if (actor && a_item) {
 				auto inventory = actor->GetInventory();
-				
-				const auto list = a_item->As<RE::BGSListForm>(); 
+
+				const auto list = a_item->As<RE::BGSListForm>();
 				if (list) {
 					auto result = std::ranges::any_of(list->forms, [&](const auto& form) {
 						return form && form->IsBoundObject() && detail::get_worn(inventory, form);

@@ -131,8 +131,13 @@ namespace VoiceModulation
 
 	inline void Install()
 	{
-		REL::Relocation<std::uintptr_t> target{ REL::ID(36541), 0x6F3 };
-		stl::write_thunk_call<SetObjectToFollow>(target.address());
+		REL::Relocation<std::uintptr_t> target{ REL::ID(36541),
+#ifndef SKYRIMVR
+			0x6F3
+#else
+			0x6e6
+#endif
+		};
 
 		logger::info("Installed voice modulation tweak"sv);
 	}
@@ -529,7 +534,13 @@ namespace SitToWait
 
 	inline void Install()
 	{
-		REL::Relocation<std::uintptr_t> target{ REL::ID(51400), 0x394 };
+		REL::Relocation<std::uintptr_t> target{ REL::ID(51400),
+#ifndef SKYRIMVR
+			0x394
+#else
+			0x681
+#endif
+		};
 		stl::write_thunk_call<HandleWaitRequest>(target.address());
 
 		logger::info("Installed sit to wait tweak"sv);
