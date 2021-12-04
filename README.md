@@ -1,8 +1,9 @@
 # powerofthree's Tweaks
 
-Yet another collection of bug fixes and gameplay tweaks for Skyrim Special Edition
+Yet another collection of bug fixes and gameplay tweaks for Skyrim Special Edition/AE/VR
 
 [SSE/AE](https://www.nexusmods.com/skyrimspecialedition/mods/51073)
+[VR](https://www.nexusmods.com/skyrimspecialedition/mods/59510)
 ## Requirements
 * [CMake](https://cmake.org/)
 	* Add this to your `PATH`
