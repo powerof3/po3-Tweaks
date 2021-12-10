@@ -49,4 +49,9 @@ void Fixes::Install()
 	if (fixes.loadEditorIDs.value) {
 		LoadFormEditorIDs::Install();
 	}
+#ifdef SKYRIMVR
+	if (fixes.fixVRCrosshairRefEvent.value) {
+		FixCrosshairRefEvent::Install();
+	}
+#endif
 }

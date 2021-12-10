@@ -79,6 +79,9 @@ public:
 			a_trampolineSpace += detail::get_data(a_ini, collisionToggleFix, section, "ToggleCollision Fix", ";Patches ToggleCollision to toggle object collision if selected in console");
 
 			a_trampolineSpace += detail::get_data(a_ini, loadEditorIDs, section, "Load EditorIDs", ";Loads editorIDs for skipped forms at runtime");
+#ifdef SKYRIMVR
+			a_trampolineSpace += detail::get_data(a_ini, fixVRCrosshairRefEvent, section, "VR CrosshairRefEvent Fix", "; Trigger CrossHairRefEvent with hand selection (normally requires game controller to enable crosshair events)");
+#endif
 		}
 
 		data<bool> queuedRefCrash{ true };
@@ -95,6 +98,9 @@ public:
 		data<bool> effectShaderZBuffer{ true };
 		data<bool> collisionToggleFix{ true, 1 };
 		data<bool> loadEditorIDs{ true };
+#ifdef SKYRIMVR
+		data<bool> fixVRCrosshairRefEvent{ true };
+#endif
 
 	} fixes;
 

@@ -897,3 +897,34 @@ namespace LoadFormEditorIDs
 		logger::info("Installed editorID cache"sv);
 	}
 }
+
+#ifdef SKYRIMVR
+//fixes VR CrosshairRefEvent to also take the hand selection
+//thanks to @adamhynek for help with offsets and fixing stupid bugs
+namespace FixCrosshairRefEvent
+{
+	struct LookupByHandle
+	{
+		static bool thunk(RefHandle& a_refHandle, NiPointer<TESObjectREFR>& a_refrOut)
+		{
+			bool result = func(a_refHandle, a_refrOut);
+			const SKSE::CrosshairRefEvent event{ a_refrOut };
+			auto source = SKSE::GetCrosshairRefEventSource();
+			if (source) {
+				source->SendEvent(std::addressof(event));
+			}
+			return result;
+		}
+		static inline REL::Relocation<decltype(thunk)> func;
+	};
+
+	inline void Install()
+	{
+		REL::Relocation<std::uintptr_t> target{ REL::Offset(0x6D2F82) };
+		::stl::write_thunk_call<LookupByHandle>(target.address());
+
+		logger::info("Installed VR CrosshairRefEvent fix"sv);
+	}
+
+}
+#endif
