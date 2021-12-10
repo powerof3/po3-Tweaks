@@ -10,7 +10,10 @@ void Fixes::Install()
 		QueuedRefCrash::Install();
 	}
 	if (fixes.mapMarker.value) {
-		MapMarker::Install();
+		if (GetModuleHandle(L"DisableFastTravel"))
+			logger::info("Detected DisableFastTravel, skipping mapMarker fix."sv);
+		else
+			MapMarker::Install();
 	}
 	if (fixes.dontTakeBookFlag.value) {
 		CantTakeBook::Install();
