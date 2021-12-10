@@ -26,10 +26,10 @@ void Tweaks::Install()
 	}
 	if (tweaks.screenshotToConsole.value) {
 		ScreenshotToConsole::Install();
-	}		
+	}
 	if (tweaks.noCritSneakMsg.value != 0) {
 		NoCritSneakMessage::Install(tweaks.noCritSneakMsg.value);
-	}	
+	}
 	if (tweaks.sitToWait.active.value) {
 		SitToWait::Install();
 	}
