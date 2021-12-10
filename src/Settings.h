@@ -180,19 +180,21 @@ public:
 	{
 		void Load(CSimpleIniA& a_ini, size_t& a_trampolineSpace, bool a_clearOld)
 		{
+			const char* section = "Experimental";
+
 			//1.1 - remove GetPlayer()
 			a_ini.Delete("Experimental", "Fast GetPlayer()", true);
 			if (a_clearOld) {
 				a_ini.Delete("Experimental", nullptr, true);  //delete and recreate it below tweaks section
 			}
 
-			a_trampolineSpace += detail::get_data(a_ini, fastRandomInt, "Experimental", "Fast RandomInt()", ";Speeds up Utility.RandomInt calls.");
+			a_trampolineSpace += detail::get_data(a_ini, fastRandomInt, section, "Fast RandomInt()", ";Speeds up Utility.RandomInt calls.");
 
-			a_trampolineSpace += detail::get_data(a_ini, fastRandomFloat, "Experimental", "Fast RandomFloat()", ";Speeds up Utility.RandomFloat calls.");
+			a_trampolineSpace += detail::get_data(a_ini, fastRandomFloat, section, "Fast RandomFloat()", ";Speeds up Utility.RandomFloat calls.");
 
-			a_trampolineSpace += detail::get_data(a_ini, orphanedAEFix, "Experimental", "Clean Orphaned ActiveEffects", ";Removes active effects from NPCs with missing ability perks.");
+			a_trampolineSpace += detail::get_data(a_ini, orphanedAEFix, section, "Clean Orphaned ActiveEffects", ";Removes active effects from NPCs with missing ability perks.");
 
-			a_trampolineSpace += detail::get_data(a_ini, updateGameTimers, "Experimental", "Update GameHour Timers", ";Updates game timers when advancing time using GameHour.SetValue");
+			a_trampolineSpace += detail::get_data(a_ini, updateGameTimers, section, "Update GameHour Timers", ";Updates game timers when advancing time using GameHour.SetValue");
 		}
 
 		data<bool> fastRandomInt{ false };
