@@ -16,4 +16,7 @@ void Experimental::Install()
 	if (experimental.updateGameTimers.value) {
 		GameTimers::Install();
 	}
+	if (experimental.removeFlushTimeout.value) {
+		RemoveSuspendedStackFlushTimeout::Install();
+	}
 }
