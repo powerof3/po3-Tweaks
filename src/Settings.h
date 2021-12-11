@@ -201,12 +201,17 @@ public:
 			a_trampolineSpace += detail::get_data(a_ini, orphanedAEFix, section, "Clean Orphaned ActiveEffects", ";Removes active effects from NPCs with missing ability perks.");
 
 			a_trampolineSpace += detail::get_data(a_ini, updateGameTimers, section, "Update GameHour Timers", ";Updates game timers when advancing time using GameHour.SetValue");
+
+			a_trampolineSpace += detail::get_data(a_ini, removeFlushTimeout, section, "Remove Stack Flush Timeout", ";Disables 30 second timeout for suspended stack flush. Warning: This may result in a locked state if Skyrim can't dump stacks.");
+
 		}
 
 		data<bool> fastRandomInt{ false };
 		data<bool> fastRandomFloat{ false };
 		data<bool> orphanedAEFix{ false };
 		data<bool> updateGameTimers{ false };
+		data<bool> removeFlushTimeout{ false };
+
 
 	} experimental;
 

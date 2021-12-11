@@ -140,3 +140,16 @@ namespace CleanupOrphanedActiveEffects
 		logger::info("Installed orphan AE cleanup fix"sv);
 	}
 }
+
+//disable timeout check for Suspended Stack flushing
+namespace RemoveSuspendedStackFlushTimeout
+{
+	inline void
+		Install()
+	{
+		constexpr REL::ID FlushOffset{ 53209 };
+		static REL::Relocation<std::uintptr_t> target{ FlushOffset, 0x8b };
+		REL::safe_write(target.address(), static_cast<std::uint8_t>(0xeb));  // swap jle 0x7e for jmp 0xeb
+		logger::info("Removed timeout check on suspended stack flush"sv);
+	}
+}
