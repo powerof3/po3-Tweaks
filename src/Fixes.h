@@ -4,7 +4,7 @@
 
 namespace Fixes
 {
-	void Install();
+	void Install(std::uint32_t skse_version);
 }
 
 //nullptr crash re: QueuedReference
@@ -899,7 +899,7 @@ namespace LoadFormEditorIDs
 }
 
 #ifdef SKYRIMVR
-//fixes VR CrosshairRefEvent to also take the hand selection
+//fixes VR CrosshairRefEvent and GetCurrentCrosshairRef to also take the hand selection
 //thanks to @adamhynek for help with offsets and fixing stupid bugs
 namespace FixCrosshairRefEvent
 {
@@ -908,18 +908,30 @@ namespace FixCrosshairRefEvent
 		static bool thunk(RefHandle& a_refHandle, NiPointer<TESObjectREFR>& a_refrOut)
 		{
 			bool result = func(a_refHandle, a_refrOut);
+			if (!result)
+				return result;
+			if (patchSKSE && a_refrOut && a_refrOut->AsReference())
+				REL::safe_write<std::uintptr_t>((std::uintptr_t)(sksevr_base + 0x15D9F0), (std::uint64_t)a_refrOut->AsReference());
 			const SKSE::CrosshairRefEvent event{ a_refrOut };
-			auto source = SKSE::GetCrosshairRefEventSource();
+			RE::BSTEventSource<SKSE::CrosshairRefEvent>* source = SKSE::GetCrosshairRefEventSource();
 			if (source) {
 				source->SendEvent(std::addressof(event));
 			}
 			return result;
 		}
 		static inline REL::Relocation<decltype(thunk)> func;
+		static inline std::uintptr_t sksevr_base;
+		static inline bool patchSKSE = false;
 	};
 
-	inline void Install()
+	inline void Install(std::uint32_t skse_version)
 	{
+		LookupByHandle::sksevr_base = reinterpret_cast<uintptr_t>(GetModuleHandleA("sksevr_1_4_15"));
+		if (skse_version == 33554624) {  //2.0.12
+			LookupByHandle::patchSKSE = true;
+			logger::info("VR CrosshairRefEvent: Found patchable sksevr_1_4_15.dll version {} with base {}", skse_version, LookupByHandle::sksevr_base);
+		}else
+			logger::info("VR CrosshairRefEvent: Found uknown sksevr_1_4_15.dll version {} with base {}; not patching", skse_version, LookupByHandle::sksevr_base);
 		REL::Relocation<std::uintptr_t> target{ REL::Offset(0x6D2F82) };
 		::stl::write_thunk_call<LookupByHandle>(target.address());
 
