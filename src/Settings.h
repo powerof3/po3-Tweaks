@@ -144,6 +144,9 @@ public:
 
 			a_trampolineSpace += detail::get_data(a_ini, noPoisonPrompt, section, "No Poison Prompt", ";Disables poison confirmation messages.\n;0 - off, 1 - disable confirmation, 2 - show other messages as notifications (may clip with inventory menu), 3 - both");
 
+#ifdef SKYRIMVR
+			a_trampolineSpace += detail::get_data(a_ini, rememberLockPickAngle, section, "Remember Lock Pick Angle", "; Angle is preserved after break");
+#endif
 			if (a_clearOld) {
 				logger::info("Replacing old Patches section with Tweaks");
 				a_ini.Delete("Patches", nullptr, true);
@@ -158,7 +161,9 @@ public:
 		data<bool> noWaterPhysicsOnHover{ false };
 		data<bool> screenshotToConsole{ false, 1 };
 		data<std::uint32_t> noCritSneakMsg{ 0 };
-
+#ifdef SKYRIMVR
+		data<bool> rememberLockPickAngle{ false };
+#endif
 		struct
 		{
 			data<bool> active{ false, 1 };
