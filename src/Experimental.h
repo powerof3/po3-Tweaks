@@ -144,8 +144,7 @@ namespace CleanupOrphanedActiveEffects
 //disable timeout check for Suspended Stack flushing
 namespace RemoveSuspendedStackFlushTimeout
 {
-	inline void
-		Install()
+	inline void Install()
 	{
 		constexpr REL::ID FlushOffset{ 53209 };
 		static REL::Relocation<std::uintptr_t> target{ FlushOffset, 0x8b };

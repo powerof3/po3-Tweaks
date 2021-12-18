@@ -72,7 +72,7 @@ public:
 
 			a_trampolineSpace += detail::get_data(a_ini, noConjurationAbsorb, section, "No Conjuration Spell Absorb", ";Adds NoAbsorb flag to all conjuration spells missing this flag");
 
-			a_trampolineSpace += detail::get_data(a_ini, getEquipped, section, "GetEquipped Fix", ";Patches GetEquipped console/condition function to work with left hand equipped items");
+			//a_trampolineSpace += detail::get_data(a_ini, getEquipped, section, "GetEquipped Fix", ";Patches GetEquipped console/condition function to work with left hand equipped items");
 
 			a_trampolineSpace += detail::get_data(a_ini, effectShaderZBuffer, section, "EffectShader Z-Buffer Fix", ";Fixes effect shader z-buffer rendering so particles can show through objects");
 
@@ -112,7 +112,7 @@ public:
 
 			a_trampolineSpace += detail::get_data(a_ini, factionStealing, section, "Faction Stealing", ";Items will be marked stolen until player is friendly with all present members of faction.");
 
-			a_trampolineSpace += detail::get_data(a_ini, aiFadeOut, section, "Load Door Fade Out", ";Stops NPCs from fading out when using load doors.");
+			//a_trampolineSpace += detail::get_data(a_ini, aiFadeOut, section, "Load Door Fade Out", ";Stops NPCs from fading out when using load doors.");
 
 			a_trampolineSpace += detail::get_data(a_ini, voiceModulationValue, section, "Voice Modulation", ";Applies voice distortion effect on NPCs wearing face covering helmets. A value of 1.0 has no effect.\n;Pitch is directly proportional to value. Recommended setting (0.85-0.90).");
 
