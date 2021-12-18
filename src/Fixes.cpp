@@ -1,6 +1,6 @@
 #include "Fixes.h"
 
-void Fixes::Install()
+void Fixes::Install(std::uint32_t skse_version)
 {
 	const auto fixes = Settings::GetSingleton()->fixes;
 
@@ -10,7 +10,10 @@ void Fixes::Install()
 		QueuedRefCrash::Install();
 	}
 	if (fixes.mapMarker.value) {
-		MapMarker::Install();
+		if (GetModuleHandle(L"DisableFastTravel"))
+			logger::info("Detected DisableFastTravel, skipping mapMarker fix."sv);
+		else
+			MapMarker::Install();
 	}
 	if (fixes.dontTakeBookFlag.value) {
 		CantTakeBook::Install();
@@ -46,4 +49,9 @@ void Fixes::Install()
 	if (fixes.loadEditorIDs.value) {
 		LoadFormEditorIDs::Install();
 	}
+#ifdef SKYRIMVR
+	if (fixes.fixVRCrosshairRefEvent.value) {
+		FixCrosshairRefEvent::Install(skse_version);
+	}
+#endif
 }

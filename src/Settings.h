@@ -79,6 +79,9 @@ public:
 			a_trampolineSpace += detail::get_data(a_ini, collisionToggleFix, section, "ToggleCollision Fix", ";Patches ToggleCollision to toggle object collision if selected in console");
 
 			a_trampolineSpace += detail::get_data(a_ini, loadEditorIDs, section, "Load EditorIDs", ";Loads editorIDs for skipped forms at runtime");
+#ifdef SKYRIMVR
+			a_trampolineSpace += detail::get_data(a_ini, fixVRCrosshairRefEvent, section, "VR CrosshairRefEvent Fix", "; Trigger CrossHairRefEvent with hand selection (normally requires game controller to enable crosshair events)");
+#endif
 		}
 
 		data<bool> queuedRefCrash{ true };
@@ -95,6 +98,9 @@ public:
 		data<bool> effectShaderZBuffer{ true };
 		data<bool> collisionToggleFix{ true, 1 };
 		data<bool> loadEditorIDs{ true };
+#ifdef SKYRIMVR
+		data<bool> fixVRCrosshairRefEvent{ true };
+#endif
 
 	} fixes;
 
@@ -138,6 +144,9 @@ public:
 
 			a_trampolineSpace += detail::get_data(a_ini, noPoisonPrompt, section, "No Poison Prompt", ";Disables poison confirmation messages.\n;0 - off, 1 - disable confirmation, 2 - show other messages as notifications (may clip with inventory menu), 3 - both");
 
+#ifdef SKYRIMVR
+			a_trampolineSpace += detail::get_data(a_ini, rememberLockPickAngle, section, "Remember Lock Pick Angle", "; Angle is preserved after break");
+#endif
 			if (a_clearOld) {
 				logger::info("Replacing old Patches section with Tweaks");
 				a_ini.Delete("Patches", nullptr, true);
@@ -152,7 +161,9 @@ public:
 		data<bool> noWaterPhysicsOnHover{ false };
 		data<bool> screenshotToConsole{ false, 1 };
 		data<std::uint32_t> noCritSneakMsg{ 0 };
-
+#ifdef SKYRIMVR
+		data<bool> rememberLockPickAngle{ false };
+#endif
 		struct
 		{
 			data<bool> active{ false, 1 };
@@ -180,25 +191,32 @@ public:
 	{
 		void Load(CSimpleIniA& a_ini, size_t& a_trampolineSpace, bool a_clearOld)
 		{
+			const char* section = "Experimental";
+
 			//1.1 - remove GetPlayer()
 			a_ini.Delete("Experimental", "Fast GetPlayer()", true);
 			if (a_clearOld) {
 				a_ini.Delete("Experimental", nullptr, true);  //delete and recreate it below tweaks section
 			}
 
-			a_trampolineSpace += detail::get_data(a_ini, fastRandomInt, "Experimental", "Fast RandomInt()", ";Speeds up Utility.RandomInt calls.");
+			a_trampolineSpace += detail::get_data(a_ini, fastRandomInt, section, "Fast RandomInt()", ";Speeds up Utility.RandomInt calls.");
 
-			a_trampolineSpace += detail::get_data(a_ini, fastRandomFloat, "Experimental", "Fast RandomFloat()", ";Speeds up Utility.RandomFloat calls.");
+			a_trampolineSpace += detail::get_data(a_ini, fastRandomFloat, section, "Fast RandomFloat()", ";Speeds up Utility.RandomFloat calls.");
 
-			a_trampolineSpace += detail::get_data(a_ini, orphanedAEFix, "Experimental", "Clean Orphaned ActiveEffects", ";Removes active effects from NPCs with missing ability perks.");
+			a_trampolineSpace += detail::get_data(a_ini, orphanedAEFix, section, "Clean Orphaned ActiveEffects", ";Removes active effects from NPCs with missing ability perks.");
 
-			a_trampolineSpace += detail::get_data(a_ini, updateGameTimers, "Experimental", "Update GameHour Timers", ";Updates game timers when advancing time using GameHour.SetValue");
+			a_trampolineSpace += detail::get_data(a_ini, updateGameTimers, section, "Update GameHour Timers", ";Updates game timers when advancing time using GameHour.SetValue");
+
+			a_trampolineSpace += detail::get_data(a_ini, removeFlushTimeout, section, "Remove Stack Flush Timeout", ";Disables 30 second timeout for suspended stack flush. Warning: This may result in a locked state if Skyrim can't dump stacks.");
+
 		}
 
 		data<bool> fastRandomInt{ false };
 		data<bool> fastRandomFloat{ false };
 		data<bool> orphanedAEFix{ false };
 		data<bool> updateGameTimers{ false };
+		data<bool> removeFlushTimeout{ false };
+
 
 	} experimental;
 
