@@ -26,10 +26,10 @@ void Tweaks::Install()
 	}
 	if (tweaks.screenshotToConsole.value) {
 		ScreenshotToConsole::Install();
-	}		
+	}
 	if (tweaks.noCritSneakMsg.value != 0) {
 		NoCritSneakMessage::Install(tweaks.noCritSneakMsg.value);
-	}	
+	}
 	if (tweaks.sitToWait.active.value) {
 		SitToWait::Install();
 	}
@@ -42,4 +42,9 @@ void Tweaks::Install()
 	if (tweaks.noPoisonPrompt.value != 0) {
 		NoPoisonPrompt::Install(tweaks.noPoisonPrompt.value);
 	}
+	#ifdef SKYRIMVR
+	if (tweaks.rememberLockPickAngle.value) {
+		RememberLockPickAngle::Install();
+	}
+	#endif
 }

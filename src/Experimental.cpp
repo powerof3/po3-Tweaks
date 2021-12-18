@@ -7,7 +7,7 @@ void Experimental::Install()
 	logger::info("{:*^30}", "EXPERIMENTAL"sv);
 
 	const auto papyrus = SKSE::GetPapyrusInterface();
-	papyrus->Register(Script::Speedup);
+	papyrus->Register(::Script::Speedup);
 
 	if (experimental.orphanedAEFix.value) {
 		CleanupOrphanedActiveEffects::Install();
@@ -15,5 +15,8 @@ void Experimental::Install()
 
 	if (experimental.updateGameTimers.value) {
 		GameTimers::Install();
+	}
+	if (experimental.removeFlushTimeout.value) {
+		RemoveSuspendedStackFlushTimeout::Install();
 	}
 }
