@@ -166,16 +166,16 @@ namespace DopplerShift
 			return true;
 		}
 
-		static DWORD Play(RE::BSAudioManager* a_manager, std::int32_t a_soundID)
+		static void Play(RE::BSAudioManager* a_manager, std::int32_t a_soundID)
 		{
 			using func_t = decltype(&Play);
 			REL::Relocation<func_t> func{ REL::ID(66408) };
 			return func(a_manager, a_soundID);
 		}
 
-		static DWORD Play3D(RE::BSAudioManager* a_manager, std::int32_t a_soundID, std::uint32_t a_unk03)
+		static void PlayAfter(RE::BSAudioManager* a_manager, std::int32_t a_soundID, std::uint32_t a_unk03)
 		{
-			using func_t = decltype(&Play3D);
+			using func_t = decltype(&PlayAfter);
 			REL::Relocation<func_t> func{ REL::ID(66409) };
 			return func(a_manager, a_soundID, a_unk03);
 		}
@@ -209,7 +209,7 @@ namespace DopplerShift
 		static bool func(RE::BSSoundHandle& a_handle, std::uint32_t a_unk02)
 		{
 			return detail::PlayHandle(a_handle, [&](std::int32_t a_soundID) {
-				detail::Play3D(RE::BSAudioManager::GetSingleton(), a_soundID, a_unk02);
+				detail::PlayAfter(RE::BSAudioManager::GetSingleton(), a_soundID, a_unk02);
 			});
 		}
 		static inline constexpr std::size_t size = 0x46;

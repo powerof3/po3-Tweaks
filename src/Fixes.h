@@ -221,7 +221,7 @@ namespace Spells
 {
 	namespace detail
 	{
-		struct SpellApplyStruct
+		struct PermanentMagicFunctor
 		{
 			RE::MagicCaster* caster{ nullptr };
 			RE::Actor* actor{ nullptr };
@@ -231,11 +231,11 @@ namespace Spells
 			std::uint8_t pad13{ 0 };
 			std::uint32_t pad14{ 0 };
 		};
-		static_assert(sizeof(SpellApplyStruct) == 0x18);
+		static_assert(sizeof(PermanentMagicFunctor) == 0x18);
 
-		inline bool ApplySpell(SpellApplyStruct& a_applier, RE::SpellItem* a_spell)
+		inline bool Apply(PermanentMagicFunctor& a_applier, RE::SpellItem* a_spell)
 		{
-			using func_t = decltype(&ApplySpell);
+			using func_t = decltype(&Apply);
 			REL::Relocation<func_t> func{ REL::ID(33684) };
 			return func(a_applier, a_spell);
 		}
@@ -252,10 +252,10 @@ namespace Spells
                                         actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
                                         nullptr;
 				if (caster) {
-					detail::SpellApplyStruct applier{ caster, actor };
+					detail::PermanentMagicFunctor applier{ caster, actor };
 					applier.flags = applier.flags & 0xF9 | 1;
 					for (const auto& spell : actor->addedSpells) {
-						ApplySpell(applier, spell);
+						Apply(applier, spell);
 					}
 				}
 				return func(a_list);
@@ -308,7 +308,7 @@ namespace Spells
                                         a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
                                         nullptr;
 				if (caster) {
-					detail::SpellApplyStruct applier{ caster, a_actor };
+					detail::PermanentMagicFunctor applier{ caster, a_actor };
 					applier.flags = applier.flags & 0xF9 | 1;
 
 					const auto has_no_dispel_flag = [&](const RE::SpellItem& a_spell) {
@@ -324,7 +324,7 @@ namespace Spells
 						const std::span span(actorEffects->spells, actorEffects->numSpells);
 						for (const auto& spell : span) {
 							if (spell && has_no_dispel_flag(*spell)) {
-								ApplySpell(applier, spell);
+								Apply(applier, spell);
 							}
 						}
 					}
@@ -332,7 +332,7 @@ namespace Spells
 					if (Settings::GetSingleton()->fixes.addedSpell.value) {
 						for (const auto& spell : a_actor->addedSpells) {
 							if (spell && has_no_dispel_flag(*spell)) {
-								ApplySpell(applier, spell);
+								Apply(applier, spell);
 							}
 						}
 					}
