@@ -208,7 +208,6 @@ public:
 			a_trampolineSpace += detail::get_data(a_ini, updateGameTimers, section, "Update GameHour Timers", ";Updates game timers when advancing time using GameHour.SetValue");
 
 			a_trampolineSpace += detail::get_data(a_ini, removeFlushTimeout, section, "Remove Stack Flush Timeout", ";Disables 30 second timeout for suspended stack flush. Warning: This may result in a locked state if Skyrim can't dump stacks.");
-
 		}
 
 		data<bool> fastRandomInt{ false };
@@ -216,7 +215,6 @@ public:
 		data<bool> orphanedAEFix{ false };
 		data<bool> updateGameTimers{ false };
 		data<bool> removeFlushTimeout{ false };
-
 
 	} experimental;
 
@@ -249,7 +247,7 @@ private:
 			a_ini.SetBoolValue(a_section, a_key, a_data.value, a_comment);
 
 			return a_data.value ? a_data.space : 0;
-		};
+		}
 
 		static size_t get_data(CSimpleIniA& a_ini, std::string& a_data, const char* a_section, const char* a_key, const char* a_comment)
 		{
@@ -257,6 +255,6 @@ private:
 			a_ini.SetValue(a_section, a_key, a_data.c_str(), a_comment);
 
 			return 0;
-		};
+		}
 	};
 };

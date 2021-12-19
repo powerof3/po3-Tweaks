@@ -244,7 +244,7 @@ namespace DynamicSnowMaterial
 					if (!result && stat) {
 						//find statics with snow txst swap
 						if (const auto model = stat->GetAsModelTextureSwap(); model && model->alternateTextures) {
-							std::span span(model->alternateTextures, model->numAlternateTextures);
+                            const std::span span(model->alternateTextures, model->numAlternateTextures);
 							for (const auto& texture : span) {
 								if (const auto txst = texture.textureSet; txst && string::icontains(txst->textures[RE::BSTextureSet::Texture::kDiffuse].textureName, "snow"sv)) {
 									result = true;
