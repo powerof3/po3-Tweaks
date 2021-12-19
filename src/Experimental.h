@@ -146,9 +146,9 @@ namespace RemoveSuspendedStackFlushTimeout
 {
 	inline void Install()
 	{
-		constexpr REL::ID FlushOffset{ 53209 };
-		static REL::Relocation<std::uintptr_t> target{ FlushOffset, 0x8b };
-		REL::safe_write(target.address(), static_cast<std::uint8_t>(0xeb));  // swap jle 0x7e for jmp 0xeb
+		static REL::Relocation<std::uintptr_t> target{ REL::ID(53209) };
+		REL::safe_write(target.address() + 0x8B, static_cast<std::uint8_t>(0xEB));  // swap jle 0x7e for jmp 0xeb
+
 		logger::info("Removed timeout check on suspended stack flush"sv);
 	}
 }
