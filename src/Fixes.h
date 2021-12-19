@@ -664,12 +664,12 @@ namespace ToggleCollisionFix
 		{
 			static bool should_disable_collision(RE::Actor* a_actor, float a_delta)
 			{
-                const auto controller = a_actor->GetCharController();
+				const auto controller = a_actor->GetCharController();
 				if (!controller) {
 					return false;
 				}
 
-                const auto& collisionObj = controller->bumpedCharCollisionObject;
+				const auto& collisionObj = controller->bumpedCharCollisionObject;
 				if (!collisionObj) {
 					return false;
 				}
@@ -679,7 +679,7 @@ namespace ToggleCollisionFix
 					return false;
 				}
 
-                const auto colRef = RE::TESHavokUtilities::FindCollidableRef(collisionObj->collidable);
+				const auto colRef = RE::TESHavokUtilities::FindCollidableRef(collisionObj->collidable);
 				if (colRef && colRef->HasCollision()) {
 					return false;
 				}
@@ -733,21 +733,7 @@ namespace LoadFormEditorIDs
 	{
 		static bool thunk(RE::TESForm* a_this, const char* a_str)
 		{
-			if (!string::is_empty(a_str)) {
-				detail::add_to_game_map(a_this, a_str);
-			}
-			return func(a_this, a_str);
-		}
-		static inline REL::Relocation<decltype(thunk)> func;
-
-		static inline size_t size = 0x33;
-	};
-
-	struct SetFormEditorID_REFR
-	{
-		static bool thunk(RE::TESForm* a_this, const char* a_str)
-		{
-			if (!string::is_empty(a_str) && !a_this->IsDynamicForm()) {
+			if (!a_this->IsDynamicForm() && !string::is_empty(a_str)) {
 				detail::add_to_game_map(a_this, a_str);
 			}
 			return func(a_this, a_str);
@@ -790,8 +776,11 @@ namespace LoadFormEditorIDs
 		::stl::write_vfunc<RE::TESObjectMISC, SetFormEditorID>();
 		::stl::write_vfunc<RE::BGSApparatus, SetFormEditorID>();
 		::stl::write_vfunc<RE::TESObjectSTAT, SetFormEditorID>();
-		//::stl::write_vfunc<RE::BGSStaticCollection, SetFormEditorID>();
-		//::stl::write_vfunc<RE::BGSMovableStatic, SetFormEditorID>();
+		::stl::write_vfunc<RE::BGSStaticCollection, SetFormEditorID>();
+
+		//does not directly inherit from TESForm for some godforsaken reason
+		::stl::write_vfunc<RE::BGSMovableStatic, 2, SetFormEditorID>();
+
 		::stl::write_vfunc<RE::TESGrass, SetFormEditorID>();
 		::stl::write_vfunc<RE::TESObjectTREE, SetFormEditorID>();
 		::stl::write_vfunc<RE::TESFlora, SetFormEditorID>();
@@ -817,18 +806,18 @@ namespace LoadFormEditorIDs
 		//::stl::write_vfunc<RE::NavMeshInfoMap, SetFormEditorID>();
 		//::stl::write_vfunc<RE::TESObjectCELL, SetFormEditorID>();
 
-		::stl::write_vfunc<RE::TESObjectREFR, SetFormEditorID_REFR>();
-		::stl::write_vfunc<RE::Actor, SetFormEditorID_REFR>();
-		::stl::write_vfunc<RE::Character, SetFormEditorID_REFR>();
-		::stl::write_vfunc<RE::PlayerCharacter, SetFormEditorID_REFR>();
-		::stl::write_vfunc<RE::MissileProjectile, SetFormEditorID_REFR>();
-		::stl::write_vfunc<RE::ArrowProjectile, SetFormEditorID_REFR>();
-		::stl::write_vfunc<RE::GrenadeProjectile, SetFormEditorID_REFR>();
-		::stl::write_vfunc<RE::BeamProjectile, SetFormEditorID_REFR>();
-		::stl::write_vfunc<RE::FlameProjectile, SetFormEditorID_REFR>();
-		::stl::write_vfunc<RE::ConeProjectile, SetFormEditorID_REFR>();
-		::stl::write_vfunc<RE::BarrierProjectile, SetFormEditorID_REFR>();
-		::stl::write_vfunc<RE::Hazard, SetFormEditorID_REFR>();
+		::stl::write_vfunc<RE::TESObjectREFR, SetFormEditorID>();
+		::stl::write_vfunc<RE::Actor, SetFormEditorID>();
+		::stl::write_vfunc<RE::Character, SetFormEditorID>();
+		::stl::write_vfunc<RE::PlayerCharacter, SetFormEditorID>();
+		::stl::write_vfunc<RE::MissileProjectile, SetFormEditorID>();
+		::stl::write_vfunc<RE::ArrowProjectile, SetFormEditorID>();
+		::stl::write_vfunc<RE::GrenadeProjectile, SetFormEditorID>();
+		::stl::write_vfunc<RE::BeamProjectile, SetFormEditorID>();
+		::stl::write_vfunc<RE::FlameProjectile, SetFormEditorID>();
+		::stl::write_vfunc<RE::ConeProjectile, SetFormEditorID>();
+		::stl::write_vfunc<RE::BarrierProjectile, SetFormEditorID>();
+		::stl::write_vfunc<RE::Hazard, SetFormEditorID>();
 
 		//::stl::write_vfunc<RE::TESWorldSpace, SetFormEditorID>();
 		//::stl::write_vfunc<RE::TESObjectLAND, SetFormEditorID>();
@@ -930,7 +919,7 @@ namespace FixCrosshairRefEvent
 		if (skse_version == 33554624) {  //2.0.12
 			LookupByHandle::patchSKSE = true;
 			logger::info("VR CrosshairRefEvent: Found patchable sksevr_1_4_15.dll version {} with base {}", skse_version, LookupByHandle::sksevr_base);
-		}else
+		} else
 			logger::info("VR CrosshairRefEvent: Found uknown sksevr_1_4_15.dll version {} with base {}; not patching", skse_version, LookupByHandle::sksevr_base);
 		REL::Relocation<std::uintptr_t> target{ REL::Offset(0x6D2F82) };
 		::stl::write_thunk_call<LookupByHandle>(target.address());
