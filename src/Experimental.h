@@ -93,7 +93,7 @@ namespace CleanupOrphanedActiveEffects
 					if (const auto dataHandler = RE::TESDataHandler::GetSingleton(); dataHandler) {
 						for (const auto& perk : dataHandler->GetFormArray<RE::BGSPerk>()) {
 							if (perk) {
-								for (auto& entry : perk->perkEntries) {
+								for (const auto& entry : perk->perkEntries) {
 									if (entry && entry->GetType() == RE::PERK_ENTRY_TYPE::kAbility) {
 										const auto abilityEntry = static_cast<RE::BGSAbilityPerkEntry*>(entry);
 										if (abilityEntry && abilityEntry->ability) {
@@ -111,7 +111,7 @@ namespace CleanupOrphanedActiveEffects
 					bool result = false;
 					auto spell = *it;
 					if (spell && spell->GetSpellType() == RE::MagicSystem::SpellType::kAbility) {
-						if (abilityPerkMap.count(spell) > 0) {
+						if (abilityPerkMap.contains(spell)) {
 							const auto base = a_this->GetActorBase();
 							if (base && !std::ranges::any_of(abilityPerkMap[spell], [&](const auto& perk) {
 									return base->GetPerkIndex(perk).has_value();

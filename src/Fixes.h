@@ -43,7 +43,7 @@ namespace MapMarker
 			const auto enabled = func(a_this, a_hideNotification);
 			if (!enabled) {
 				const auto UI = RE::UI::GetSingleton();
-				auto mapMenu = UI ? UI->GetMenu<RE::MapMenu>() : nullptr;
+				const auto mapMenu = UI ? UI->GetMenu<RE::MapMenu>() : nullptr;
 
 				if (mapMenu) {
 					mapMenu->PlaceMarker();
@@ -566,7 +566,7 @@ namespace EffectShaderZBufferFix
 //nullptr crash re: QueuedReference
 namespace ToggleCollisionFix
 {
-	const auto no_collision_flag = static_cast<std::uint32_t>(RE::CFilter::Flag::kNoCollision);
+	constexpr auto no_collision_flag = static_cast<std::uint32_t>(RE::CFilter::Flag::kNoCollision);
 
 	struct ToggleCollision
 	{
@@ -646,12 +646,12 @@ namespace ToggleCollisionFix
 		{
 			static bool should_disable_collision(RE::Actor* a_actor, float a_delta)
 			{
-				auto controller = a_actor->GetCharController();
+                const auto controller = a_actor->GetCharController();
 				if (!controller) {
 					return false;
 				}
 
-				auto& collisionObj = controller->bumpedCharCollisionObject;
+                const auto& collisionObj = controller->bumpedCharCollisionObject;
 				if (!collisionObj) {
 					return false;
 				}
@@ -661,7 +661,7 @@ namespace ToggleCollisionFix
 					return false;
 				}
 
-				auto colRef = RE::TESHavokUtilities::FindCollidableRef(collisionObj->collidable);
+                const auto colRef = RE::TESHavokUtilities::FindCollidableRef(collisionObj->collidable);
 				if (colRef && colRef->HasCollision()) {
 					return false;
 				}
