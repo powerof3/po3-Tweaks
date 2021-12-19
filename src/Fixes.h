@@ -430,7 +430,7 @@ namespace AttachLightCrash
 			}
 			return 1;
 		}
-		
+
 		//FixedStrings::GetSingleton() got inlined
 		static inline constexpr std::size_t size = 0xEC;
 	};
@@ -495,7 +495,7 @@ namespace GetEquippedFix
 				return std::ranges::any_of(a_inventory, [a_item](const auto& itemData) {
 					const auto& [item, data] = itemData;
 					const auto& [count, entry] = data;
-					
+
 					return item == a_item ? entry->IsWorn() : false;
 				});
 			}
@@ -505,11 +505,11 @@ namespace GetEquippedFix
 		{
 			a_result = 0.0;
 
-			const auto actor = a_this ? a_this->As<RE::Actor>() : nullptr; 
+			const auto actor = a_this ? a_this->As<RE::Actor>() : nullptr;
 			if (actor && a_item) {
 				auto inventory = actor->GetInventory();
-				
-				const auto list = a_item->As<RE::BGSListForm>(); 
+
+				const auto list = a_item->As<RE::BGSListForm>();
 				if (list) {
 					auto result = std::ranges::any_of(list->forms, [&](const auto& form) {
 						return form && form->IsBoundObject() && detail::get_worn(inventory, form);
@@ -535,7 +535,7 @@ namespace GetEquippedFix
 
 			return true;
 		}
-		
+
 		//inlining here too
 		static inline constexpr std::size_t size = 0x18D;
 	};
