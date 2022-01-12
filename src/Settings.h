@@ -72,7 +72,7 @@ public:
 
 			a_trampolineSpace += detail::get_data(a_ini, noConjurationAbsorb, section, "No Conjuration Spell Absorb", ";Adds NoAbsorb flag to all conjuration spells missing this flag");
 
-			a_trampolineSpace += detail::get_data(a_ini, getEquipped, section, "GetEquipped Fix", ";Patches GetEquipped console/condition function to work with left hand equipped items");
+			//a_trampolineSpace += detail::get_data(a_ini, getEquipped, section, "GetEquipped Fix", ";Patches GetEquipped console/condition function to work with left hand equipped items");
 
 			a_trampolineSpace += detail::get_data(a_ini, effectShaderZBuffer, section, "EffectShader Z-Buffer Fix", ";Fixes effect shader z-buffer rendering so particles can show through objects");
 
@@ -112,7 +112,7 @@ public:
 
 			a_trampolineSpace += detail::get_data(a_ini, factionStealing, section, "Faction Stealing", ";Items will be marked stolen until player is friendly with all present members of faction.");
 
-			a_trampolineSpace += detail::get_data(a_ini, aiFadeOut, section, "Load Door Fade Out", ";Stops NPCs from fading out when using load doors.");
+			//a_trampolineSpace += detail::get_data(a_ini, aiFadeOut, section, "Load Door Fade Out", ";Stops NPCs from fading out when using load doors.");
 
 			a_trampolineSpace += detail::get_data(a_ini, voiceModulationValue, section, "Voice Modulation", ";Applies voice distortion effect on NPCs wearing face covering helmets. A value of 1.0 has no effect.\n;Pitch is directly proportional to value. Recommended setting (0.85-0.90).");
 
@@ -207,8 +207,7 @@ public:
 
 			a_trampolineSpace += detail::get_data(a_ini, updateGameTimers, section, "Update GameHour Timers", ";Updates game timers when advancing time using GameHour.SetValue");
 
-			a_trampolineSpace += detail::get_data(a_ini, removeFlushTimeout, section, "Remove Stack Flush Timeout", ";Disables 30 second timeout for suspended stack flush. Warning: This may result in a locked state if Skyrim can't dump stacks.");
-
+			a_trampolineSpace += detail::get_data(a_ini, removeFlushTimeout, section, "Remove Stack Flush Timeout", ";Disables 30 second timeout for suspended Papyrus stack dumping. Warning: This may result in a locked state if Skyrim can't dump stacks.");
 		}
 
 		data<bool> fastRandomInt{ false };
@@ -216,7 +215,6 @@ public:
 		data<bool> orphanedAEFix{ false };
 		data<bool> updateGameTimers{ false };
 		data<bool> removeFlushTimeout{ false };
-
 
 	} experimental;
 
@@ -249,7 +247,7 @@ private:
 			a_ini.SetBoolValue(a_section, a_key, a_data.value, a_comment);
 
 			return a_data.value ? a_data.space : 0;
-		};
+		}
 
 		static size_t get_data(CSimpleIniA& a_ini, std::string& a_data, const char* a_section, const char* a_key, const char* a_comment)
 		{
@@ -257,6 +255,6 @@ private:
 			a_ini.SetValue(a_section, a_key, a_data.c_str(), a_comment);
 
 			return 0;
-		};
+		}
 	};
 };

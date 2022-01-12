@@ -61,7 +61,7 @@ namespace GameTimers
 				a_vm->TraceStack("Cannot set the value of a constant GlobalVariable", a_stackID, RE::BSScript::ErrorLogger::Severity::kError);
 			} else {
 				a_global->value = a_value;
-				if (::stl::is_in(a_global->GetFormID(), detail::gameHour, detail::gameDay)) {
+				if (stl::is_in(a_global->GetFormID(), detail::gameHour, detail::gameDay)) {
 					detail::get_sleeping() = false;
 					detail::UpdateTimers(RE::PlayerCharacter::GetSingleton());
 				}
@@ -73,7 +73,7 @@ namespace GameTimers
 	inline void Install()
 	{
 		REL::Relocation<std::uintptr_t> func{ REL::ID(55352) };
-		::stl::asm_replace<SetGlobal>(func.address());
+		stl::asm_replace<SetGlobal>(func.address());
 
 		logger::info("Installed game hour timer fix"sv);
 	}
@@ -93,7 +93,7 @@ namespace CleanupOrphanedActiveEffects
 					if (const auto dataHandler = RE::TESDataHandler::GetSingleton(); dataHandler) {
 						for (const auto& perk : dataHandler->GetFormArray<RE::BGSPerk>()) {
 							if (perk) {
-								for (auto& entry : perk->perkEntries) {
+								for (const auto& entry : perk->perkEntries) {
 									if (entry && entry->GetType() == RE::PERK_ENTRY_TYPE::kAbility) {
 										const auto abilityEntry = static_cast<RE::BGSAbilityPerkEntry*>(entry);
 										if (abilityEntry && abilityEntry->ability) {
@@ -111,7 +111,7 @@ namespace CleanupOrphanedActiveEffects
 					bool result = false;
 					auto spell = *it;
 					if (spell && spell->GetSpellType() == RE::MagicSystem::SpellType::kAbility) {
-						if (abilityPerkMap.count(spell) > 0) {
+						if (abilityPerkMap.contains(spell)) {
 							const auto base = a_this->GetActorBase();
 							if (base && !std::ranges::any_of(abilityPerkMap[spell], [&](const auto& perk) {
 									return base->GetPerkIndex(perk).has_value();
@@ -135,7 +135,7 @@ namespace CleanupOrphanedActiveEffects
 
 	inline void Install()
 	{
-		::stl::write_vfunc<RE::Character, ReadFromSaveGame>();
+		stl::write_vfunc<RE::Character, ReadFromSaveGame>();
 
 		logger::info("Installed orphan AE cleanup fix"sv);
 	}
@@ -144,12 +144,11 @@ namespace CleanupOrphanedActiveEffects
 //disable timeout check for Suspended Stack flushing
 namespace RemoveSuspendedStackFlushTimeout
 {
-	inline void
-		Install()
+	inline void Install()
 	{
-		constexpr REL::ID FlushOffset{ 53209 };
-		static REL::Relocation<std::uintptr_t> target{ FlushOffset, 0x8b };
-		REL::safe_write(target.address(), static_cast<std::uint8_t>(0xeb));  // swap jle 0x7e for jmp 0xeb
+		static REL::Relocation<std::uintptr_t> target{ REL::ID(53209) };
+		REL::safe_write(target.address() + 0x8B, static_cast<std::uint8_t>(0xEB));  // swap jle 0x7e for jmp 0xeb
+
 		logger::info("Removed timeout check on suspended stack flush"sv);
 	}
 }

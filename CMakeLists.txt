@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 set(NAME "po3_Tweaks")
-set(VERSION 1.4.0)
+set(VERSION 1.5.0)
 set(VR_VERSION 3)
 
 # ---- Options ----
@@ -113,9 +113,6 @@ else ()
 	)
 endif()
 
-find_package(spdlog REQUIRED CONFIG)
-find_package(xbyak REQUIRED CONFIG)
-
 find_path(SIMPLEINI_INCLUDE_DIRS "ConvertUTF.c")
 
 # ---- Add source files ----
@@ -174,8 +171,6 @@ target_link_libraries(
 	${PROJECT_NAME}
 	PRIVATE
 		${CommonLibName}::${CommonLibName}
-		spdlog::spdlog
-		xbyak::xbyak
 )
 
 target_precompile_headers(

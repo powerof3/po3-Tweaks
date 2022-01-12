@@ -21,9 +21,7 @@ using namespace std::literals;
 
 namespace stl
 {
-	using SKSE::stl::adjust_pointer;
-	using SKSE::stl::is_in;
-	using SKSE::stl::to_underlying;
+	using namespace SKSE::stl;
 
 	void asm_replace(std::uintptr_t a_from, std::size_t a_size, std::uintptr_t a_to);
 
@@ -44,6 +42,13 @@ namespace stl
 	void write_vfunc()
 	{
 		REL::Relocation<std::uintptr_t> vtbl{ F::VTABLE[0] };
+		T::func = vtbl.write_vfunc(T::size, T::thunk);
+	}
+
+	template <class F, size_t index, class T>
+	void write_vfunc()
+	{
+		REL::Relocation<std::uintptr_t> vtbl{ F::VTABLE[index] };
 		T::func = vtbl.write_vfunc(T::size, T::thunk);
 	}
 }

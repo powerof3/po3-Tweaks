@@ -1,11 +1,12 @@
 {
   "name": "po3tweaks",
-  "version-string": "1.4.0",
+  "version-string": "1.5.0",
   "description": "Collection of bug fixes and tweaks for Skyrim SE",
   "homepage": "https://github.com/powerof3/po3-Tweaks/",
   "license": "MIT",
   "dependencies": [
     "boost-stl-interfaces",
+    "rsm-binary-io",
     "robin-hood-hashing",
     "rsm-binary-io",
     "simpleini",

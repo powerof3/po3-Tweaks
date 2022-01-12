@@ -75,7 +75,7 @@ namespace FactionStealing
 	inline void Install()
 	{
 		REL::Relocation<std::uintptr_t> func{ REL::ID(39584) };
-		::stl::asm_replace<CanTake>(func.address());
+		stl::asm_replace<CanTake>(func.address());
 
 		logger::info("Installed faction stealing tweak"sv);
 	}
@@ -104,7 +104,7 @@ namespace AIFadeOut
 	inline void Install()
 	{
 		REL::Relocation<std::uintptr_t> target{ REL::ID(17521), 0x3C5 };
-		::stl::write_thunk_call<GetFadeState>(target.address());
+		stl::write_thunk_call<GetFadeState>(target.address());
 
 		logger::info("Installed load door fade out tweak"sv);
 	}
@@ -138,7 +138,7 @@ namespace VoiceModulation
 			0x6e6
 #endif
 		};
-		::stl::write_thunk_call<SetObjectToFollow>(target.address());
+		stl::write_thunk_call<SetObjectToFollow>(target.address());
 
 		logger::info("Installed voice modulation tweak"sv);
 	}
@@ -166,16 +166,16 @@ namespace DopplerShift
 			return true;
 		}
 
-		static DWORD Play(RE::BSAudioManager* a_manager, std::int32_t a_soundID)
+		static void Play(RE::BSAudioManager* a_manager, std::int32_t a_soundID)
 		{
 			using func_t = decltype(&Play);
 			REL::Relocation<func_t> func{ REL::ID(66408) };
 			return func(a_manager, a_soundID);
 		}
 
-		static DWORD Play3D(RE::BSAudioManager* a_manager, std::int32_t a_soundID, std::uint32_t a_unk03)
+		static void PlayAfter(RE::BSAudioManager* a_manager, std::int32_t a_soundID, std::uint32_t a_unk03)
 		{
-			using func_t = decltype(&Play3D);
+			using func_t = decltype(&PlayAfter);
 			REL::Relocation<func_t> func{ REL::ID(66409) };
 			return func(a_manager, a_soundID, a_unk03);
 		}
@@ -186,7 +186,7 @@ namespace DopplerShift
 		static void Install()
 		{
 			REL::Relocation<std::uintptr_t> func{ REL::ID(66355) };
-			::stl::asm_replace<DefaultSound>(func.address());  //BSSoundHandle::PlaySound
+			stl::asm_replace<DefaultSound>(func.address());  //BSSoundHandle::PlaySound
 		}
 
 		static bool func(RE::BSSoundHandle& a_handle)
@@ -203,13 +203,13 @@ namespace DopplerShift
 		static void Install()
 		{
 			REL::Relocation<std::uintptr_t> func{ REL::ID(66356) };
-			::stl::asm_replace<Dialogue>(func.address());  //BSSoundHandle::PlaySound3D
+			stl::asm_replace<Dialogue>(func.address());  //BSSoundHandle::PlaySound3D
 		}
 
 		static bool func(RE::BSSoundHandle& a_handle, std::uint32_t a_unk02)
 		{
 			return detail::PlayHandle(a_handle, [&](std::int32_t a_soundID) {
-				detail::Play3D(RE::BSAudioManager::GetSingleton(), a_soundID, a_unk02);
+				detail::PlayAfter(RE::BSAudioManager::GetSingleton(), a_soundID, a_unk02);
 			});
 		}
 		static inline constexpr std::size_t size = 0x46;
@@ -244,7 +244,7 @@ namespace DynamicSnowMaterial
 					if (!result && stat) {
 						//find statics with snow txst swap
 						if (const auto model = stat->GetAsModelTextureSwap(); model && model->alternateTextures) {
-							std::span span(model->alternateTextures, model->numAlternateTextures);
+                            const std::span span(model->alternateTextures, model->numAlternateTextures);
 							for (const auto& texture : span) {
 								if (const auto txst = texture.textureSet; txst && string::icontains(txst->textures[RE::BSTextureSet::Texture::kDiffuse].textureName, "snow"sv)) {
 									result = true;
@@ -363,7 +363,7 @@ namespace DynamicSnowMaterial
 
 	inline void Install()
 	{
-		::stl::write_vfunc<RE::TESObjectREFR, Load3D>();
+		stl::write_vfunc<RE::TESObjectREFR, Load3D>();
 		logger::info("Installed dynamic snow material tweak"sv);
 	}
 }
@@ -418,8 +418,8 @@ namespace NoRipplesOnHover
 
 	inline void Install()
 	{
-		::stl::write_vfunc<RE::PlayerCharacter, ProcessInWater::Player>();
-		::stl::write_vfunc<RE::Character, ProcessInWater::NPC>();
+		stl::write_vfunc<RE::PlayerCharacter, ProcessInWater::Player>();
+		stl::write_vfunc<RE::Character, ProcessInWater::NPC>();
 
 		logger::info("Installed no ripples on hover tweak"sv);
 	}
@@ -443,7 +443,7 @@ namespace ScreenshotToConsole
 	inline void Install()
 	{
 		REL::Relocation<std::uintptr_t> target{ REL::ID(35882), 0xA8 };
-		::stl::write_thunk_call<DebugNotification>(target.address());
+		stl::write_thunk_call<DebugNotification>(target.address());
 
 		logger::info("Installed screenshot to console tweak"sv);
 	}
@@ -542,7 +542,7 @@ namespace SitToWait
 			0x681
 #endif
 		};
-		::stl::write_thunk_call<HandleWaitRequest>(target.address());
+		stl::write_thunk_call<HandleWaitRequest>(target.address());
 
 		logger::info("Installed sit to wait tweak"sv);
 	}
@@ -555,7 +555,7 @@ namespace NoCheatMode
 		static void Install()
 		{
 			REL::Relocation<std::uintptr_t> func{ REL::ID(22339) };
-			::stl::asm_replace<GodMode>(func.address());
+			stl::asm_replace<GodMode>(func.address());
 		}
 
 		static bool func()
@@ -574,7 +574,7 @@ namespace NoCheatMode
 		static void Install()
 		{
 			REL::Relocation<std::uintptr_t> func{ REL::ID(22340) };
-			::stl::asm_replace<ImmortalMode>(func.address());
+			stl::asm_replace<ImmortalMode>(func.address());
 		}
 
 		static bool func()
@@ -741,8 +741,8 @@ namespace LoadDoorPrompt
 	{
 		REL::Relocation<std::uintptr_t> target{ REL::ID(17522) };
 
-		::stl::write_thunk_call<Locked>(target.address() + 0x140);
-		::stl::write_thunk_call<Normal>(target.address() + 0x168);
+		stl::write_thunk_call<Locked>(target.address() + 0x140);
+		stl::write_thunk_call<Normal>(target.address() + 0x168);
 
 		logger::info("Installed load door activate prompt tweak"sv);
 	}
@@ -776,15 +776,15 @@ namespace NoPoisonPrompt
 
 		switch (a_type) {
 		case 1:
-			::stl::write_thunk_call<ShowPoisonConfirmationPrompt>(target.address() + 0x10B);
+			stl::write_thunk_call<ShowPoisonConfirmationPrompt>(target.address() + 0x10B);
 			break;
 		case 2:
-			::stl::write_thunk_call<ShowPoisonInformationPrompt>(target.address() + 0x143);
+			stl::write_thunk_call<ShowPoisonInformationPrompt>(target.address() + 0x143);
 			break;
 		case 3:
 			{
-				::stl::write_thunk_call<ShowPoisonConfirmationPrompt>(target.address() + 0x10B);
-				::stl::write_thunk_call<ShowPoisonInformationPrompt>(target.address() + 0x143);
+				stl::write_thunk_call<ShowPoisonConfirmationPrompt>(target.address() + 0x10B);
+				stl::write_thunk_call<ShowPoisonInformationPrompt>(target.address() + 0x143);
 			}
 			break;
 		default:
