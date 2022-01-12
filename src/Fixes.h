@@ -908,14 +908,19 @@ namespace FixCrosshairRefEvent
 		static bool thunk(RefHandle& a_refHandle, NiPointer<TESObjectREFR>& a_refrOut)
 		{
 			bool result = func(a_refHandle, a_refrOut);
-			if (!result)
+			if (!result) {
+				if (patchSKSE)
+					REL::safe_write<std::uintptr_t>((std::uintptr_t)(sksevr_base + 0x15D9F0), (std::uint64_t) nullptr);
 				return result;
-			if (patchSKSE && a_refrOut && a_refrOut->AsReference())
-				REL::safe_write<std::uintptr_t>((std::uintptr_t)(sksevr_base + 0x15D9F0), (std::uint64_t)a_refrOut->AsReference());
-			const SKSE::CrosshairRefEvent event{ a_refrOut };
-			RE::BSTEventSource<SKSE::CrosshairRefEvent>* source = SKSE::GetCrosshairRefEventSource();
-			if (source) {
-				source->SendEvent(std::addressof(event));
+			}
+			if (a_refrOut) {
+				if (patchSKSE && a_refrOut->AsReference())
+					REL::safe_write<std::uintptr_t>((std::uintptr_t)(sksevr_base + 0x15D9F0), (std::uint64_t)a_refrOut->AsReference());
+				const SKSE::CrosshairRefEvent event{ a_refrOut };
+				RE::BSTEventSource<SKSE::CrosshairRefEvent>* source = SKSE::GetCrosshairRefEventSource();
+				if (source) {
+					source->SendEvent(std::addressof(event));
+				}
 			}
 			return result;
 		}
