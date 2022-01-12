@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 set(NAME "po3_Tweaks")
 set(VERSION 1.5.0)
-set(VR_VERSION 3)
+set(VR_VERSION 1)
 
 # ---- Options ----
 
@@ -16,28 +16,40 @@ macro(set_from_environment VARIABLE)
 	endif ()
 endmacro()
 
+macro(find_commonlib_path)
+	if (CommonLibName AND NOT ${CommonLibName} STREQUAL "")
+		# Check extern
+		find_path(CommonLibPath
+		include/REL/Relocation.h
+		PATHS external/${CommonLibName}
+			extern/${CommonLibName})
+		if (${CommonLibPath} STREQUAL "CommonLibPath-NOTFOUND")
+			#Check path
+			set_from_environment(${CommonLibName}Path)
+			set(CommonLibPath ${${CommonLibName}Path})
+		endif()
+	endif()
+endmacro()
+
 set_from_environment(VCPKG_ROOT)
 if(BUILD_SKYRIMVR)
 	add_compile_definitions(SKYRIMVR)
-	add_compile_definitions(SKYRIMVR)
-	set_from_environment(CommonLibVRPath)
-	set(CommonLibPath ${CommonLibVRPath})
+	add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 	set(CommonLibName "CommonLibVR")
 	set_from_environment(SkyrimVRPath)
 	set(SkyrimPath ${SkyrimVRPath})
 	set(SkyrimVersion "Skyrim VR")
-	set(VERSION "${VERSION}.${VR_VERSION}")
+	set(VERSION ${VERSION}.${VR_VERSION})
 else()
-	set_from_environment(CommonLibSSEPath)
-	set(CommonLibPath ${CommonLibSSEPath})
 	set(CommonLibName "CommonLibSSE")
 	set_from_environment(Skyrim64Path)
 	set(SkyrimPath ${Skyrim64Path})
 	set(SkyrimVersion "Skyrim SSE")
 endif()
+find_commonlib_path()
 message(
 	STATUS
-	"Building for ${SkyrimVersion} at ${SkyrimPath} with ${CommonLibName} at ${CommonLibPath}."
+	"Building ${NAME} ${VERSION} for ${SkyrimVersion} at ${SkyrimPath} with ${CommonLibName} at ${CommonLibPath}."
 )
 
 if (DEFINED VCPKG_ROOT)
@@ -51,7 +63,6 @@ else ()
 endif ()
 
 set(Boost_USE_STATIC_RUNTIME OFF CACHE BOOL "")
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>" CACHE STRING "")
 
 # ---- Project ----
 

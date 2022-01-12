@@ -36,15 +36,15 @@ cd po3-Tweaks
 ```
 ### SSE
 ```
-cmake -B build -S .
+cmake --preset vs2022-windows-vcpkg
+# build or open po3_Tweaks.sln in Visual Studio
+cmake --build build --config Release
 ```
-Open build/po3_Tweaks.sln in Visual Studio to build dll.
 ### VR
 ```
-cmake -B build2 -S . -DBUILD_SKYRIMVR=On
+cmake --preset vs2022-windows-vcpkg-vr
+cmake --build buildvr --config Release
 ```
-Open build2/po3_Tweaks.sln in Visual Studio to build dll.
-
 
 ## License
 [MIT](LICENSE)
