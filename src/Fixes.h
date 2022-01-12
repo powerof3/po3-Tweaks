@@ -928,7 +928,8 @@ namespace FixCrosshairRefEvent
 		if (skse_version == 33554624 && code_match) {  //2.0.12
 			LookupByHandle::patchSKSE = true;
 			logger::info("VR CrosshairRefEvent: Found patchable sksevr_1_4_15.dll version {} with base {}", skse_version, LookupByHandle::sksevr_base);
-		}else
+		}
+		else
 			logger::info("VR CrosshairRefEvent: Found unknown sksevr_1_4_15.dll version {} with base {}; not patching", skse_version, LookupByHandle::sksevr_base);
 		REL::Relocation<std::uintptr_t> target{ REL::Offset(0x6D2F82) };
 		stl::write_thunk_call<LookupByHandle>(target.address());
