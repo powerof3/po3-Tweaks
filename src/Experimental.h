@@ -61,7 +61,7 @@ namespace GameTimers
 				a_vm->TraceStack("Cannot set the value of a constant GlobalVariable", a_stackID, RE::BSScript::ErrorLogger::Severity::kError);
 			} else {
 				a_global->value = a_value;
-				if (stl::is_in(a_global->GetFormID(), detail::gameHour, detail::gameDay)) {
+				if (::stl::is_in(a_global->GetFormID(), detail::gameHour, detail::gameDay)) {
 					detail::get_sleeping() = false;
 					detail::UpdateTimers(RE::PlayerCharacter::GetSingleton());
 				}
@@ -73,7 +73,7 @@ namespace GameTimers
 	inline void Install()
 	{
 		REL::Relocation<std::uintptr_t> func{ REL::ID(55352) };
-		stl::asm_replace<SetGlobal>(func.address());
+		::stl::asm_replace<SetGlobal>(func.address());
 
 		logger::info("Installed game hour timer fix"sv);
 	}
@@ -135,7 +135,7 @@ namespace CleanupOrphanedActiveEffects
 
 	inline void Install()
 	{
-		stl::write_vfunc<RE::Character, ReadFromSaveGame>();
+		::stl::write_vfunc<RE::Character, ReadFromSaveGame>();
 
 		logger::info("Installed orphan AE cleanup fix"sv);
 	}
