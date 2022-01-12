@@ -927,11 +927,20 @@ namespace FixCrosshairRefEvent
 	inline void Install(std::uint32_t skse_version)
 	{
 		LookupByHandle::sksevr_base = reinterpret_cast<uintptr_t>(GetModuleHandleA("sksevr_1_4_15"));
-		if (skse_version == 33554624) {  //2.0.12
+		bool code_match = true;
+		const uint8_t* read_addr = (uint8_t*)(uintptr_t)(LookupByHandle::sksevr_base + 0x52ef0);  
+		static const uint8_t read_expected[] = { 0x48, 0x8b, 0x05, 0xf9, 0xaa, 0x10, 0x00};
+		const uint8_t* write_addr = (uint8_t*)(uintptr_t)(LookupByHandle::sksevr_base + 0xdd15);  
+		static const uint8_t write_expected[] = { 0x48, 0x89, 0x0d, 0xd4, 0xfc, 0x14, 0x00};
+		if (std::memcmp((const void*)read_addr, read_expected, sizeof(read_expected)) && std::memcmp((const void*)write_addr, write_expected, sizeof(write_expected))) {
+			logger::info("VR CrosshairRefEvent: Read and write crosshair code is not expected"sv);
+			code_match = false;
+		}
+		if (skse_version == 33554624 && code_match) {  //2.0.12
 			LookupByHandle::patchSKSE = true;
 			logger::info("VR CrosshairRefEvent: Found patchable sksevr_1_4_15.dll version {} with base {}", skse_version, LookupByHandle::sksevr_base);
 		}else
-			logger::info("VR CrosshairRefEvent: Found uknown sksevr_1_4_15.dll version {} with base {}; not patching", skse_version, LookupByHandle::sksevr_base);
+			logger::info("VR CrosshairRefEvent: Found unknown sksevr_1_4_15.dll version {} with base {}; not patching", skse_version, LookupByHandle::sksevr_base);
 		REL::Relocation<std::uintptr_t> target{ REL::Offset(0x6D2F82) };
 		::stl::write_thunk_call<LookupByHandle>(target.address());
 
