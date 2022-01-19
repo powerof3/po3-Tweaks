@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Settings.h"
 #include "Cache.h"
+#include "Settings.h"
 
 namespace Fixes
 {
@@ -649,6 +649,40 @@ namespace ToggleCollisionFix
 		stl::asm_replace<ToggleCollision>(func.address());
 
 		logger::info("Installed toggle collision fix"sv);
+	}
+}
+
+namespace SkinnedDecalDeleteFix
+{
+	struct RemoveItem
+	{
+		static RE::NiPointer<RE::BSTempEffect>*& thunk(RE::BSTArray<RE::NiPointer<RE::BSTempEffect>>& a_this, RE::NiPointer<RE::BSTempEffect>*& a_return, RE::NiPointer<RE::BSTempEffect>*& a_item)
+		{
+			auto& result = func(a_this, a_return, a_item);
+
+			if (a_item) {
+				auto decal = (*a_item)->As<RE::BSTempEffectGeometryDecal>();
+				auto decalNode = decal ? decal->decalNode : nullptr;
+				if (decalNode && decalNode->parent) {
+					decalNode->parent->DetachChild(decalNode.get());
+					auto& count = RE::BGSDecalManager::GetSingleton()->skinDecalCount;
+					if (count > 0) {
+						--count;
+					}
+				}
+			}
+
+			return result;
+		}
+		static inline REL::Relocation<decltype(thunk)> func;
+	};
+
+	inline void Install()
+	{
+		REL::Relocation<std::uintptr_t> target{ REL::ID(15118), 0x12B };
+		stl::write_thunk_call<RemoveItem>(target.address());
+
+		logger::info("Installed skinned decal delete fix"sv);
 	}
 }
 

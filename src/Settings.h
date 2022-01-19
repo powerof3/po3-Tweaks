@@ -62,6 +62,7 @@ public:
 			detail::get_data(a_ini, noConjurationAbsorb, section, "No Conjuration Spell Absorb", ";Adds NoAbsorb flag to all conjuration spells missing this flag");
 			detail::get_data(a_ini, effectShaderZBuffer, section, "EffectShader Z-Buffer Fix", ";Fixes effect shader z-buffer rendering so particles can show through objects");
 			detail::get_data(a_ini, collisionToggleFix, section, "ToggleCollision Fix", ";Patches ToggleCollision to toggle object collision if selected in console");
+			detail::get_data(a_ini, skinnedDecalDelete, section, "Skinned Decal Delete", ";Immediately delete skinned decals when they're marked for removal (ie. swapping bloody armor)");
 			detail::get_data(a_ini, loadEditorIDs, section, "Load EditorIDs", ";Loads editorIDs for skipped forms at runtime");
 #ifdef SKYRIMVR
 			detail::get_data(a_ini, fixVRCrosshairRefEvent, section, "VR CrosshairRefEvent Fix", "; Trigger CrossHairRefEvent with hand selection (normally requires game controller to enable crosshair events)");
@@ -80,6 +81,7 @@ public:
 		data<bool> noConjurationAbsorb{ true };
 		data<bool> effectShaderZBuffer{ true };
 		data<bool> collisionToggleFix{ true };
+		data<bool> skinnedDecalDelete{ true };
 		data<bool> loadEditorIDs{ true };
 #ifdef SKYRIMVR
 		data<bool> fixVRCrosshairRefEvent{ true };
