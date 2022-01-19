@@ -82,35 +82,6 @@ namespace FactionStealing
 	}
 }
 
-//removes fadeout when going through load doors
-namespace AIFadeOut
-{
-	struct GetFadeState
-	{
-		static std::uint32_t thunk(RE::AIProcess* a_aiProcess)
-		{
-			const auto state = func(a_aiProcess);
-
-			const auto middleProcess = a_aiProcess ? a_aiProcess->middleHigh : nullptr;
-			const auto torsoNode = middleProcess ? middleProcess->torsoNode : nullptr;
-			const auto user = torsoNode ? torsoNode->GetUserData() : nullptr;
-
-			return user && user->IsPlayerRef() ?
-                       state :
-                       4;
-		}
-		static inline REL::Relocation<decltype(thunk)> func;
-	};
-
-	inline void Install()
-	{
-		REL::Relocation<std::uintptr_t> target{ REL::ID(17521), 0x3C5 };
-		stl::write_thunk_call<GetFadeState>(target.address());
-
-		logger::info("Installed load door fade out tweak"sv);
-	}
-}
-
 //voice distortion while wearing a helmet
 namespace VoiceModulation
 {
