@@ -35,14 +35,9 @@ namespace stl
 	void write_thunk_call(std::uintptr_t a_src)
 	{
 		auto& trampoline = SKSE::GetTrampoline();
-		T::func = trampoline.write_call<5>(a_src, T::thunk);
-	}
+		SKSE::AllocTrampoline(14);
 
-	template <class F, class T>
-	void write_vfunc()
-	{
-		REL::Relocation<std::uintptr_t> vtbl{ F::VTABLE[0] };
-		T::func = vtbl.write_vfunc(T::size, T::thunk);
+		T::func = trampoline.write_call<5>(a_src, T::thunk);
 	}
 
 	template <class F, size_t index, class T>
@@ -50,6 +45,12 @@ namespace stl
 	{
 		REL::Relocation<std::uintptr_t> vtbl{ F::VTABLE[index] };
 		T::func = vtbl.write_vfunc(T::size, T::thunk);
+	}
+
+	template <class F, class T>
+	void write_vfunc()
+	{
+		write_vfunc<F, 0, T>();
 	}
 }
 
