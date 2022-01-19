@@ -302,7 +302,7 @@ namespace DynamicSnowMaterial
 			patch.ready();
 
 			auto& trampoline = SKSE::GetTrampoline();
-			SKSE::AllocTrampoline(17);
+			SKSE::AllocTrampoline(31);
 
 			_GetMaterialID = trampoline.write_call<5>(target.address(), trampoline.allocate(patch));
 		}
