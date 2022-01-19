@@ -43,6 +43,9 @@ void Fixes::Install()
 	if (fixes.collisionToggleFix.value) {
 		ToggleCollisionFix::Install();
 	}
+	if (fixes.skinnedDecalDelete.value) {
+		SkinnedDecalDeleteFix::Install();
+	}
 	if (fixes.loadEditorIDs.value) {
 		LoadFormEditorIDs::Install();
 	}
