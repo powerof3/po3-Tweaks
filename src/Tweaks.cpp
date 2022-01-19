@@ -9,9 +9,6 @@ void Tweaks::Install()
 	if (tweaks.factionStealing.value) {
 		FactionStealing::Install();
 	}
-	if (tweaks.aiFadeOut.value) {
-		//AIFadeOut::Install();
-	}
 	if (tweaks.voiceModulationValue.value != 1.0f) {
 		VoiceModulation::Install();
 	}
