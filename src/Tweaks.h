@@ -278,7 +278,7 @@ namespace DynamicSnowMaterial
 	{
 		static void Install()
 		{
-			REL::Relocation<std::uintptr_t> target{ REL::ID(35320), 0x600 };
+			REL::Relocation<std::uintptr_t> target{ REL::ID(36215), 0x6A4 };
 
 			struct Patch : Xbyak::CodeGenerator
 			{
@@ -286,7 +286,7 @@ namespace DynamicSnowMaterial
 				{
 					Xbyak::Label f;
 
-					mov(r8, rbx);
+					mov(r8, rdi);
 					jmp(ptr[rip + f]);
 
 					L(f);
