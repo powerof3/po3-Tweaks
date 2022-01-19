@@ -73,11 +73,11 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 	SKSE::Init(a_skse);
 
 	auto trampolineSize = Settings::GetSingleton()->Load();
-	SKSE::AllocTrampoline(trampolineSize * 16);
-	const auto skse_version = a_skse->SKSEVersion();
+	SKSE::AllocTrampoline(trampolineSize * 14);
+
 	logger::info("{:*^30}", "PATCH START"sv);
 
-	Fixes::Install(skse_version);
+	Fixes::Install(a_skse->SKSEVersion());
 	Tweaks::Install();
 	Experimental::Install();
 

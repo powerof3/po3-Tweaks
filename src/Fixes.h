@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Settings.h"
+#include "Cache.h"
 
 namespace Fixes
 {
@@ -727,6 +728,11 @@ namespace LoadFormEditorIDs
 				map->emplace(a_str, a_form);
 			}
 		}
+
+		static void cache_editorID(RE::TESForm* a_form, const char* a_str)
+		{
+			Cache::EditorID::GetSingleton()->CacheEditorID(a_form, a_str);
+		}
 	};
 
 	struct SetFormEditorID
@@ -735,6 +741,21 @@ namespace LoadFormEditorIDs
 		{
 			if (!a_this->IsDynamicForm() && !string::is_empty(a_str)) {
 				detail::add_to_game_map(a_this, a_str);
+			}
+			return func(a_this, a_str);
+		}
+		static inline REL::Relocation<decltype(thunk)> func;
+
+		static inline size_t size = 0x33;
+	};
+
+	struct SetFormEditorID_Cache
+	{
+		static bool thunk(RE::TESForm* a_this, const char* a_str)
+		{
+			if (!a_this->IsDynamicForm() && !string::is_empty(a_str)) {
+				detail::add_to_game_map(a_this, a_str);
+				detail::cache_editorID(a_this, a_str);
 			}
 			return func(a_this, a_str);
 		}
@@ -872,7 +893,9 @@ namespace LoadFormEditorIDs
 		stl::write_vfunc<RE::BGSAssociationType, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSOutfit, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSArtObject, SetFormEditorID>();
-		stl::write_vfunc<RE::BGSMaterialObject, SetFormEditorID>();
+
+		stl::write_vfunc<RE::BGSMaterialObject, SetFormEditorID_Cache>();
+
 		stl::write_vfunc<RE::BGSMovementType, SetFormEditorID>();
 		//stl::write_vfunc<RE::BGSSoundDescriptorForm, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSDualCastData, SetFormEditorID>();

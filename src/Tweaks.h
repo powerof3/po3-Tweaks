@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Cache.h"
 #include "Settings.h"
 
 namespace Tweaks
@@ -227,143 +228,102 @@ namespace DopplerShift
 //applies snow havok material to objects using snow dir mat
 namespace DynamicSnowMaterial
 {
-	struct Load3D
+	using MAT = RE::MATERIAL_ID;
+	
+	struct detail
 	{
-		using MAT = RE::MATERIAL_ID;
-
-		static RE::NiAVObject* thunk(RE::TESObjectREFR* a_ref, bool a_backgroundLoading)
+		static bool is_snow_object(const RE::TESObjectREFR* a_ref)
 		{
-			auto node = func(a_ref, a_backgroundLoading);
-			if (node) {
-				const auto get_directional_mat = [&]() {
-					const auto base = a_ref->GetObjectReference();
-					const auto stat = base ? base->As<RE::TESObjectSTAT>() : nullptr;
-					const auto matObj = stat ? stat->data.materialObj : nullptr;
+			auto result = false;
+			
+			const auto base = a_ref->GetObjectReference();
+			const auto stat = base ? base->As<RE::TESObjectSTAT>() : nullptr;
+			const auto matObj = stat ? stat->data.materialObj : nullptr;
 
-					auto result = matObj != nullptr && matObj->directionalData.flags.all(RE::BSMaterialObject::DIRECTIONAL_DATA::Flag::kSnow) && stat->data.materialThresholdAngle >= 90.0f;
-					if (!result && stat) {
-						//find statics with snow txst swap
-						if (const auto model = stat->GetAsModelTextureSwap(); model && model->alternateTextures) {
-                            const std::span span(model->alternateTextures, model->numAlternateTextures);
-							for (const auto& texture : span) {
-								if (const auto txst = texture.textureSet; txst && string::icontains(txst->textures[RE::BSTextureSet::Texture::kDiffuse].textureName, "snow"sv)) {
-									result = true;
-									break;
-								}
-							}
-						}
-					}
-					return result;
-				};
+			if (matObj) {
+				const auto editorID = Cache::EditorID::GetSingleton()->GetEditorID(matObj);
+				result = string::icontains(editorID, "snow"sv) && stat->data.materialThresholdAngle >= 90.0f;
+			}
 
-				if (!get_directional_mat()) {
-					return node;
-				}
-
-				const auto cell = a_ref->GetSaveParentCell();
-				if (!cell) {
-					return node;
-				}
-
-				const auto sky = RE::Sky::GetSingleton();
-				std::uint32_t snowState = sky && sky->GetIsSnowing() ? 1 : 0;
-
-				if (snowState == 0) {
-					const auto xRegion = cell->extraList.GetByType<RE::ExtraRegionList>();
-					const auto regionList = xRegion ? xRegion->list : nullptr;
-					if (regionList) {
-						static std::vector<RE::FormID> regions;
-						if (regions.empty()) {
-							const auto dataHandler = RE::TESDataHandler::GetSingleton();
-							if (dataHandler) {
-								const auto is_snowy_region = [&](const RE::TESRegion* a_region) {
-									if (const auto list = a_region->dataList; list) {
-										for (const auto& data : list->regionDataList) {
-											if (const auto weatherData = data && data->GetType() == RE::TESRegionData::Type::kWeather ?
-                                                                             static_cast<RE::TESRegionDataWeather*>(data) :
-                                                                             nullptr;
-												weatherData) {
-												for (const auto& weatherType : weatherData->weatherTypes) {
-													if (const auto weather = weatherType->weather; weather && weather->data.flags.any(RE::TESWeather::WeatherDataFlag::kSnow)) {
-														return true;
-													}
-												}
-											}
-										}
-									}
-									return false;
-								};
-								for (const auto& region : dataHandler->GetFormArray<RE::TESRegion>()) {
-									if (region && is_snowy_region(region)) {
-										regions.push_back(region->GetFormID());
-									}
-								}
-							}
-						}
-
-						for (const auto& region : *regionList) {
-							if (region && std::ranges::find(regions, region->GetFormID()) != regions.end()) {
-								snowState = 2;
+			if (!result) {
+				if (stat && !matObj) {
+					//find statics with snow txst swap
+					const auto model = stat->GetAsModelTextureSwap();
+					if (model && model->alternateTextures) {
+						const std::span span(model->alternateTextures, model->numAlternateTextures);
+						for (const auto& texture : span) {
+							if (const auto txst = texture.textureSet; txst && string::icontains(txst->textures[RE::BSTextureSet::Texture::kDiffuse].textureName, "snow"sv)) {
+								result = true;
 								break;
 							}
 						}
 					}
 				}
-
-				if (snowState == 0) {
-					return node;
-				}
-
-				if (const auto world = cell->GetbhkWorld(); world) {
-					RE::BSWriteLockGuard locker(world->worldLock);
-
-					RE::BSVisit::TraverseScenegraphCollision(node, [&](const RE::bhkNiCollisionObject* a_col) -> RE::BSVisit::BSVisitControl {
-						const auto body = a_col->body.get();
-						if (!body) {
-							return RE::BSVisit::BSVisitControl::kContinue;
-						}
-
-						const auto hkpBody = static_cast<RE::hkpWorldObject*>(body->referencedObject.get());
-						const auto hkpShape = hkpBody ? hkpBody->GetShape() : nullptr;
-
-						if (hkpShape && hkpShape->type == RE::hkpShapeType::kMOPP) {
-							const auto mopp = static_cast<const RE::hkpMoppBvTreeShape*>(hkpShape);
-							const auto childShape = mopp ? mopp->child.childShape : nullptr;
-							const auto compressedShape = childShape ? netimmerse_cast<RE::bhkCompressedMeshShape*>(childShape->userData) : nullptr;
-							const auto shapeData = compressedShape ? compressedShape->data.get() : nullptr;
-
-							if (shapeData) {
-								for (auto& meshMaterial : shapeData->meshMaterials) {
-									if (std::ranges::find(blacklistedMat, meshMaterial.materialID) != blacklistedMat.end() || snowState == 2 && meshMaterial.materialID == MAT::kStone) {
-										continue;  //some statics have snow directional mats in non-snowy areas
-									}
-									if (std::ranges::find(stairsMat, meshMaterial.materialID) != stairsMat.end()) {
-										meshMaterial.materialID = MAT::kSnowStairs;
-									} else {
-										meshMaterial.materialID = MAT::kSnow;
-									}
-								}
-							}
-						}
-
-						return RE::BSVisit::BSVisitControl::kContinue;
-					});
-				}
 			}
-			return node;
+
+			return result;
 		}
-		static inline REL::Relocation<decltype(thunk)> func;
 
-		static inline constexpr std::size_t size = 0x6A;
+		static bool is_stairs(MAT a_matID)
+		{
+			return std::ranges::find(stairsMat, a_matID) != stairsMat.end();
+		}
 
-	private:
-		static inline constexpr std::array<MAT, 6> blacklistedMat{ MAT::kSnow, MAT::kSnowStairs, MAT::kCloth, MAT::kGlass, MAT::kBone, MAT::kBarrel };
-		static inline constexpr std::array<MAT, 7> stairsMat{ MAT::kStoneStairs, MAT::kStoneAsStairs, MAT::kStoneStairsBroken, MAT::kWoodAsStairs, MAT::kWoodStairs };
+		static bool is_blacklisted(MAT a_matID)
+		{
+			return std::ranges::find(blacklistedMat, a_matID) != blacklistedMat.end();
+		}
+
+		static inline constexpr std::array blacklistedMat{ MAT::kSnow, MAT::kSnowStairs, MAT::kIce, MAT::kCloth, MAT::kGlass, MAT::kBone, MAT::kBarrel };
+		static inline constexpr std::array stairsMat{ MAT::kStoneStairs, MAT::kStoneAsStairs, MAT::kStoneStairsBroken, MAT::kWoodAsStairs, MAT::kWoodStairs };
 	};
 
+	struct GetMaterialIDPatch
+	{
+		static void Install()
+		{
+			REL::Relocation<std::uintptr_t> target{ REL::ID(35320), 0x600 };
+
+			struct Patch : Xbyak::CodeGenerator
+			{
+				Patch(std::uintptr_t a_func)
+				{
+					Xbyak::Label f;
+
+					mov(r8, rbx);
+					jmp(ptr[rip + f]);
+
+					L(f);
+					dq(a_func);
+				}
+			};
+
+			Patch patch{ reinterpret_cast<std::uintptr_t>(GetMaterialID) };
+			patch.ready();
+
+			auto& trampoline = SKSE::GetTrampoline();
+			SKSE::AllocTrampoline(17);
+
+			_GetMaterialID = trampoline.write_call<5>(target.address(), trampoline.allocate(patch));
+		}
+	private:
+		static MAT GetMaterialID(RE::bhkShape* a_shape, std::uint32_t a_ID, RE::hkpCollidable* a_collidable)
+		{
+			auto matID = _GetMaterialID(a_shape, a_ID);
+			if (a_collidable && !detail::is_blacklisted(matID)) {
+				auto ref = RE::TESHavokUtilities::FindCollidableRef(*a_collidable);
+				if (ref && detail::is_snow_object(ref)) {
+					matID = detail::is_stairs(matID) ? MAT::kSnowStairs : MAT::kSnow;
+				}
+			}
+			return matID;
+		}
+		static inline REL::Relocation<MAT(RE::bhkShape*, std::uint32_t)> _GetMaterialID;
+	};
+	
 	inline void Install()
 	{
-		stl::write_vfunc<RE::TESObjectREFR, Load3D>();
+		GetMaterialIDPatch::Install();	
 		logger::info("Installed dynamic snow material tweak"sv);
 	}
 }

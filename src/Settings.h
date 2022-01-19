@@ -224,7 +224,7 @@ private:
 		static size_t get_data(CSimpleIniA& a_ini, data<std::uint32_t>& a_data, const char* a_section, const char* a_key, const char* a_comment)
 		{
 			try {
-				a_data.value = string::lexical_cast<std::uint32_t>(a_ini.GetValue(a_section, a_key, "0"));
+				a_data.value = string::lexical_cast<std::uint32_t>(a_ini.GetValue(a_section, a_key, std::to_string(a_data.value).c_str()));
 				a_ini.SetValue(a_section, a_key, std::to_string(a_data.value).c_str(), a_comment);
 
 				return a_data.value != 0 ? a_data.space : 0;
