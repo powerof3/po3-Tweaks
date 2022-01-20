@@ -39,7 +39,7 @@ public:
 		void Load(CSimpleIniA& a_ini)
 		{
 			static const char* section = "Fixes";
-			
+
 			//1.5 - remove GetEquippedFix()
 			a_ini.Delete(section, "GetEquipped Fix", true);
 
@@ -57,7 +57,6 @@ public:
 			detail::get_value(a_ini, collisionToggleFix, section, "ToggleCollision Fix", ";Patches ToggleCollision to toggle object collision if selected in console");
 			detail::get_value(a_ini, skinnedDecalDelete, section, "Skinned Decal Delete", ";Immediately delete skinned decals when they're marked for removal (ie. swapping bloody armor)");
 			detail::get_value(a_ini, loadEditorIDs, section, "Load EditorIDs", ";Loads editorIDs for skipped forms at runtime");
-
 		}
 
 		bool queuedRefCrash{ true };
@@ -75,7 +74,6 @@ public:
 		bool skinnedDecalDelete{ true };
 		bool loadEditorIDs{ true };
 
-
 	} fixes;
 
 	struct
@@ -86,7 +84,7 @@ public:
 
 			//1.5 - delete AIFadeOut()
 			a_ini.Delete(section, "Load Door Fade Out", true);
-			
+
 			detail::get_value(a_ini, factionStealing, section, "Faction Stealing", ";Items will be marked stolen until player is friendly with all present members of faction.");
 			detail::get_value(a_ini, voiceModulationValue, section, "Voice Modulation", ";Applies voice distortion effect on NPCs wearing face covering helmets. A value of 1.0 has no effect.\n;Pitch is directly proportional to value. Recommended setting (0.85-0.90).");
 			detail::get_value(a_ini, dopplerShift, section, "Game Time Affects Sounds", ";Scales sound pitch with time speed, eg. Slow Time will massively decrease pitch of all sounds");
@@ -115,7 +113,7 @@ public:
 		bool dopplerShift{ false };
 		bool dynamicSnowMat{ false };
 		bool noWaterPhysicsOnHover{ false };
-		bool screenshotToConsole{ false};
+		bool screenshotToConsole{ false };
 		std::uint32_t noCritSneakMsg{ 0 };
 
 		struct

@@ -148,7 +148,7 @@ namespace ModifySuspendedStackFlushTimeout
 	{
 		inline void Install(double a_milliseconds)
 		{
-			static REL::Relocation<std::uintptr_t> target{ REL::ID(54020), 0x3D };
+			static REL::Relocation<std::uintptr_t> target{ REL::ID(54020), 0x10D };
 
 			struct StackDumpTimeout_Code : Xbyak::CodeGenerator
 			{
