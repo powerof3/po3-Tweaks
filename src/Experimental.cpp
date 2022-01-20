@@ -7,7 +7,7 @@ void Experimental::Install()
 	logger::info("{:*^30}", "EXPERIMENTAL"sv);
 
 	const auto papyrus = SKSE::GetPapyrusInterface();
-	papyrus->Register(::Script::Speedup);
+	papyrus->Register(Script::Speedup);
 
 	if (experimental.orphanedAEFix.value) {
 		CleanupOrphanedActiveEffects::Install();

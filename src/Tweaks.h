@@ -622,8 +622,8 @@ namespace LoadDoorPrompt
 					const auto linkedRef = linkedDoor.get();
 					const auto linkedCell = linkedRef ? linkedRef->GetSaveParentCell() : nullptr;
 					if (linkedCell && linkedCell->IsExteriorCell()) {
-						const auto prompt = Settings::GetSingleton()->tweaks.loadDoorPrompt;
-						return { kInterior, prompt.type.value == 2 ?
+						auto& [type, enter, exit] = Settings::GetSingleton()->tweaks.loadDoorPrompt;
+						return { kInterior, type.value == 2 ?
                                                 cell->GetName() :
                                                 a_cellName };
 					}

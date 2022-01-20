@@ -408,8 +408,7 @@ namespace IsFurnitureAnimTypeFix
 				}
 			}
 
-			const auto log = RE::ConsoleLog::GetSingleton();
-			if (log && log->IsConsoleMode()) {
+            if (const auto log = RE::ConsoleLog::GetSingleton(); log && RE::ConsoleLog::IsConsoleMode()) {
 				log->Print("IsFurnitureAnimType >> %0.2f", a_result);
 			}
 
