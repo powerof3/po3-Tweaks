@@ -11,7 +11,7 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_message)
 			SpellNoAbsorb::Install();
 
 			auto& tweaks = Settings::GetSingleton()->tweaks;
-			if (tweaks.grabbingIsStealing.value) {
+			if (tweaks.grabbingIsStealing) {
 				GrabbingIsStealing::Install();
 			}
 		}

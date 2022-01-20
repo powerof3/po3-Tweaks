@@ -97,7 +97,7 @@ namespace VoiceModulation
 			const auto biped = user ? user->GetBiped() : nullptr;
 
 			if (biped && biped->objects[RE::BIPED_OBJECT::kHead].partClone.get()) {
-				a_handle.SetFrequency(Settings::GetSingleton()->tweaks.voiceModulationValue.value);
+				a_handle.SetFrequency(Settings::GetSingleton()->tweaks.voiceModulationValue);
 			}
 		}
 		static inline REL::Relocation<decltype(thunk)> func;
@@ -625,7 +625,7 @@ namespace LoadDoorPrompt
 					const auto linkedCell = linkedRef ? linkedRef->GetSaveParentCell() : nullptr;
 					if (linkedCell && linkedCell->IsExteriorCell()) {
 						auto& [type, enter, exit] = Settings::GetSingleton()->tweaks.loadDoorPrompt;
-						return { kInterior, type.value == 2 ?
+						return { kInterior, type == 2 ?
                                                 cell->GetName() :
                                                 a_cellName };
 					}
@@ -642,7 +642,7 @@ namespace LoadDoorPrompt
 				return enter;
 			}
 			if (a_type == kInterior) {
-				return type.value == 2 ?
+				return type == 2 ?
                            exit :
                            enter;
 			}
