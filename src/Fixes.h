@@ -330,7 +330,7 @@ namespace Spells
 						}
 					}
 
-					if (Settings::GetSingleton()->fixes.addedSpell.value) {
+					if (Settings::GetSingleton()->fixes.addedSpell) {
 						for (const auto& spell : a_actor->addedSpells) {
 							if (spell && has_no_dispel_flag(*spell)) {
 								Apply(applier, spell);
@@ -475,8 +475,8 @@ namespace SpellNoAbsorb
 		const auto dataHandler = RE::TESDataHandler::GetSingleton();
 		if (dataHandler) {
 			const auto settings = Settings::GetSingleton();
-			const auto noConj = settings->fixes.noConjurationAbsorb.value;
-			const auto noHostile = settings->tweaks.noHostileAbsorb.value;
+			const auto noConj = settings->fixes.noConjurationAbsorb;
+			const auto noHostile = settings->tweaks.noHostileAbsorb;
 
 			if (!noConj && !noHostile) {
 				return;
