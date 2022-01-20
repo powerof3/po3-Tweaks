@@ -200,36 +200,47 @@ namespace DopplerShift
 namespace DynamicSnowMaterial
 {
 	using MAT = RE::MATERIAL_ID;
-	
+
 	struct detail
 	{
+		static bool must_only_contain_textureset(const RE::TESBoundObject* a_base, const std::pair<std::string_view, std::string_view>& a_modelPath)
+		{
+			if (const auto model = a_base->As<RE::TESModelTextureSwap>(); model && model->alternateTextures && model->numAlternateTextures > 0) {
+				std::span altTextures{ model->alternateTextures, model->numAlternateTextures };
+				return std::ranges::all_of(altTextures, [&](const auto& textures) {
+					const auto txst = textures.textureSet;
+					std::string path = txst ? txst->textures[0].textureName.c_str() : std::string();
+					return path.find(a_modelPath.first) != std::string::npos || path.find(a_modelPath.second) != std::string::npos;
+				});
+			}
+
+			return false;
+		}
+
 		static bool is_snow_object(const RE::TESObjectREFR* a_ref)
 		{
 			auto result = false;
-			
-			const auto base = a_ref->GetObjectReference();
-			const auto stat = base ? base->As<RE::TESObjectSTAT>() : nullptr;
-			const auto matObj = stat ? stat->data.materialObj : nullptr;
 
-			if (matObj) {
-				const auto editorID = Cache::EditorID::GetSingleton()->GetEditorID(matObj);
+			const auto base = a_ref->GetObjectReference();
+			if (!base) {
+				return result;
+			}
+
+			const auto stat = base->As<RE::TESObjectSTAT>();
+			const auto matObject = stat ? stat->data.materialObj : nullptr;
+
+			if (matObject) {  //statics
+				const auto editorID = Cache::EditorID::GetSingleton()->GetEditorID(matObject);
 				result = string::icontains(editorID, "snow"sv) && stat->data.materialThresholdAngle >= 90.0f;
 			}
 
-			if (!result) {
-				if (stat && !matObj) {
-					//find statics with snow txst swap
-					const auto model = stat->GetAsModelTextureSwap();
-					if (model && model->alternateTextures) {
-						const std::span span(model->alternateTextures, model->numAlternateTextures);
-						for (const auto& texture : span) {
-							if (const auto txst = texture.textureSet; txst && string::icontains(txst->textures[RE::BSTextureSet::Texture::kDiffuse].textureName, "snow"sv)) {
-								result = true;
-								break;
-							}
-						}
-					}
-				}
+			if (!result && !matObject) {  // snow variants
+				result = must_only_contain_textureset(base, { "Snow", "Mask" }); //dirtcliffmask
+			}
+
+			if (!result) {  //seasons
+				const auto root = a_ref->Get3D();
+				result = root && root->HasExtraData("SOS_SNOW_SHADER");
 			}
 
 			return result;
@@ -253,7 +264,7 @@ namespace DynamicSnowMaterial
 	{
 		static void Install()
 		{
-			REL::Relocation<std::uintptr_t> target{ REL::ID(35320), 0x600 };
+			REL::Relocation<std::uintptr_t> target{ REL::ID(35320), 0x600 }; //BGSImpactManager::PlayImpactEffect
 
 			struct Patch : Xbyak::CodeGenerator
 			{
@@ -277,13 +288,13 @@ namespace DynamicSnowMaterial
 
 			_GetMaterialID = trampoline.write_call<5>(target.address(), trampoline.allocate(patch));
 		}
+
 	private:
 		static MAT GetMaterialID(RE::bhkShape* a_shape, std::uint32_t a_ID, RE::hkpCollidable* a_collidable)
 		{
 			auto matID = _GetMaterialID(a_shape, a_ID);
 			if (a_collidable && !detail::is_blacklisted(matID)) {
-				auto ref = RE::TESHavokUtilities::FindCollidableRef(*a_collidable);
-				if (ref && detail::is_snow_object(ref)) {
+				if (const auto ref = RE::TESHavokUtilities::FindCollidableRef(*a_collidable); ref && detail::is_snow_object(ref)) {
 					matID = detail::is_stairs(matID) ? MAT::kSnowStairs : MAT::kSnow;
 				}
 			}
@@ -291,11 +302,11 @@ namespace DynamicSnowMaterial
 		}
 		static inline REL::Relocation<MAT(RE::bhkShape*, std::uint32_t)> _GetMaterialID;
 	};
-	
+
 	inline void Install()
 	{
-		GetMaterialIDPatch::Install();	
-		
+		GetMaterialIDPatch::Install();
+
 		logger::info("Installed dynamic snow material tweak"sv);
 	}
 }
