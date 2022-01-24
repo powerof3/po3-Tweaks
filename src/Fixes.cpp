@@ -6,51 +6,52 @@ void Fixes::Install(std::uint32_t skse_version)
 
 	logger::info("{:*^30}", "FIXES"sv);
 
-	if (fixes.queuedRefCrash.value) {
+	if (fixes.queuedRefCrash) {
 		QueuedRefCrash::Install();
 	}
-	if (fixes.mapMarker.value) {
-		if (GetModuleHandle(L"DisableFastTravel"))
+	if (fixes.mapMarker) {
+		if (GetModuleHandle(L"DisableFastTravel")) {
 			logger::info("Detected DisableFastTravel, skipping mapMarker fix."sv);
-		else
+		} else {
 			MapMarker::Install();
+		}
 	}
-	if (fixes.dontTakeBookFlag.value) {
+	if (fixes.dontTakeBookFlag) {
 		CantTakeBook::Install();
 	}
-	if (fixes.projectileRange.value) {
+	if (fixes.projectileRange) {
 		ProjectileRange::Install();
 	}
-	if (fixes.combatDialogue.value) {
+	if (fixes.combatDialogue) {
 		CombatDialogue::Install();
 	}
-	if (fixes.addedSpell.value) {
+	if (fixes.addedSpell) {
 		Spells::ReapplyAdded::Install();
 		Spells::DispelAdded::Install();
 	}
-	if (fixes.deathSpell.value) {
+	if (fixes.deathSpell) {
 		Spells::ReapplyOnDeath::Install();
 	}
-	if (fixes.furnitureAnimType.value) {
+	if (fixes.furnitureAnimType) {
 		IsFurnitureAnimTypeFix::Install();
 	}
-	if (fixes.lightAttachCrash.value) {
+	if (fixes.lightAttachCrash) {
 		AttachLightCrash::Install();
 	}
-	if (fixes.getEquipped.value) {
-		//GetEquippedFix::Install();
-	}
-	if (fixes.effectShaderZBuffer.value) {
+	if (fixes.effectShaderZBuffer) {
 		EffectShaderZBufferFix::Install();
 	}
-	if (fixes.collisionToggleFix.value) {
+	if (fixes.collisionToggleFix) {
 		ToggleCollisionFix::Install();
 	}
-	if (fixes.loadEditorIDs.value) {
+	if (fixes.skinnedDecalDelete) {
+		SkinnedDecalDeleteFix::Install();
+	}
+	if (fixes.loadEditorIDs) {
 		LoadFormEditorIDs::Install();
 	}
 #ifdef SKYRIMVR
-	if (fixes.fixVRCrosshairRefEvent.value) {
+	if (fixes.fixVRCrosshairRefEvent) {
 		FixCrosshairRefEvent::Install(skse_version);
 	}
 #endif

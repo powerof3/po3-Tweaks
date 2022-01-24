@@ -18,11 +18,11 @@ namespace Script
 
 		auto experimental = Settings::GetSingleton()->experimental;
 
-		if (experimental.fastRandomInt.value) {
+		if (experimental.fastRandomInt) {
 			a_vm->SetCallableFromTasklets("Utility", "RandomInt", true);
 			logger::info("patched Utility.RandomInt"sv);
 		}
-		if (experimental.fastRandomFloat.value) {
+		if (experimental.fastRandomFloat) {
 			a_vm->SetCallableFromTasklets("Utility", "RandomFloat", true);
 			logger::info("patched Utility.RandomFloat"sv);
 		}
@@ -141,14 +141,66 @@ namespace CleanupOrphanedActiveEffects
 	}
 }
 
-//disable timeout check for Suspended Stack flushing
-namespace RemoveSuspendedStackFlushTimeout
+//modify timeout check for Suspended Stack flushing
+namespace ModifySuspendedStackFlushTimeout
 {
+	namespace ModifyLimit
+	{
+		inline void Install(double a_milliseconds)
+		{
+			static REL::Relocation<std::uintptr_t> target{ REL::ID(53209), 0x3D };
+
+			struct StackDumpTimeout_Code : Xbyak::CodeGenerator
+			{
+				StackDumpTimeout_Code(std::uintptr_t a_address, double a_val)
+				{
+					static auto VAL = static_cast<float>(a_val);
+
+					push(rax);
+
+					mov(rax, stl::unrestricted_cast<std::uintptr_t>(std::addressof(VAL)));
+					mulss(xmm0, ptr[rax]);
+
+					pop(rax);
+
+					jmp(ptr[rip]);
+					dq(a_address + 0x8);
+				}
+			};
+
+			StackDumpTimeout_Code code(target.address(), a_milliseconds);
+			code.ready();
+
+			auto& trampoline = SKSE::GetTrampoline();
+			SKSE::AllocTrampoline(38);
+
+			trampoline.write_branch<6>(
+				target.address(),
+				trampoline.allocate(code));
+
+			logger::info("increased timeout on suspended stack flush to {} seconds"sv, a_milliseconds / 1000.0);
+		}
+	}
+
+	namespace NoLimit
+	{
+		inline void Install()
+		{
+			static REL::Relocation<std::uintptr_t> target{ REL::ID(53209) };
+			REL::safe_write(target.address() + 0x8B, static_cast<std::uint8_t>(0xEB));  // swap jle 0x7e for jmp 0xeb
+
+			logger::info("Removed timeout check on suspended stack flush"sv);
+		}
+	}
+
 	inline void Install()
 	{
-		static REL::Relocation<std::uintptr_t> target{ REL::ID(53209) };
-		REL::safe_write(target.address() + 0x8B, static_cast<std::uint8_t>(0xEB));  // swap jle 0x7e for jmp 0xeb
-
-		logger::info("Removed timeout check on suspended stack flush"sv);
+        if (const auto timeoutSeconds = Settings::GetSingleton()->experimental.stackDumpTimeoutModifier; timeoutSeconds != 30.0) {
+			if (timeoutSeconds == 0.0) {
+				NoLimit::Install();
+			} else {
+				ModifyLimit::Install(timeoutSeconds * 1000.0);
+			}
+		}
 	}
 }

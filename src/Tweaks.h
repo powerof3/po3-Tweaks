@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Cache.h"
 #include "Settings.h"
 
 namespace Tweaks
@@ -75,38 +76,9 @@ namespace FactionStealing
 	inline void Install()
 	{
 		REL::Relocation<std::uintptr_t> func{ REL::ID(39584) };
-		::stl::asm_replace<CanTake>(func.address());
+		stl::asm_replace<CanTake>(func.address());
 
 		logger::info("Installed faction stealing tweak"sv);
-	}
-}
-
-//removes fadeout when going through load doors
-namespace AIFadeOut
-{
-	struct GetFadeState
-	{
-		static std::uint32_t thunk(RE::AIProcess* a_aiProcess)
-		{
-			const auto state = func(a_aiProcess);
-
-			const auto middleProcess = a_aiProcess ? a_aiProcess->middleHigh : nullptr;
-			const auto torsoNode = middleProcess ? middleProcess->torsoNode : nullptr;
-			const auto user = torsoNode ? torsoNode->GetUserData() : nullptr;
-
-			return user && user->IsPlayerRef() ?
-                       state :
-                       4;
-		}
-		static inline REL::Relocation<decltype(thunk)> func;
-	};
-
-	inline void Install()
-	{
-		REL::Relocation<std::uintptr_t> target{ REL::ID(17521), 0x3C5 };
-		::stl::write_thunk_call<GetFadeState>(target.address());
-
-		logger::info("Installed load door fade out tweak"sv);
 	}
 }
 
@@ -123,7 +95,7 @@ namespace VoiceModulation
 			const auto biped = user ? user->GetBiped() : nullptr;
 
 			if (biped && biped->objects[RE::BIPED_OBJECT::kHead].partClone.get()) {
-				a_handle.SetFrequency(Settings::GetSingleton()->tweaks.voiceModulationValue.value);
+				a_handle.SetFrequency(Settings::GetSingleton()->tweaks.voiceModulationValue);
 			}
 		}
 		static inline REL::Relocation<decltype(thunk)> func;
@@ -138,7 +110,7 @@ namespace VoiceModulation
 			0x6e6
 #endif
 		};
-		::stl::write_thunk_call<SetObjectToFollow>(target.address());
+		stl::write_thunk_call<SetObjectToFollow>(target.address());
 
 		logger::info("Installed voice modulation tweak"sv);
 	}
@@ -186,7 +158,7 @@ namespace DopplerShift
 		static void Install()
 		{
 			REL::Relocation<std::uintptr_t> func{ REL::ID(66355) };
-			::stl::asm_replace<DefaultSound>(func.address());  //BSSoundHandle::PlaySound
+			stl::asm_replace<DefaultSound>(func.address());  //BSSoundHandle::PlaySound
 		}
 
 		static bool func(RE::BSSoundHandle& a_handle)
@@ -203,7 +175,7 @@ namespace DopplerShift
 		static void Install()
 		{
 			REL::Relocation<std::uintptr_t> func{ REL::ID(66356) };
-			::stl::asm_replace<Dialogue>(func.address());  //BSSoundHandle::PlaySound3D
+			stl::asm_replace<Dialogue>(func.address());  //BSSoundHandle::PlaySound3D
 		}
 
 		static bool func(RE::BSSoundHandle& a_handle, std::uint32_t a_unk02)
@@ -227,143 +199,114 @@ namespace DopplerShift
 //applies snow havok material to objects using snow dir mat
 namespace DynamicSnowMaterial
 {
-	struct Load3D
+	using MAT = RE::MATERIAL_ID;
+
+	struct detail
 	{
-		using MAT = RE::MATERIAL_ID;
-
-		static RE::NiAVObject* thunk(RE::TESObjectREFR* a_ref, bool a_backgroundLoading)
+		static bool must_only_contain_textureset(const RE::TESBoundObject* a_base, const std::pair<std::string_view, std::string_view>& a_modelPath)
 		{
-			auto node = func(a_ref, a_backgroundLoading);
-			if (node) {
-				const auto get_directional_mat = [&]() {
-					const auto base = a_ref->GetObjectReference();
-					const auto stat = base ? base->As<RE::TESObjectSTAT>() : nullptr;
-					const auto matObj = stat ? stat->data.materialObj : nullptr;
-
-					auto result = matObj != nullptr && matObj->directionalData.flags.all(RE::BSMaterialObject::DIRECTIONAL_DATA::Flag::kSnow) && stat->data.materialThresholdAngle >= 90.0f;
-					if (!result && stat) {
-						//find statics with snow txst swap
-						if (const auto model = stat->GetAsModelTextureSwap(); model && model->alternateTextures) {
-                            const std::span span(model->alternateTextures, model->numAlternateTextures);
-							for (const auto& texture : span) {
-								if (const auto txst = texture.textureSet; txst && string::icontains(txst->textures[RE::BSTextureSet::Texture::kDiffuse].textureName, "snow"sv)) {
-									result = true;
-									break;
-								}
-							}
-						}
-					}
-					return result;
-				};
-
-				if (!get_directional_mat()) {
-					return node;
-				}
-
-				const auto cell = a_ref->GetSaveParentCell();
-				if (!cell) {
-					return node;
-				}
-
-				const auto sky = RE::Sky::GetSingleton();
-				std::uint32_t snowState = sky && sky->GetIsSnowing() ? 1 : 0;
-
-				if (snowState == 0) {
-					const auto xRegion = cell->extraList.GetByType<RE::ExtraRegionList>();
-					const auto regionList = xRegion ? xRegion->list : nullptr;
-					if (regionList) {
-						static std::vector<RE::FormID> regions;
-						if (regions.empty()) {
-							const auto dataHandler = RE::TESDataHandler::GetSingleton();
-							if (dataHandler) {
-								const auto is_snowy_region = [&](const RE::TESRegion* a_region) {
-									if (const auto list = a_region->dataList; list) {
-										for (const auto& data : list->regionDataList) {
-											if (const auto weatherData = data && data->GetType() == RE::TESRegionData::Type::kWeather ?
-                                                                             static_cast<RE::TESRegionDataWeather*>(data) :
-                                                                             nullptr;
-												weatherData) {
-												for (const auto& weatherType : weatherData->weatherTypes) {
-													if (const auto weather = weatherType->weather; weather && weather->data.flags.any(RE::TESWeather::WeatherDataFlag::kSnow)) {
-														return true;
-													}
-												}
-											}
-										}
-									}
-									return false;
-								};
-								for (const auto& region : dataHandler->GetFormArray<RE::TESRegion>()) {
-									if (region && is_snowy_region(region)) {
-										regions.push_back(region->GetFormID());
-									}
-								}
-							}
-						}
-
-						for (const auto& region : *regionList) {
-							if (region && std::ranges::find(regions, region->GetFormID()) != regions.end()) {
-								snowState = 2;
-								break;
-							}
-						}
-					}
-				}
-
-				if (snowState == 0) {
-					return node;
-				}
-
-				if (const auto world = cell->GetbhkWorld(); world) {
-					RE::BSWriteLockGuard locker(world->worldLock);
-
-					RE::BSVisit::TraverseScenegraphCollision(node, [&](const RE::bhkNiCollisionObject* a_col) -> RE::BSVisit::BSVisitControl {
-						const auto body = a_col->body.get();
-						if (!body) {
-							return RE::BSVisit::BSVisitControl::kContinue;
-						}
-
-						const auto hkpBody = static_cast<RE::hkpWorldObject*>(body->referencedObject.get());
-						const auto hkpShape = hkpBody ? hkpBody->GetShape() : nullptr;
-
-						if (hkpShape && hkpShape->type == RE::hkpShapeType::kMOPP) {
-							const auto mopp = static_cast<const RE::hkpMoppBvTreeShape*>(hkpShape);
-							const auto childShape = mopp ? mopp->child.childShape : nullptr;
-							const auto compressedShape = childShape ? netimmerse_cast<RE::bhkCompressedMeshShape*>(childShape->userData) : nullptr;
-							const auto shapeData = compressedShape ? compressedShape->data.get() : nullptr;
-
-							if (shapeData) {
-								for (auto& meshMaterial : shapeData->meshMaterials) {
-									if (std::ranges::find(blacklistedMat, meshMaterial.materialID) != blacklistedMat.end() || snowState == 2 && meshMaterial.materialID == MAT::kStone) {
-										continue;  //some statics have snow directional mats in non-snowy areas
-									}
-									if (std::ranges::find(stairsMat, meshMaterial.materialID) != stairsMat.end()) {
-										meshMaterial.materialID = MAT::kSnowStairs;
-									} else {
-										meshMaterial.materialID = MAT::kSnow;
-									}
-								}
-							}
-						}
-
-						return RE::BSVisit::BSVisitControl::kContinue;
-					});
-				}
+			if (const auto model = a_base->As<RE::TESModelTextureSwap>(); model && model->alternateTextures && model->numAlternateTextures > 0) {
+				std::span altTextures{ model->alternateTextures, model->numAlternateTextures };
+				return std::ranges::all_of(altTextures, [&](const auto& textures) {
+					const auto txst = textures.textureSet;
+					std::string path = txst ? txst->textures[0].textureName.c_str() : std::string();
+					return path.find(a_modelPath.first) != std::string::npos || path.find(a_modelPath.second) != std::string::npos;
+				});
 			}
-			return node;
-		}
-		static inline REL::Relocation<decltype(thunk)> func;
 
-		static inline constexpr std::size_t size = 0x6A;
+			return false;
+		}
+
+		static bool is_snow_object(const RE::TESObjectREFR* a_ref)
+		{
+			auto result = false;
+
+			const auto base = a_ref->GetObjectReference();
+			if (!base) {
+				return result;
+			}
+
+			const auto stat = base->As<RE::TESObjectSTAT>();
+			const auto matObject = stat ? stat->data.materialObj : nullptr;
+
+			if (matObject) {  //statics
+				const auto editorID = Cache::EditorID::GetSingleton()->GetEditorID(matObject);
+				result = string::icontains(editorID, "snow"sv) && stat->data.materialThresholdAngle >= 90.0f;
+			}
+
+			if (!result && !matObject) {  // snow variants
+				result = must_only_contain_textureset(base, { "Snow", "Mask" }); //dirtcliffmask
+			}
+
+			if (!result) {  //seasons
+				const auto root = a_ref->Get3D();
+				result = root && root->HasExtraData("SOS_SNOW_SHADER");
+			}
+
+			return result;
+		}
+
+		static bool is_stairs(MAT a_matID)
+		{
+			return std::ranges::find(stairsMat, a_matID) != stairsMat.end();
+		}
+
+		static bool is_blacklisted(MAT a_matID)
+		{
+			return std::ranges::find(blacklistedMat, a_matID) != blacklistedMat.end();
+		}
+
+		static inline constexpr std::array blacklistedMat{ MAT::kSnow, MAT::kSnowStairs, MAT::kIce, MAT::kCloth, MAT::kGlass, MAT::kBone, MAT::kBarrel };
+		static inline constexpr std::array stairsMat{ MAT::kStoneStairs, MAT::kStoneAsStairs, MAT::kStoneStairsBroken, MAT::kWoodAsStairs, MAT::kWoodStairs };
+	};
+
+	struct GetMaterialIDPatch
+	{
+		static void Install()
+		{
+			REL::Relocation<std::uintptr_t> target{ REL::ID(35320), 0x600 }; //BGSImpactManager::PlayImpactEffect
+
+			struct Patch : Xbyak::CodeGenerator
+			{
+				Patch(std::uintptr_t a_func)
+				{
+					Xbyak::Label f;
+
+					mov(r8, rbx);
+					jmp(ptr[rip + f]);
+
+					L(f);
+					dq(a_func);
+				}
+			};
+
+			Patch patch{ reinterpret_cast<std::uintptr_t>(GetMaterialID) };
+			patch.ready();
+
+			auto& trampoline = SKSE::GetTrampoline();
+			SKSE::AllocTrampoline(31);
+
+			_GetMaterialID = trampoline.write_call<5>(target.address(), trampoline.allocate(patch));
+		}
 
 	private:
-		static inline constexpr std::array<MAT, 6> blacklistedMat{ MAT::kSnow, MAT::kSnowStairs, MAT::kCloth, MAT::kGlass, MAT::kBone, MAT::kBarrel };
-		static inline constexpr std::array<MAT, 7> stairsMat{ MAT::kStoneStairs, MAT::kStoneAsStairs, MAT::kStoneStairsBroken, MAT::kWoodAsStairs, MAT::kWoodStairs };
+		static MAT GetMaterialID(RE::bhkShape* a_shape, std::uint32_t a_ID, RE::hkpCollidable* a_collidable)
+		{
+			auto matID = _GetMaterialID(a_shape, a_ID);
+			if (a_collidable && !detail::is_blacklisted(matID)) {
+				if (const auto ref = RE::TESHavokUtilities::FindCollidableRef(*a_collidable); ref && detail::is_snow_object(ref)) {
+					matID = detail::is_stairs(matID) ? MAT::kSnowStairs : MAT::kSnow;
+				}
+			}
+			return matID;
+		}
+		static inline REL::Relocation<MAT(RE::bhkShape*, std::uint32_t)> _GetMaterialID;
 	};
 
 	inline void Install()
 	{
-		::stl::write_vfunc<RE::TESObjectREFR, Load3D>();
+		GetMaterialIDPatch::Install();
+
 		logger::info("Installed dynamic snow material tweak"sv);
 	}
 }
@@ -418,8 +361,8 @@ namespace NoRipplesOnHover
 
 	inline void Install()
 	{
-		::stl::write_vfunc<RE::PlayerCharacter, ProcessInWater::Player>();
-		::stl::write_vfunc<RE::Character, ProcessInWater::NPC>();
+		stl::write_vfunc<RE::PlayerCharacter, ProcessInWater::Player>();
+		stl::write_vfunc<RE::Character, ProcessInWater::NPC>();
 
 		logger::info("Installed no ripples on hover tweak"sv);
 	}
@@ -443,7 +386,7 @@ namespace ScreenshotToConsole
 	inline void Install()
 	{
 		REL::Relocation<std::uintptr_t> target{ REL::ID(35882), 0xA8 };
-		::stl::write_thunk_call<DebugNotification>(target.address());
+		stl::write_thunk_call<DebugNotification>(target.address());
 
 		logger::info("Installed screenshot to console tweak"sv);
 	}
@@ -542,7 +485,7 @@ namespace SitToWait
 			0x681
 #endif
 		};
-		::stl::write_thunk_call<HandleWaitRequest>(target.address());
+		stl::write_thunk_call<HandleWaitRequest>(target.address());
 
 		logger::info("Installed sit to wait tweak"sv);
 	}
@@ -555,7 +498,7 @@ namespace NoCheatMode
 		static void Install()
 		{
 			REL::Relocation<std::uintptr_t> func{ REL::ID(22339) };
-			::stl::asm_replace<GodMode>(func.address());
+			stl::asm_replace<GodMode>(func.address());
 		}
 
 		static bool func()
@@ -574,7 +517,7 @@ namespace NoCheatMode
 		static void Install()
 		{
 			REL::Relocation<std::uintptr_t> func{ REL::ID(22340) };
-			::stl::asm_replace<ImmortalMode>(func.address());
+			stl::asm_replace<ImmortalMode>(func.address());
 		}
 
 		static bool func()
@@ -690,8 +633,8 @@ namespace LoadDoorPrompt
 					const auto linkedRef = linkedDoor.get();
 					const auto linkedCell = linkedRef ? linkedRef->GetSaveParentCell() : nullptr;
 					if (linkedCell && linkedCell->IsExteriorCell()) {
-						const auto prompt = Settings::GetSingleton()->tweaks.loadDoorPrompt;
-						return { kInterior, prompt.type.value == 2 ?
+						auto& [type, enter, exit] = Settings::GetSingleton()->tweaks.loadDoorPrompt;
+						return { kInterior, type == 2 ?
                                                 cell->GetName() :
                                                 a_cellName };
 					}
@@ -708,7 +651,7 @@ namespace LoadDoorPrompt
 				return enter;
 			}
 			if (a_type == kInterior) {
-				return type.value == 2 ?
+				return type == 2 ?
                            exit :
                            enter;
 			}
@@ -741,8 +684,8 @@ namespace LoadDoorPrompt
 	{
 		REL::Relocation<std::uintptr_t> target{ REL::ID(17522) };
 
-		::stl::write_thunk_call<Locked>(target.address() + 0x140);
-		::stl::write_thunk_call<Normal>(target.address() + 0x168);
+		stl::write_thunk_call<Locked>(target.address() + 0x140);
+		stl::write_thunk_call<Normal>(target.address() + 0x168);
 
 		logger::info("Installed load door activate prompt tweak"sv);
 	}
@@ -776,15 +719,15 @@ namespace NoPoisonPrompt
 
 		switch (a_type) {
 		case 1:
-			::stl::write_thunk_call<ShowPoisonConfirmationPrompt>(target.address() + 0x10B);
+			stl::write_thunk_call<ShowPoisonConfirmationPrompt>(target.address() + 0x10B);
 			break;
 		case 2:
-			::stl::write_thunk_call<ShowPoisonInformationPrompt>(target.address() + 0x143);
+			stl::write_thunk_call<ShowPoisonInformationPrompt>(target.address() + 0x143);
 			break;
 		case 3:
 			{
-				::stl::write_thunk_call<ShowPoisonConfirmationPrompt>(target.address() + 0x10B);
-				::stl::write_thunk_call<ShowPoisonInformationPrompt>(target.address() + 0x143);
+				stl::write_thunk_call<ShowPoisonConfirmationPrompt>(target.address() + 0x10B);
+				stl::write_thunk_call<ShowPoisonInformationPrompt>(target.address() + 0x143);
 			}
 			break;
 		default:

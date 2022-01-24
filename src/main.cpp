@@ -10,8 +10,8 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_message)
 		{
 			SpellNoAbsorb::Install();
 
-			auto tweaks = Settings::GetSingleton()->tweaks;
-			if (tweaks.grabbingIsStealing.value) {
+			auto& tweaks = Settings::GetSingleton()->tweaks;
+			if (tweaks.grabbingIsStealing) {
 				GrabbingIsStealing::Install();
 			}
 		}
@@ -72,12 +72,11 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 
 	SKSE::Init(a_skse);
 
-	auto trampolineSize = Settings::GetSingleton()->Load();
-	SKSE::AllocTrampoline(trampolineSize * 16);
-	const auto skse_version = a_skse->SKSEVersion();
+	Settings::GetSingleton()->Load();
+
 	logger::info("{:*^30}", "PATCH START"sv);
 
-	Fixes::Install(skse_version);
+	Fixes::Install(a_skse->SKSEVersion());
 	Tweaks::Install();
 	Experimental::Install();
 

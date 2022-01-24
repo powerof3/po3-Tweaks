@@ -6,44 +6,41 @@ void Tweaks::Install()
 
 	logger::info("{:*^30}", "TWEAKS"sv);
 
-	if (tweaks.factionStealing.value) {
+	if (tweaks.factionStealing) {
 		FactionStealing::Install();
 	}
-	if (tweaks.aiFadeOut.value) {
-		//AIFadeOut::Install();
-	}
-	if (tweaks.voiceModulationValue.value != 1.0f) {
+	if (tweaks.voiceModulationValue != 1.0f) {
 		VoiceModulation::Install();
 	}
-	if (tweaks.dopplerShift.value) {
+	if (tweaks.dopplerShift) {
 		DopplerShift::Install();
 	}
-	if (tweaks.dynamicSnowMat.value) {
+	if (tweaks.dynamicSnowMat) {
 		DynamicSnowMaterial::Install();
 	}
-	if (tweaks.noWaterPhysicsOnHover.value) {
+	if (tweaks.noWaterPhysicsOnHover) {
 		NoRipplesOnHover::Install();
 	}
-	if (tweaks.screenshotToConsole.value) {
+	if (tweaks.screenshotToConsole) {
 		ScreenshotToConsole::Install();
 	}
-	if (tweaks.noCritSneakMsg.value != 0) {
-		NoCritSneakMessage::Install(tweaks.noCritSneakMsg.value);
+	if (tweaks.noCritSneakMsg != 0) {
+		NoCritSneakMessage::Install(tweaks.noCritSneakMsg);
 	}
-	if (tweaks.sitToWait.active.value) {
+	if (tweaks.sitToWait.active) {
 		SitToWait::Install();
 	}
-	if (tweaks.noCheatMode.value != 0) {
-		NoCheatMode::Install(tweaks.noCheatMode.value);
+	if (tweaks.noCheatMode != 0) {
+		NoCheatMode::Install(tweaks.noCheatMode);
 	}
-	if (tweaks.loadDoorPrompt.type.value != 0) {
+	if (tweaks.loadDoorPrompt.type != 0) {
 		LoadDoorPrompt::Install();
 	}
-	if (tweaks.noPoisonPrompt.value != 0) {
-		NoPoisonPrompt::Install(tweaks.noPoisonPrompt.value);
+	if (tweaks.noPoisonPrompt != 0) {
+		NoPoisonPrompt::Install(tweaks.noPoisonPrompt);
 	}
 	#ifdef SKYRIMVR
-	if (tweaks.rememberLockPickAngle.value) {
+	if (tweaks.rememberLockPickAngle) {
 		RememberLockPickAngle::Install();
 	}
 	#endif
