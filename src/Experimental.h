@@ -178,7 +178,7 @@ namespace ModifySuspendedStackFlushTimeout
 				target.address(),
 				trampoline.allocate(code));
 
-			logger::info("increased timeout on suspended stack flush to {} seconds"sv, a_milliseconds / 1000.0);
+			logger::info("set timeout on suspended stack flush to {} seconds"sv, a_milliseconds / 1000.0);
 		}
 	}
 

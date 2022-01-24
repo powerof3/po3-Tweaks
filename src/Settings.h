@@ -39,7 +39,7 @@ public:
 		void Load(CSimpleIniA& a_ini)
 		{
 			static const char* section = "Fixes";
-			
+
 			//1.5 - remove GetEquippedFix()
 			a_ini.Delete(section, "GetEquipped Fix", true);
 
@@ -90,7 +90,7 @@ public:
 
 			//1.5 - delete AIFadeOut()
 			a_ini.Delete(section, "Load Door Fade Out", true);
-			
+
 			detail::get_value(a_ini, factionStealing, section, "Faction Stealing", ";Items will be marked stolen until player is friendly with all present members of faction.");
 			detail::get_value(a_ini, voiceModulationValue, section, "Voice Modulation", ";Applies voice distortion effect on NPCs wearing face covering helmets. A value of 1.0 has no effect.\n;Pitch is directly proportional to value. Recommended setting (0.85-0.90).");
 			detail::get_value(a_ini, dopplerShift, section, "Game Time Affects Sounds", ";Scales sound pitch with time speed, eg. Slow Time will massively decrease pitch of all sounds");
@@ -166,7 +166,7 @@ public:
 			detail::get_value(a_ini, fastRandomFloat, section, "Fast RandomFloat()", ";Speeds up Utility.RandomFloat calls.");
 			detail::get_value(a_ini, orphanedAEFix, section, "Clean Orphaned ActiveEffects", ";Removes active effects from NPCs with missing ability perks.");
 			detail::get_value(a_ini, updateGameTimers, section, "Update GameHour Timers", ";Updates game timers when advancing time using GameHour.SetValue.");
-			detail::get_value(a_ini, stackDumpTimeoutModifier, section, "Stack Dump Timeout Modifier", ";How many seconds before Papyrus will start dumping script stacks (vanilla : 30 seconds). Setting this to 0 will disable the timeout (warning: this may result in a locked state if Skyrim can't dump stacks).");
+			detail::get_value(a_ini, stackDumpTimeoutModifier, section, "Stack Dump Timeout Modifier", ";How many seconds Papyrus will use dumping script stacks (vanilla : 30 seconds). Setting this to 0 will disable the timeout (warning: this may result in a locked state if Skyrim can't dump stacks).");
 		}
 
 		bool fastRandomInt{ false };
