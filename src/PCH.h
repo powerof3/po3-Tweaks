@@ -21,9 +21,7 @@ using namespace std::literals;
 
 namespace stl
 {
-	using SKSE::stl::adjust_pointer;
-	using SKSE::stl::is_in;
-	using SKSE::stl::to_underlying;
+	using namespace SKSE::stl;
 
 	void asm_replace(std::uintptr_t a_from, std::size_t a_size, std::uintptr_t a_to);
 
