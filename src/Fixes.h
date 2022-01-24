@@ -659,7 +659,7 @@ namespace SkinnedDecalDeleteFix
 		{
 			auto& result = func(a_this, a_return, a_item);
 
-			if (a_item) {
+			if (a_item && (*a_item)->initialized) {
 				auto decal = (*a_item)->As<RE::BSTempEffectGeometryDecal>();
 				auto decalNode = decal ? decal->decalNode : nullptr;
 				if (decalNode && decalNode->parent) {
