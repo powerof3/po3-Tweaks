@@ -166,7 +166,7 @@ public:
 			detail::get_value(a_ini, fastRandomFloat, section, "Fast RandomFloat()", ";Speeds up Utility.RandomFloat calls.");
 			detail::get_value(a_ini, orphanedAEFix, section, "Clean Orphaned ActiveEffects", ";Removes active effects from NPCs with missing ability perks.");
 			detail::get_value(a_ini, updateGameTimers, section, "Update GameHour Timers", ";Updates game timers when advancing time using GameHour.SetValue.");
-			detail::get_value(a_ini, stackDumpTimeoutModifier, section, "Stack Dump Timeout Modifier", ";How many seconds Papyrus will use dumping script stacks (vanilla : 30 seconds). Setting this to 0 will disable the timeout (warning: this may result in a locked state if Skyrim can't dump stacks).");
+			detail::get_value(a_ini, stackDumpTimeoutModifier, section, "Stack Dump Timeout Modifier", ";How many seconds Papyrus will try to dump script stacks (vanilla : 30 seconds). Setting this to 0 will disable the timeout (warning: this may result in a locked state if Skyrim can't dump stacks).");
 		}
 
 		bool fastRandomInt{ false };
