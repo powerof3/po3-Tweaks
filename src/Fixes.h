@@ -250,7 +250,7 @@ namespace Spells
 			{
 				const auto actor = stl::adjust_pointer<RE::Character>(a_list, -0x70);
 				const auto caster = actor && !actor->IsPlayerRef() && !actor->addedSpells.empty() ?
-                                        actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
+				                        actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
                                         nullptr;
 				if (caster) {
 					detail::PermanentMagicFunctor applier{ caster, actor };
@@ -306,7 +306,7 @@ namespace Spells
 			{
 				const auto node = func(a_actor, a_backgroundLoading);
 				const auto caster = node && a_actor->IsDead() && !a_actor->IsPlayerRef() ?
-                                        a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
+				                        a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
                                         nullptr;
 				if (caster) {
 					detail::PermanentMagicFunctor applier{ caster, a_actor };
@@ -408,7 +408,7 @@ namespace IsFurnitureAnimTypeFix
 				}
 			}
 
-            if (const auto log = RE::ConsoleLog::GetSingleton(); log && RE::ConsoleLog::IsConsoleMode()) {
+			if (const auto log = RE::ConsoleLog::GetSingleton(); log && RE::ConsoleLog::IsConsoleMode()) {
 				log->Print("IsFurnitureAnimType >> %0.2f", a_result);
 			}
 
@@ -436,7 +436,7 @@ namespace AttachLightCrash
 			if (a_hitEffect->IsModelAttached()) {
 				auto root = a_hitEffect->GetTargetRoot();
 				const auto attachLightObj = root ?
-                                                root->GetObjectByName(RE::FixedStrings::GetSingleton()->attachLight) :  //crash here because no null check
+				                                root->GetObjectByName(RE::FixedStrings::GetSingleton()->attachLight) :  //crash here because no null check
                                                 nullptr;
 				if (attachLightObj) {
 					root = attachLightObj;
@@ -685,6 +685,28 @@ namespace SkinnedDecalDeleteFix
 	}
 }
 
+namespace JumpingBonusFix
+{
+	struct GetScale
+	{
+		static float thunk(RE::Actor* a_actor)
+		{
+			const auto jumpingBonus = 1.0f + (a_actor->GetActorValue(RE::ActorValue::kJumpingBonus) / 100.0f);
+
+		    return func(a_actor) * jumpingBonus;
+		}
+		static inline REL::Relocation<decltype(thunk)> func;
+	};
+
+	inline void Install()
+	{
+		REL::Relocation<std::uintptr_t> target{ REL::ID(36271), 0x190 };
+		stl::write_thunk_call<GetScale>(target.address());
+
+		logger::info("Installed jumping bonus fix"sv);
+	}
+}
+
 namespace LoadFormEditorIDs
 {
 	struct detail
@@ -910,9 +932,9 @@ namespace FixCrosshairRefEvent
 		LookupByHandle::sksevr_base = reinterpret_cast<uintptr_t>(GetModuleHandleA("sksevr_1_4_15"));
 		bool code_match = true;
 		const uint8_t* read_addr = (uint8_t*)(uintptr_t)(LookupByHandle::sksevr_base + 0x52ef0);
-		static const uint8_t read_expected[] = { 0x48, 0x8b, 0x05, 0xf9, 0xaa, 0x10, 0x00};
+		static const uint8_t read_expected[] = { 0x48, 0x8b, 0x05, 0xf9, 0xaa, 0x10, 0x00 };
 		const uint8_t* write_addr = (uint8_t*)(uintptr_t)(LookupByHandle::sksevr_base + 0xdd15);
-		static const uint8_t write_expected[] = { 0x48, 0x89, 0x0d, 0xd4, 0xfc, 0x14, 0x00};
+		static const uint8_t write_expected[] = { 0x48, 0x89, 0x0d, 0xd4, 0xfc, 0x14, 0x00 };
 		if (std::memcmp((const void*)read_addr, read_expected, sizeof(read_expected)) && std::memcmp((const void*)write_addr, write_expected, sizeof(write_expected))) {
 			logger::info("VR CrosshairRefEvent: Read and write crosshair code is not expected"sv);
 			code_match = false;
@@ -920,8 +942,7 @@ namespace FixCrosshairRefEvent
 		if (skse_version == 33554624 && code_match) {  //2.0.12
 			LookupByHandle::patchSKSE = true;
 			logger::info("VR CrosshairRefEvent: Found patchable sksevr_1_4_15.dll version {} with base {}", skse_version, LookupByHandle::sksevr_base);
-		}
-		else
+		} else
 			logger::info("VR CrosshairRefEvent: Found unknown sksevr_1_4_15.dll version {} with base {}; not patching", skse_version, LookupByHandle::sksevr_base);
 		REL::Relocation<std::uintptr_t> target{ REL::Offset(0x6D2F82) };
 		stl::write_thunk_call<LookupByHandle>(target.address());

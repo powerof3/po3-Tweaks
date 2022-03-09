@@ -47,6 +47,9 @@ void Fixes::Install(std::uint32_t skse_version)
 	if (fixes.skinnedDecalDelete) {
 		SkinnedDecalDeleteFix::Install();
 	}
+	if (fixes.jumpingBonusFix) {
+		JumpingBonusFix::Install();
+	}
 	if (fixes.loadEditorIDs) {
 		LoadFormEditorIDs::Install();
 	}
