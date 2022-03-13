@@ -26,7 +26,7 @@ namespace FactionStealing
 			{
 				const auto favorCost = GetFavorCost(a_playerBase, a_npc);
 				return favorCost > 1 ?
-                           a_cost <= favorCost :
+				           a_cost <= favorCost :
                            false;
 			}
 		};
@@ -234,8 +234,8 @@ namespace DynamicSnowMaterial
 				result = string::icontains(editorID, "snow"sv) && stat->data.materialThresholdAngle >= 90.0f;
 			}
 
-			if (!result && !matObject) {  // snow variants
-				result = must_only_contain_textureset(base, { "Snow", "Mask" }); //dirtcliffmask
+			if (!result && !matObject) {                                          // snow variants
+				result = must_only_contain_textureset(base, { "Snow", "Mask" });  //dirtcliffmask
 			}
 
 			if (!result) {  //seasons
@@ -264,7 +264,7 @@ namespace DynamicSnowMaterial
 	{
 		static void Install()
 		{
-			REL::Relocation<std::uintptr_t> target{ REL::ID(35320), 0x600 }; //BGSImpactManager::PlayImpactEffect
+			REL::Relocation<std::uintptr_t> target{ REL::ID(35320), 0x600 };  //BGSImpactManager::PlayImpactEffect
 
 			struct Patch : Xbyak::CodeGenerator
 			{
@@ -395,30 +395,38 @@ namespace ScreenshotToConsole
 //suppress notifications
 namespace NoCritSneakMessage
 {
-	inline constexpr std::array<std::pair<std::uintptr_t, std::uintptr_t>, 2> ranges{
-		std::make_pair(0x20D, 0x220),  //crit
-		std::make_pair(0x2D3, 0x2E6),  //sneak
-	};
-
 	inline void Install(std::uint32_t a_type)
 	{
 		REL::Relocation<std::uintptr_t> target{ REL::ID(37633) };
 
+		std::array id{
+			std::make_pair(0x20D, 0x220),  //crit
+			std::make_pair(0x2D3, 0x2E6),  //sneak
+		};
+
 		switch (a_type) {
 		case 1:
-			for (uintptr_t i = 0x20D; i < 0x220; ++i) {
-				REL::safe_write(target.address() + i, REL::NOP);
+			{
+				const auto& [start, end] = id[0];
+				for (auto i = start; i < end; ++i) {
+					REL::safe_write(target.address() + i, REL::NOP);
+				}
 			}
 			break;
 		case 2:
-			for (uintptr_t i = 0x2D3; i < 0x2E6; ++i) {
-				REL::safe_write(target.address() + i, REL::NOP);
+			{
+				const auto& [start, end] = id[1];
+				for (auto i = start; i < end; ++i) {
+					REL::safe_write(target.address() + i, REL::NOP);
+				}
 			}
 			break;
 		case 3:
-			for (const auto& [start, end] : ranges) {
-				for (uintptr_t i = start; i < end; ++i) {
-					REL::safe_write(target.address() + i, REL::NOP);
+			{
+				for (const auto& [start, end] : id) {
+					for (auto i = start; i < end; ++i) {
+						REL::safe_write(target.address() + i, REL::NOP);
+					}
 				}
 			}
 			break;
@@ -571,7 +579,7 @@ namespace GrabbingIsStealing
 		EventResult ProcessEvent(const RE::TESGrabReleaseEvent* a_event, RE::BSTEventSource<RE::TESGrabReleaseEvent>*) override
 		{
 			const auto ref = a_event && a_event->grabbed ?
-                                 a_event->ref :
+			                     a_event->ref :
                                  RE::TESObjectREFRPtr();
 
 			if (ref) {
@@ -635,7 +643,7 @@ namespace LoadDoorPrompt
 					if (linkedCell && linkedCell->IsExteriorCell()) {
 						auto& [type, enter, exit] = Settings::GetSingleton()->tweaks.loadDoorPrompt;
 						return { kInterior, type == 2 ?
-                                                cell->GetName() :
+												cell->GetName() :
                                                 a_cellName };
 					}
 				}
@@ -652,7 +660,7 @@ namespace LoadDoorPrompt
 			}
 			if (a_type == kInterior) {
 				return type == 2 ?
-                           exit :
+				           exit :
                            enter;
 			}
 			return a_default;

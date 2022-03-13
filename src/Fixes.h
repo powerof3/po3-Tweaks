@@ -693,7 +693,7 @@ namespace JumpingBonusFix
 		{
 			const auto jumpingBonus = 1.0f + (a_actor->GetActorValue(RE::ActorValue::kJumpingBonus) / 100.0f);
 
-		    return func(a_actor) * jumpingBonus;
+			return func(a_actor) * jumpingBonus;
 		}
 		static inline REL::Relocation<decltype(thunk)> func;
 	};

@@ -31,7 +31,13 @@ public:
 		//EXPERIMENTAL
 		experimental.Load(ini, usesOldPatches);
 
-		ini.SaveFile(path);
+		(void*)ini.SaveFile(path);
+	}
+
+	bool GetTweakInstalled(std::string_view a_tweak)
+	{
+		const auto it = settingsMap.find(stl::as_string(a_tweak));
+		return it != settingsMap.end() ? it->second : false;
 	}
 
 	struct
@@ -110,7 +116,7 @@ public:
 			detail::get_value(a_ini, loadDoorPrompt.exit, section, "Exit Label", nullptr);
 			detail::get_value(a_ini, noPoisonPrompt, section, "No Poison Prompt", ";Disables poison confirmation messages.\n;0 - off, 1 - disable confirmation, 2 - show other messages as notifications (may clip with inventory menu), 3 - both");
 #ifdef SKYRIMVR
-			detail::get_value(a_ini, rememberLockPickAngle, section, "Remember Lock Pick Angle", "; Angle is preserved after break");
+			detail::get_value(a_ini, rememberLockPickAngle, section, "Remember Lock Pick Angle", ";Angle is preserved after break");
 #endif
 			if (a_clearOld) {
 				logger::info("Replacing old Patches section with Tweaks");
@@ -182,38 +188,33 @@ public:
 private:
 	struct detail
 	{
-		static void get_value(CSimpleIniA& a_ini, std::uint32_t& a_value, const char* a_section, const char* a_key, const char* a_comment)
+		template <class T>
+		static void get_value(CSimpleIniA& a_ini, T& a_value, const char* a_section, const char* a_key, const char* a_comment)
 		{
 			try {
-				a_value = string::lexical_cast<std::uint32_t>(a_ini.GetValue(a_section, a_key, std::to_string(a_value).c_str()));
-				a_ini.SetValue(a_section, a_key, std::to_string(a_value).c_str(), a_comment);
+				if constexpr (std::is_same_v<bool, T>) {
+					a_value = a_ini.GetBoolValue(a_section, a_key, a_value);
+					a_ini.SetBoolValue(a_section, a_key, a_value, a_comment);
 
+					GetSingleton()->settingsMap.emplace(a_key, a_value);
+				} else if constexpr (std::is_floating_point_v<T>) {
+					a_value = static_cast<T>(a_ini.GetDoubleValue(a_section, a_key, a_value));
+					a_ini.SetDoubleValue(a_section, a_key, a_value, a_comment);
+
+					GetSingleton()->settingsMap.emplace(a_key, a_value != 1.0);  //for the one setting that uses a float (Voice Modulation)
+				} else if constexpr (std::is_arithmetic_v<T>) {
+					a_value = string::lexical_cast<T>(a_ini.GetValue(a_section, a_key, std::to_string(a_value).c_str()));
+					a_ini.SetValue(a_section, a_key, std::to_string(a_value).c_str(), a_comment);
+
+					GetSingleton()->settingsMap.emplace(a_key, a_value != 0);
+				} else {
+					a_value = a_ini.GetValue(a_section, a_key, a_value.c_str());
+					a_ini.SetValue(a_section, a_key, a_value.c_str(), a_comment);
+				}
 			} catch (...) {
 			}
 		}
-
-		static void get_value(CSimpleIniA& a_ini, float& a_value, const char* a_section, const char* a_key, const char* a_comment)
-		{
-			a_value = static_cast<float>(a_ini.GetDoubleValue(a_section, a_key, a_value));
-			a_ini.SetDoubleValue(a_section, a_key, a_value, a_comment);
-		}
-
-		static void get_value(CSimpleIniA& a_ini, double& a_value, const char* a_section, const char* a_key, const char* a_comment)
-		{
-			a_value = a_ini.GetDoubleValue(a_section, a_key, a_value);
-			a_ini.SetDoubleValue(a_section, a_key, a_value, a_comment);
-		}
-
-		static void get_value(CSimpleIniA& a_ini, bool& a_value, const char* a_section, const char* a_key, const char* a_comment)
-		{
-			a_value = a_ini.GetBoolValue(a_section, a_key, a_value);
-			a_ini.SetBoolValue(a_section, a_key, a_value, a_comment);
-		}
-
-		static void get_value(CSimpleIniA& a_ini, std::string& a_value, const char* a_section, const char* a_key, const char* a_comment)
-		{
-			a_value = a_ini.GetValue(a_section, a_key, a_value.c_str());
-			a_ini.SetValue(a_section, a_key, a_value.c_str(), a_comment);
-		}
 	};
+
+	robin_hood::unordered_flat_map<std::string, bool> settingsMap{};
 };

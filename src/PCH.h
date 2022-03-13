@@ -52,6 +52,11 @@ namespace stl
 	{
 		write_vfunc<F, 0, T>();
 	}
+
+	inline std::string as_string(std::string_view a_view)
+	{
+		return { a_view.data(), a_view.size() };
+	}
 }
 
 #define DLLEXPORT __declspec(dllexport)
