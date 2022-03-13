@@ -1,5 +1,6 @@
 #include "Experimental.h"
 #include "Fixes.h"
+#include "Papyrus.h"
 #include "Settings.h"
 #include "Tweaks.h"
 
@@ -81,6 +82,9 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 	Experimental::Install();
 
 	logger::info("{:*^30}", "PATCHES FINISH"sv);
+
+	auto papyrus = SKSE::GetPapyrusInterface();
+	papyrus->Register(Papyrus::Bind);
 
 	auto messaging = SKSE::GetMessagingInterface();
 	messaging->RegisterListener(MessageHandler);
