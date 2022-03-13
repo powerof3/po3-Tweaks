@@ -34,7 +34,7 @@ public:
 		(void*)ini.SaveFile(path);
 	}
 
-	bool GetTweakInstalled(std::string_view a_tweak)
+	bool IsTweakInstalled(std::string_view a_tweak)
 	{
 		const auto it = settingsMap.find(stl::as_string(a_tweak));
 		return it != settingsMap.end() ? it->second : false;

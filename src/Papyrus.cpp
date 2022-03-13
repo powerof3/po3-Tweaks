@@ -3,7 +3,7 @@
 
 namespace Papyrus
 {
-	bool IsTweakInstalled(VM*, StackID, RE::StaticFunctionTag*, RE::BSFixedString a_tweak);
+	bool IsTweakInstalled(VM*, StackID, RE::StaticFunctionTag*, RE::BSFixedString a_tweak)
 	{
 		return Settings::GetSingleton()->IsTweakInstalled(a_tweak);
 	}
@@ -17,9 +17,9 @@ namespace Papyrus
 
 		logger::info("{:*^30}", "FUNCTIONS"sv);
 
-		a_vm.RegisterFunction("IsTweakInstalled"sv, "po3_Tweaks"sv, IsTweakInstalled, true);
+		a_vm->RegisterFunction("IsTweakInstalled"sv, "po3_Tweaks"sv, IsTweakInstalled, true);
 
-		logger::info("Registered functions"sv);
+		logger::info("Registered IsTweakInstalled"sv);
 
 		return true;
 	}
