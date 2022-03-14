@@ -73,7 +73,11 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 
 	SKSE::Init(a_skse);
 
-	Settings::GetSingleton()->Load();
+	try {
+		Settings::GetSingleton()->Load();
+	} catch (...) {
+		logger::error("Exception caught when loading settings! Default settings will be used");
+	}
 
 	logger::info("{:*^30}", "PATCH START"sv);
 

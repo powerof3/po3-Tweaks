@@ -660,8 +660,8 @@ namespace SkinnedDecalDeleteFix
 			auto& result = func(a_this, a_return, a_item);
 
 			if (a_item && (*a_item)->initialized) {
-				auto decal = (*a_item)->As<RE::BSTempEffectGeometryDecal>();
-				auto decalNode = decal ? decal->decalNode : nullptr;
+                const auto decal = (*a_item)->As<RE::BSTempEffectGeometryDecal>();
+                const auto decalNode = decal ? decal->decalNode : nullptr;
 				if (decalNode && decalNode->parent) {
 					decalNode->parent->DetachChild(decalNode.get());
 					auto& count = RE::BGSDecalManager::GetSingleton()->skinDecalCount;
