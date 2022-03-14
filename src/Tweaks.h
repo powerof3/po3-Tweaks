@@ -746,6 +746,29 @@ namespace NoPoisonPrompt
 	}
 }
 
+namespace SilentSneakPowerAttack
+{
+	struct SayCombatDialogue
+	{
+		static bool thunk(std::uintptr_t a_combatDialogueManager, RE::Actor* a_speaker, RE::Actor* a_target, RE::DIALOGUE_TYPE a_type, RE::DIALOGUE_DATA::Subtype a_subtype, bool a_ignoreSpeakingDone, RE::CombatController* a_combatController)
+		{
+			if (a_subtype == RE::DIALOGUE_DATA::Subtype::kPowerAttack && a_speaker->IsSneaking()) {
+				return false;
+			}
+			return func(a_combatDialogueManager, a_speaker, a_target, a_type, a_subtype, a_ignoreSpeakingDone, a_combatController);
+		}
+		static inline REL::Relocation<decltype(thunk)> func;
+	};
+
+	inline void Install()
+	{
+		REL::Relocation<std::uintptr_t> target{ REL::ID(39577), 0xAA };
+		stl::write_thunk_call<SayCombatDialogue>(target.address());
+
+		logger::info("Installed silent sneak power attack tweak"sv);
+	}
+}
+
 #ifdef SKYRIMVR
 //Remember lock pick angle.
 //Based on offsets discovered by OnlyIWeDo (https://www.nexusmods.com/skyrimspecialedition/mods/24543) and updated by Umgak (https://www.nexusmods.com/skyrimspecialedition/mods/26838)

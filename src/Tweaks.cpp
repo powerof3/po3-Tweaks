@@ -39,6 +39,9 @@ void Tweaks::Install()
 	if (tweaks.noPoisonPrompt != 0) {
 		NoPoisonPrompt::Install(tweaks.noPoisonPrompt);
 	}
+	if (tweaks.silentSneakPowerAttack) {
+		SilentSneakPowerAttack::Install();
+	}
 	#ifdef SKYRIMVR
 	if (tweaks.rememberLockPickAngle) {
 		RememberLockPickAngle::Install();

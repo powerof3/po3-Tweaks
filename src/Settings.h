@@ -115,6 +115,7 @@ public:
 			detail::get_value(a_ini, loadDoorPrompt.enter, section, "Enter Label", nullptr);
 			detail::get_value(a_ini, loadDoorPrompt.exit, section, "Exit Label", nullptr);
 			detail::get_value(a_ini, noPoisonPrompt, section, "No Poison Prompt", ";Disables poison confirmation messages.\n;0 - off, 1 - disable confirmation, 2 - show other messages as notifications (may clip with inventory menu), 3 - both");
+			detail::get_value(a_ini, silentSneakPowerAttack, section, "Silent Sneak Power Attacks", ";Prevent player shouting during power attacks if sneaking");
 #ifdef SKYRIMVR
 			detail::get_value(a_ini, rememberLockPickAngle, section, "Remember Lock Pick Angle", ";Angle is preserved after break");
 #endif
@@ -154,6 +155,7 @@ public:
 		} loadDoorPrompt;
 
 		std::uint32_t noPoisonPrompt{ 0 };
+		bool silentSneakPowerAttack{ false };
 
 	} tweaks;
 
