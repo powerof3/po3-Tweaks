@@ -130,7 +130,7 @@ namespace CleanupOrphanedActiveEffects
 		}
 		static inline REL::Relocation<decltype(thunk)> func;
 
-		static inline constexpr std::size_t size = 0x0F;
+		static inline constexpr std::size_t idx = 0x0F;
 	};
 
 	inline void Install()

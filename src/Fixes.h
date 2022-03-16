@@ -132,7 +132,7 @@ namespace CantTakeBook
 			}
 			static inline REL::Relocation<decltype(thunk)> func;
 
-			static inline constexpr std::size_t size = 0x04;
+			static inline constexpr std::size_t idx = 0x04;
 		};
 
 		inline void Install()
@@ -737,7 +737,7 @@ namespace LoadFormEditorIDs
 		}
 		static inline REL::Relocation<decltype(thunk)> func;
 
-		static inline size_t size = 0x33;
+		static inline constexpr size_t idx = 0x33;
 	};
 
 	struct SetFormEditorID_Cache
@@ -752,7 +752,7 @@ namespace LoadFormEditorIDs
 		}
 		static inline REL::Relocation<decltype(thunk)> func;
 
-		static inline size_t size = 0x33;
+		static inline constexpr size_t idx = 0x33;
 	};
 
 	inline void Install()

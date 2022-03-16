@@ -341,7 +341,7 @@ namespace NoRipplesOnHover
 			}
 			static inline REL::Relocation<decltype(thunk)> func;
 
-			static inline constexpr std::size_t size = 0x9C;
+			static inline constexpr std::size_t idx = 0x9C;
 		};
 
 		struct NPC
@@ -355,7 +355,7 @@ namespace NoRipplesOnHover
 			}
 			static inline REL::Relocation<decltype(thunk)> func;
 
-			static inline constexpr std::size_t size = 0x9C;
+			static inline constexpr std::size_t idx = 0x9C;
 		};
 	};
 

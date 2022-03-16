@@ -40,11 +40,11 @@ namespace stl
 		T::func = trampoline.write_call<5>(a_src, T::thunk);
 	}
 
-	template <class F, size_t index, class T>
+	template <class F, size_t offset, class T>
 	void write_vfunc()
 	{
-		REL::Relocation<std::uintptr_t> vtbl{ F::VTABLE[index] };
-		T::func = vtbl.write_vfunc(T::size, T::thunk);
+		REL::Relocation<std::uintptr_t> vtbl{ F::VTABLE[offset] };
+		T::func = vtbl.write_vfunc(T::idx, T::thunk);
 	}
 
 	template <class F, class T>
