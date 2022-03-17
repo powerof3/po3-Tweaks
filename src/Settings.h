@@ -31,7 +31,7 @@ public:
 		//EXPERIMENTAL
 		experimental.Load(ini, usesOldPatches);
 
-		(void*)ini.SaveFile(path);
+		ini.SaveFile(path);
 	}
 
 	bool IsTweakInstalled(std::string_view a_tweak)
@@ -49,7 +49,10 @@ public:
 			//1.5 - remove GetEquippedFix()
 			a_ini.Delete(section, "GetEquipped Fix", true);
 
-			detail::get_value(a_ini, queuedRefCrash, section, "Queued Ref Crash", ";Fixes crash caused by faulty ref loading.");
+			//1.6 - delete QueuedRef Crash
+			a_ini.Delete(section, "Queued Ref Crash", true);
+
+			detail::get_value(a_ini, distantRefLoadCrash, section, "Distant Ref Load Crash", ";Fixes loading crash caused by missing 3D on distant references.");
 			detail::get_value(a_ini, mapMarker, section, "Map Marker Placement Fix", ";Allows placing map markers near fast travel destinations when fast travel is disabled");
 			detail::get_value(a_ini, dontTakeBookFlag, section, "Restore 'Can't Be Taken Book' Flag", ";Enables 'Can't be taken' book flag functionality.");
 			detail::get_value(a_ini, projectileRange, section, "Projectile Range Fix", ";Adjusts range of projectile fired while moving for consistent lifetime.");
@@ -69,7 +72,7 @@ public:
 #endif
 		}
 
-		bool queuedRefCrash{ true };
+		bool distantRefLoadCrash{ true };
 		bool mapMarker{ true };
 		bool dontTakeBookFlag{ true };
 		bool projectileRange{ true };

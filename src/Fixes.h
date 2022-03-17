@@ -8,10 +8,10 @@ namespace Fixes
 	void Install(std::uint32_t skse_version);
 }
 
-//nullptr crash re: QueuedReference
-namespace QueuedRefCrash
+//fix BSFadeNode nullptr crash when loading distant refs
+namespace DistantRefLoadCrashFix
 {
-	struct SetFadeNode
+	struct LoadedVisibleDistantRef
 	{
 		static void func([[maybe_unused]] RE::TESObjectCELL* a_cell, const RE::TESObjectREFR* a_ref)
 		{
@@ -26,15 +26,15 @@ namespace QueuedRefCrash
 #endif
 			}
 		}
-		static inline constexpr std::size_t size = 0x2D;
+		static inline constexpr std::size_t size{ 0x2D };
 	};
 
 	inline void Install()
 	{
-		REL::Relocation<std::uintptr_t> func{ REL::ID(18642) };
-		stl::asm_replace<SetFadeNode>(func.address());
+		REL::Relocation<std::uintptr_t> func{ REL_ID(18642, 19116) };
+		stl::asm_replace<LoadedVisibleDistantRef>(func.address());
 
-		logger::info("Installed queued ref crash fix"sv);
+		logger::info("Installed distant ref load crash fix"sv);
 	}
 }
 
@@ -61,13 +61,7 @@ namespace MapMarker
 
 	inline void Install()
 	{
-		REL::Relocation<std::uintptr_t> target{ REL::ID(52208),
-#ifndef SKYRIMVR
-			0x2C5
-#else
-			0x358
-#endif
-		};
+		REL::Relocation<std::uintptr_t> target{ REL_ID(52208, 53095), OFFSET_3(0x2C5, 0x328, 0x358) };
 		stl::write_thunk_call<IsFastTravelEnabled>(target.address());
 
 		logger::info("Installed map marker placement fix"sv);
@@ -77,7 +71,7 @@ namespace MapMarker
 //restores DontTake flag functionality
 namespace CantTakeBook
 {
-	namespace Button
+	namespace BlockButton
 	{
 		struct ShowTakeButton
 		{
@@ -87,7 +81,7 @@ namespace CantTakeBook
 				const auto book = ref ? RE::BookMenu::GetTargetForm() : nullptr;
 
 				if (book && !book->CanBeTaken()) {
-					RE::GFxValue* params = nullptr;  //param[0] = ??, param[1] = book ref exists, param[2] = stealing
+					RE::GFxValue* params{ nullptr };  //param[0] = ??, param[1] = book ref exists, param[2] = stealing
 					a_args.GetValues(&params);
 
 					params[1].SetBoolean(false);
@@ -100,18 +94,12 @@ namespace CantTakeBook
 
 		inline void Install()
 		{
-			REL::Relocation<std::uintptr_t> target{ REL::ID(50126),
-#ifndef SKYRIMVR
-				0x634
-#else
-				0x64a
-#endif
-			};
+			REL::Relocation<std::uintptr_t> target{ REL_ID(50126, 51057), OFFSET_3(0x634, 0x636, 0x64A) };
 			stl::write_thunk_call<ShowTakeButton>(target.address());
 		}
 	}
 
-	namespace Prompt
+	namespace BlockPrompt
 	{
 		struct ProcessMessage
 		{
@@ -132,7 +120,7 @@ namespace CantTakeBook
 			}
 			static inline REL::Relocation<decltype(thunk)> func;
 
-			static inline constexpr std::size_t idx = 0x04;
+			static inline constexpr std::size_t idx{ 0x04 };
 		};
 
 		inline void Install()
@@ -143,8 +131,8 @@ namespace CantTakeBook
 
 	inline void Install()
 	{
-		Button::Install();
-		Prompt::Install();
+		BlockButton::Install();
+		BlockPrompt::Install();
 
 		logger::info("Installed 'Can't Be Taken' book flag fix"sv);
 	}
@@ -159,10 +147,11 @@ namespace ProjectileRange
 		{
 			using Type = RE::FormType;
 
-			if (a_projectile && (a_projectile->Is(Type::ProjectileMissile) || a_projectile->Is(Type::ProjectileCone))) {
+			if (a_projectile && a_projectile->Is(Type::ProjectileMissile, Type::ProjectileCone)) {
 				const auto base = a_projectile->GetBaseObject();
 				const auto projectileBase = base ? base->As<RE::BGSProjectile>() : nullptr;
 				const auto baseSpeed = projectileBase ? projectileBase->data.speed : 0.0f;
+
 				if (baseSpeed > 0.0f) {
 					const auto velocity = a_projectile->linearVelocity;
 					a_projectile->range *= velocity.Length() / baseSpeed;
@@ -176,13 +165,7 @@ namespace ProjectileRange
 
 	inline void Install()
 	{
-		REL::Relocation<std::uintptr_t> target{ REL::ID(43030),
-#ifndef SKYRIMVR
-			0x3CB
-#else
-			0x3A8
-#endif
-		};
+		REL::Relocation<std::uintptr_t> target{ REL_ID(43030, 44222), OFFSET_3(0x3CB, 0x79D, 0x3A8) };
 		stl::write_thunk_call<UpdateCombatThreat>(target.address());
 
 		logger::info("Installed projectile range fix"sv);
@@ -209,7 +192,7 @@ namespace CombatDialogue
 
 	inline void Install()
 	{
-		REL::Relocation<std::uintptr_t> target{ REL::ID(43571), 0x135 };
+		REL::Relocation<std::uintptr_t> target{ REL_ID(43571, 44803), 0x135 };
 		stl::write_thunk_call<SayCombatDialogue>(target.address());
 
 		logger::info("Installed combat dialogue fix"sv);
@@ -237,7 +220,7 @@ namespace Spells
 		inline bool Apply(PermanentMagicFunctor& a_applier, RE::SpellItem* a_spell)
 		{
 			using func_t = decltype(&Apply);
-			REL::Relocation<func_t> func{ REL::ID(33684) };
+			REL::Relocation<func_t> func{ REL_ID(33684, 34464) };
 			return func(a_applier, a_spell);
 		}
 	}
@@ -254,7 +237,7 @@ namespace Spells
                                         nullptr;
 				if (caster) {
 					detail::PermanentMagicFunctor applier{ caster, actor };
-					applier.flags = applier.flags & 0xF9 | 1;
+					applier.flags = (applier.flags & 0xF9) | 1;
 					for (const auto& spell : actor->addedSpells) {
 						Apply(applier, spell);
 					}
@@ -266,7 +249,7 @@ namespace Spells
 
 		inline void Install()
 		{
-			REL::Relocation<std::uintptr_t> target{ REL::ID(37804), 0x115 };
+			REL::Relocation<std::uintptr_t> target{ REL_ID(37804, 38753), 0x115 };
 			stl::write_thunk_call<GetAliasInstanceArray>(target.address());
 		}
 	}
@@ -293,7 +276,7 @@ namespace Spells
 
 		inline void Install()
 		{
-			REL::Relocation<std::uintptr_t> target{ REL::ID(37805), 0x131 };
+			REL::Relocation<std::uintptr_t> target{ REL_ID(37805, 38754), 0x131 };
 			stl::write_thunk_call<GetAliasInstanceArray>(target.address());
 		}
 	}
@@ -310,7 +293,7 @@ namespace Spells
                                         nullptr;
 				if (caster) {
 					detail::PermanentMagicFunctor applier{ caster, a_actor };
-					applier.flags = applier.flags & 0xF9 | 1;
+					applier.flags = (applier.flags & 0xF9) | 1;
 
 					const auto has_no_dispel_flag = [&](const RE::SpellItem& a_spell) {
 						return std::ranges::any_of(a_spell.effects, [&](const auto& effect) {
@@ -345,7 +328,7 @@ namespace Spells
 
 		inline void Install()
 		{
-			REL::Relocation<std::uintptr_t> target{ REL::ID(36198), 0x12 };
+			REL::Relocation<std::uintptr_t> target{ REL_ID(36198, 37177), OFFSET(0x12, 0xD) };
 			stl::write_thunk_call<Load3D>(target.address());
 
 			logger::info("Installed no death dispel spell reapply fix"sv);
@@ -363,7 +346,7 @@ namespace IsFurnitureAnimTypeFix
 			static std::uint32_t GetEquippedFurnitureType(RE::Actor* a_actor)
 			{
 				using func_t = decltype(&GetEquippedFurnitureType);
-				REL::Relocation<func_t> func{ REL::ID(36720) };
+				REL::Relocation<func_t> func{ REL_ID(36720, 37732) };
 				return func(a_actor);
 			}
 
@@ -414,24 +397,24 @@ namespace IsFurnitureAnimTypeFix
 
 			return true;
 		}
-		static inline constexpr std::size_t size = 0x87;
+		static inline constexpr std::size_t size{ 0x87 };
 	};
 
 	inline void Install()
 	{
-		REL::Relocation<std::uintptr_t> func{ REL::ID(21211) };
+		REL::Relocation<std::uintptr_t> func{ REL_ID(21211, 21668) };
 		stl::asm_replace<IsFurnitureAnimType>(func.address());
 
 		logger::info("Installed IsFurnitureAnimType fix"sv);
 	}
 }
 
-//nullptr crash re: AttachLightHitEffectVisitor
+//fix BSFadeNode nullptr crash re: AttachLightHitEffectVisitor
 namespace AttachLightCrash
 {
 	struct AttachLightHitEffectVisitor
 	{
-		static std::uint32_t func(RE::AttachLightHitEffectVisitor* a_this, RE::ReferenceEffect* a_hitEffect)
+		static RE::BSContainer::ForEachResult func(RE::AttachLightHitEffectVisitor* a_this, RE::ReferenceEffect* a_hitEffect)
 		{
 			if (a_hitEffect->IsModelAttached()) {
 				auto root = a_hitEffect->GetTargetRoot();
@@ -445,19 +428,24 @@ namespace AttachLightCrash
 					a_this->attachLightNode = root;
 				}
 				if (a_this->attachLightNode) {
-					return 0;
+					return RE::BSContainer::ForEachResult::kContinue;
 				}
 			} else {
 				a_this->unk18 = false;
 			}
-			return 1;
+			return RE::BSContainer::ForEachResult::kStop;
 		}
-		static inline constexpr std::size_t size = 0x86;
+#ifdef SKYRIM_AE
+		//FixedStrings::GetSingleton() got inlined
+		static inline constexpr std::size_t size{ 0xEC };
+#else
+		static inline constexpr std::size_t size{ 0x86 };
+#endif
 	};
 
 	inline void Install()
 	{
-		REL::Relocation<std::uintptr_t> func{ REL::ID(33610) };
+		REL::Relocation<std::uintptr_t> func{ REL_ID(33610, 34388) };
 		stl::asm_replace<AttachLightHitEffectVisitor>(func.address());
 
 		logger::info("Installed light attach crash fix"sv);
@@ -472,8 +460,7 @@ namespace SpellNoAbsorb
 		using Archetype = RE::EffectArchetypes::ArchetypeID;
 		using SpellFlag = RE::SpellItem::SpellFlag;
 
-		const auto dataHandler = RE::TESDataHandler::GetSingleton();
-		if (dataHandler) {
+		if (const auto dataHandler = RE::TESDataHandler::GetSingleton()) {
 			const auto settings = Settings::GetSingleton();
 			const auto noConj = settings->fixes.noConjurationAbsorb;
 			const auto noHostile = settings->tweaks.noHostileAbsorb;
@@ -508,7 +495,7 @@ namespace EffectShaderZBufferFix
 {
 	inline void Install()
 	{
-		REL::Relocation<std::uintptr_t> target{ REL::ID(501401), 0x1C };
+		REL::Relocation<std::uintptr_t> target{ REL_ID(501401, 360087), 0x1C };
 
 		constexpr std::uint8_t zeroes[] = { 0x0, 0x0, 0x0, 0x0 };
 		REL::safe_write(target.address(), zeroes, 4);
@@ -517,7 +504,7 @@ namespace EffectShaderZBufferFix
 	}
 }
 
-//nullptr crash re: QueuedReference
+//adds selective collision toggle on console reference
 namespace ToggleCollisionFix
 {
 	constexpr auto no_collision_flag = static_cast<std::uint32_t>(RE::CFilter::Flag::kNoCollision);
@@ -529,13 +516,13 @@ namespace ToggleCollisionFix
 			static void ToggleGlobalCollision()
 			{
 				using func_t = decltype(&ToggleGlobalCollision);
-				REL::Relocation<func_t> func{ REL::ID(13224) };
+				REL::Relocation<func_t> func{ REL_ID(13224, 13375) };
 				return func();
 			}
 
 			static bool& get_collision_state()
 			{
-				REL::Relocation<bool*> collision_state{ REL::ID(514184) };
+				REL::Relocation<bool*> collision_state{ REL_ID(514184, 400334) };
 				return *collision_state;
 			}
 		};
@@ -544,9 +531,8 @@ namespace ToggleCollisionFix
 		{
 			if (a_ref) {
 				bool hasCollision = a_ref->HasCollision();
-				bool isActor = a_ref->Is(RE::FormType::ActorCharacter);
 
-				if (!isActor) {
+				if (a_ref->IsNot(RE::FormType::ActorCharacter)) {
 					const auto root = a_ref->Get3D();
 					if (root) {
 						const auto cell = a_ref->GetParentCell();
@@ -556,8 +542,7 @@ namespace ToggleCollisionFix
 							RE::BSWriteLockGuard locker(world->worldLock);
 
 							RE::BSVisit::TraverseScenegraphCollision(root, [&](RE::bhkNiCollisionObject* a_col) -> RE::BSVisit::BSVisitControl {
-								auto& body = a_col->body;
-								auto hkpBody = body ? static_cast<RE::hkpWorldObject*>(body->referencedObject.get()) : nullptr;
+								auto hkpBody = a_col->body ? static_cast<RE::hkpWorldObject*>(a_col->body->referencedObject.get()) : nullptr;
 								if (hkpBody) {
 									auto& filter = hkpBody->collidable.broadPhaseHandle.collisionFilterInfo;
 									if (hasCollision) {
@@ -591,7 +576,7 @@ namespace ToggleCollisionFix
 
 			return true;
 		}
-		static inline constexpr std::size_t size = 0x83;
+		static inline constexpr std::size_t size{ 0x83 };
 	};
 
 	struct ApplyMovementDelta
@@ -641,16 +626,17 @@ namespace ToggleCollisionFix
 
 	inline void Install()
 	{
-		REL::Relocation<std::uintptr_t> target{ REL::ID(36359), 0xF0 };
+		REL::Relocation<std::uintptr_t> target{ REL_ID(36359, 37350), OFFSET(0xF0, 0xFB) };
 		stl::write_thunk_call<ApplyMovementDelta>(target.address());
 
-		REL::Relocation<std::uintptr_t> func{ REL::ID(22350) };
+		REL::Relocation<std::uintptr_t> func{ REL_ID(22350, 22825) };
 		stl::asm_replace<ToggleCollision>(func.address());
 
 		logger::info("Installed toggle collision fix"sv);
 	}
 }
 
+//remove decals and decrement decal count immediately when queued for deletion
 namespace SkinnedDecalDeleteFix
 {
 	struct RemoveItem
@@ -660,8 +646,8 @@ namespace SkinnedDecalDeleteFix
 			auto& result = func(a_this, a_return, a_item);
 
 			if (a_item && (*a_item)->initialized) {
-                const auto decal = (*a_item)->As<RE::BSTempEffectGeometryDecal>();
-                const auto decalNode = decal ? decal->decalNode : nullptr;
+				const auto decal = (*a_item)->As<RE::BSTempEffectGeometryDecal>();
+				const auto decalNode = decal ? decal->decalNode : nullptr;
 				if (decalNode && decalNode->parent) {
 					decalNode->parent->DetachChild(decalNode.get());
 					auto& count = RE::BGSDecalManager::GetSingleton()->skinDecalCount;
@@ -678,13 +664,15 @@ namespace SkinnedDecalDeleteFix
 
 	inline void Install()
 	{
-		REL::Relocation<std::uintptr_t> target{ REL::ID(15118), 0x12B };
+		REL::Relocation<std::uintptr_t> target{ REL_ID(15118, 15295), 0x12B };
 		stl::write_thunk_call<RemoveItem>(target.address());
 
 		logger::info("Installed skinned decal delete fix"sv);
 	}
 }
 
+//multiply jump height by 1% of JumpBonus AV
+//credit to KernalsEgg for implementation
 namespace JumpingBonusFix
 {
 	struct GetScale
@@ -700,13 +688,14 @@ namespace JumpingBonusFix
 
 	inline void Install()
 	{
-		REL::Relocation<std::uintptr_t> target{ REL::ID(36271), 0x190 };
+		REL::Relocation<std::uintptr_t> target{ REL_ID(36271, 37257), OFFSET(0x190, 0x17F) };
 		stl::write_thunk_call<GetScale>(target.address());
 
 		logger::info("Installed jumping bonus fix"sv);
 	}
 }
 
+//Cache skipped formEditorIDs
 namespace LoadFormEditorIDs
 {
 	struct detail
@@ -720,7 +709,7 @@ namespace LoadFormEditorIDs
 			}
 		}
 
-		static void cache_editorID(RE::TESForm* a_form, const char* a_str)
+		static void cache_editorID(const RE::TESForm* a_form, const char* a_str)
 		{
 			Cache::EditorID::GetSingleton()->CacheEditorID(a_form, a_str);
 		}
@@ -737,7 +726,7 @@ namespace LoadFormEditorIDs
 		}
 		static inline REL::Relocation<decltype(thunk)> func;
 
-		static inline constexpr size_t idx = 0x33;
+		static inline constexpr size_t idx{ 0x33 };
 	};
 
 	struct SetFormEditorID_Cache
@@ -752,7 +741,7 @@ namespace LoadFormEditorIDs
 		}
 		static inline REL::Relocation<decltype(thunk)> func;
 
-		static inline constexpr size_t idx = 0x33;
+		static inline constexpr size_t idx{ 0x33 };
 	};
 
 	inline void Install()

@@ -6,8 +6,8 @@ void Fixes::Install(std::uint32_t skse_version)
 
 	logger::info("{:*^30}", "FIXES"sv);
 
-	if (fixes.queuedRefCrash) {
-		QueuedRefCrash::Install();
+	if (fixes.distantRefLoadCrash) {
+		DistantRefLoadCrashFix::Install();
 	}
 	if (fixes.mapMarker) {
 		if (GetModuleHandle(L"DisableFastTravel")) {
