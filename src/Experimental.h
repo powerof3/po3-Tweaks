@@ -115,7 +115,7 @@ namespace CleanupOrphanedActiveEffects
 				auto& addedSpells = a_this->addedSpells;
 				for (auto it = addedSpells.begin(); it != addedSpells.end();) {
 					bool result = false;
-                    if (auto spell = *it; spell && spell->GetSpellType() == RE::MagicSystem::SpellType::kAbility) {
+					if (auto spell = *it; spell && spell->GetSpellType() == RE::MagicSystem::SpellType::kAbility) {
 						if (abilityPerkMap.contains(spell)) {
 							const auto base = a_this->GetActorBase();
 							if (base && !std::ranges::any_of(abilityPerkMap[spell], [&](const auto& perk) {
@@ -191,9 +191,7 @@ namespace ModifySuspendedStackFlushTimeout
 	{
 		inline void Install()
 		{
-			static REL::Relocation<std::uintptr_t> target{
-				REL_ID(53209, 54020), OFFSET(0x8B, 0x152)
-			};
+			static REL::Relocation<std::uintptr_t> target{ REL_ID(53209, 54020), OFFSET(0x8B, 0x152) };
 			REL::safe_write(target.address(), static_cast<std::uint8_t>(0xEB));  // swap jle 0x7e for jmp 0xeb
 
 			logger::info("Removed timeout check on suspended stack flush"sv);
