@@ -26,7 +26,7 @@ namespace FactionStealing
 			{
 				const auto favorCost = GetFavorCost(a_playerBase, a_npc);
 				return favorCost > 1 ?
-				           a_cost <= favorCost :
+                           a_cost <= favorCost :
                            false;
 			}
 		};
@@ -584,7 +584,7 @@ namespace GrabbingIsStealing
 		EventResult ProcessEvent(const RE::TESGrabReleaseEvent* a_event, RE::BSTEventSource<RE::TESGrabReleaseEvent>*) override
 		{
 			const auto ref = a_event && a_event->grabbed ?
-			                     a_event->ref :
+                                 a_event->ref :
                                  RE::TESObjectREFRPtr();
 
 			if (ref) {
@@ -656,7 +656,7 @@ namespace LoadDoorPrompt
 					if (linkedCell && linkedCell->IsExteriorCell()) {
 						auto& [type, enter, exit] = Settings::GetSingleton()->tweaks.loadDoorPrompt;
 						return { kInterior, type == kReplaceCellAndPrompt ?
-												cell->GetName() :
+                                                cell->GetName() :
                                                 a_cellName };
 					}
 				}
@@ -673,7 +673,7 @@ namespace LoadDoorPrompt
 			}
 			if (a_type == kInterior) {
 				return type == kReplaceCellAndPrompt ?
-				           exit :
+                           exit :
                            enter;
 			}
 			return a_default;

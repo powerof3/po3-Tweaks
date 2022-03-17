@@ -233,7 +233,7 @@ namespace Spells
 			{
 				const auto actor = stl::adjust_pointer<RE::Character>(a_list, -0x70);
 				const auto caster = actor && !actor->IsPlayerRef() && !actor->addedSpells.empty() ?
-				                        actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
+                                        actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
                                         nullptr;
 				if (caster) {
 					detail::PermanentMagicFunctor applier{ caster, actor };
@@ -289,7 +289,7 @@ namespace Spells
 			{
 				const auto node = func(a_actor, a_backgroundLoading);
 				const auto caster = node && a_actor->IsDead() && !a_actor->IsPlayerRef() ?
-				                        a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
+                                        a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
                                         nullptr;
 				if (caster) {
 					detail::PermanentMagicFunctor applier{ caster, a_actor };
@@ -419,7 +419,7 @@ namespace AttachLightCrash
 			if (a_hitEffect->IsModelAttached()) {
 				auto root = a_hitEffect->GetTargetRoot();
 				const auto attachLightObj = root ?
-				                                root->GetObjectByName(RE::FixedStrings::GetSingleton()->attachLight) :  //crash here because no null check
+                                                root->GetObjectByName(RE::FixedStrings::GetSingleton()->attachLight) :  //crash here because no null check
                                                 nullptr;
 				if (attachLightObj) {
 					root = attachLightObj;

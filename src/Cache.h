@@ -14,7 +14,7 @@ namespace Cache
 		void CacheEditorID(const RE::TESForm* a_form, const char* a_editorID)
 		{
 			Locker locker(_lock);
-		    _formIDToEditorIDMap.emplace(a_form->GetFormID(), a_editorID);
+			_formIDToEditorIDMap.emplace(a_form->GetFormID(), a_editorID);
 		}
 
 		std::string GetEditorID(const RE::TESForm* a_form)
@@ -37,6 +37,6 @@ namespace Cache
 
 	private:
 		mutable Lock _lock;
-	    robin_hood::unordered_flat_map<RE::FormID, std::string> _formIDToEditorIDMap;
+		robin_hood::unordered_flat_map<RE::FormID, std::string> _formIDToEditorIDMap;
 	};
 }
