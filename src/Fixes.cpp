@@ -1,6 +1,6 @@
 #include "Fixes.h"
 
-void Fixes::Install(std::uint32_t skse_version)
+void Fixes::Install()
 {
 	const auto fixes = Settings::GetSingleton()->fixes;
 
@@ -53,8 +53,13 @@ void Fixes::Install(std::uint32_t skse_version)
 	if (fixes.loadEditorIDs) {
 		LoadFormEditorIDs::Install();
 	}
+}
+
+void Fixes::Install(std::uint32_t a_skse_version)
+{
 #ifdef SKYRIMVR
-	if (fixes.fixVRCrosshairRefEvent) {
+	const auto fixes = Settings::GetSingleton()->fixes;
+    if (fixes.fixVRCrosshairRefEvent) {
 		FixCrosshairRefEvent::Install(skse_version);
 	}
 #endif

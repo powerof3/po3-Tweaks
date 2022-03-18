@@ -7,8 +7,18 @@
 void MessageHandler(SKSE::MessagingInterface::Message* a_message)
 {
 	switch (a_message->type) {
+	case SKSE::MessagingInterface::kPostLoad:
+		{
+			logger::info("{:*^30}", "BEGIN POST LOAD PATCH"sv);
+
+			Fixes::Install();
+			Tweaks::Install();
+			Experimental::Install();
+		}
 	case SKSE::MessagingInterface::kDataLoaded:
 		{
+			logger::info("{:*^30}", "BEGIN DATA LOADED PATCH"sv);
+
 			SpellNoAbsorb::Install();
 
 			auto& tweaks = Settings::GetSingleton()->tweaks;
@@ -97,13 +107,9 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 		logger::error("Exception caught when loading settings! Default settings will be used");
 	}
 
-	logger::info("{:*^30}", "PATCH START"sv);
+	logger::info("{:*^30}", "BEGIN PRELOAD PATCH"sv);
 
 	Fixes::Install(a_skse->SKSEVersion());
-	Tweaks::Install();
-	Experimental::Install();
-
-	logger::info("{:*^30}", "PATCHES FINISH"sv);
 
 	auto papyrus = SKSE::GetPapyrusInterface();
 	papyrus->Register(Papyrus::Bind);
