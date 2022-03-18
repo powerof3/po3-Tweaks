@@ -6,7 +6,7 @@
 namespace Fixes
 {
 	void Install();
-    void Install(std::uint32_t a_skse_version);
+	void Install(std::uint32_t a_skse_version);
 }
 
 //fix BSFadeNode nullptr crash when loading distant refs
