@@ -66,6 +66,7 @@ public:
 			detail::get_value(a_ini, collisionToggleFix, section, "ToggleCollision Fix", ";Patches ToggleCollision to toggle object collision if selected in console");
 			detail::get_value(a_ini, skinnedDecalDelete, section, "Skinned Decal Delete", ";Immediately delete skinned decals when they're marked for removal (ie. removing bloody armor)");
 			detail::get_value(a_ini, jumpingBonusFix, section, "Jumping Bonus Fix", ";Jump height is multiplied by 1% per point of JumpingBonus actor value");
+			detail::get_value(a_ini, toggleAIFreezeAllFix, section, "ToggleAI Freeze All Fix", "All NPCs are frozen/unfrozen when using TAI console command/Debug.ToggleAI() function");
 			detail::get_value(a_ini, loadEditorIDs, section, "Load EditorIDs", ";Loads editorIDs for skipped forms at runtime");
 #ifdef SKYRIMVR
 			detail::get_value(a_ini, fixVRCrosshairRefEvent, section, "VR CrosshairRefEvent Fix", "; Trigger CrossHairRefEvent with hand selection (normally requires game controller to enable crosshair events)");
@@ -86,6 +87,7 @@ public:
 		bool collisionToggleFix{ true };
 		bool skinnedDecalDelete{ true };
 		bool jumpingBonusFix{ true };
+		bool toggleAIFreezeAllFix{ true };
 		bool loadEditorIDs{ true };
 #ifdef SKYRIMVR
 		bool fixVRCrosshairRefEvent{ true };

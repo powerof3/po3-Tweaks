@@ -50,6 +50,9 @@ void Fixes::Install()
 	if (fixes.jumpingBonusFix) {
 		JumpingBonusFix::Install();
 	}
+	if (fixes.toggleAIFreezeAllFix) {
+		ToggleAIFreezeAllFix::Install();
+	}
 	if (fixes.loadEditorIDs) {
 		LoadFormEditorIDs::Install();
 	}
