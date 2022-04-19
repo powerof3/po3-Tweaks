@@ -63,7 +63,7 @@ void Fixes::Install(std::uint32_t a_skse_version)
 #ifdef SKYRIMVR
 	const auto fixes = Settings::GetSingleton()->fixes;
 	if (fixes.fixVRCrosshairRefEvent) {
-		FixCrosshairRefEvent::Install(skse_version);
+		FixCrosshairRefEvent::Install(a_skse_version);
 	}
 #endif
 }
