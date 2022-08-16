@@ -17,10 +17,20 @@ namespace Cache
 			_formIDToEditorIDMap.emplace(a_form->GetFormID(), a_editorID);
 		}
 
-		std::string GetEditorID(const RE::TESForm* a_form)
+		const std::string& GetEditorID(RE::FormID a_formID)
 		{
-			const auto it = _formIDToEditorIDMap.find(a_form->GetFormID());
-			return it != _formIDToEditorIDMap.end() ? it->second : std::string();
+			const auto it = _formIDToEditorIDMap.find(a_formID);
+			if (it != _formIDToEditorIDMap.end()) {
+				return it->second;
+			}
+
+		    static std::string emptyStr;
+			return emptyStr;
+		}
+
+		const std::string& GetEditorID(const RE::TESForm* a_form)
+		{
+			return GetEditorID(a_form->GetFormID());
 		}
 
 	protected:

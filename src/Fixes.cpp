@@ -51,7 +51,7 @@ void Fixes::Install()
 		JumpingBonusFix::Install();
 	}
 	if (fixes.toggleAIFreezeAllFix) {
-		ToggleAIFreezeAllFix::Install();
+		//ToggleAIFreezeAllFix::Install(); fix character tpose when loading back in
 	}
 	if (fixes.loadEditorIDs) {
 		LoadFormEditorIDs::Install();

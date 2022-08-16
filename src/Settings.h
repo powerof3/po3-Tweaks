@@ -66,7 +66,7 @@ public:
 			detail::get_value(a_ini, collisionToggleFix, section, "ToggleCollision Fix", ";Patches ToggleCollision to toggle object collision if selected in console");
 			detail::get_value(a_ini, skinnedDecalDelete, section, "Skinned Decal Delete", ";Immediately delete skinned decals when they're marked for removal (ie. removing bloody armor)");
 			detail::get_value(a_ini, jumpingBonusFix, section, "Jumping Bonus Fix", ";Jump height is multiplied by 1% per point of JumpingBonus actor value");
-			detail::get_value(a_ini, toggleAIFreezeAllFix, section, "ToggleAI Freeze All Fix", "All NPCs are frozen/unfrozen when using TAI console command/Debug.ToggleAI() function");
+			//detail::get_value(a_ini, toggleAIFreezeAllFix, section, "ToggleAI Freeze All Fix", "All NPCs are frozen/unfrozen when using TAI console command/Debug.ToggleAI() function");
 			detail::get_value(a_ini, loadEditorIDs, section, "Load EditorIDs", ";Loads editorIDs for skipped forms at runtime");
 #ifdef SKYRIMVR
 			detail::get_value(a_ini, fixVRCrosshairRefEvent, section, "VR CrosshairRefEvent Fix", "; Trigger CrossHairRefEvent with hand selection (normally requires game controller to enable crosshair events)");
@@ -121,6 +121,7 @@ public:
 			detail::get_value(a_ini, loadDoorPrompt.exit, section, "Exit Label", nullptr);
 			detail::get_value(a_ini, noPoisonPrompt, section, "No Poison Prompt", ";Disables poison confirmation messages.\n;0 - off, 1 - disable confirmation, 2 - show other messages as notifications (may clip with inventory menu), 3 - both");
 			detail::get_value(a_ini, silentSneakPowerAttack, section, "Silent Sneak Power Attacks", ";Prevent player shouting during power attacks if sneaking");
+			detail::get_value(a_ini, useFurnitureInCombat, section, "Use Furniture In Combat", ";Use furniture in combat and prevent getting forced out of furniture when attacked.\n;0 - off, 1 - player only, 2 - player and NPCs");
 #ifdef SKYRIMVR
 			detail::get_value(a_ini, rememberLockPickAngle, section, "Remember Lock Pick Angle", ";Angle is preserved after break");
 #endif
@@ -161,6 +162,7 @@ public:
 
 		std::uint32_t noPoisonPrompt{ 0 };
 		bool silentSneakPowerAttack{ false };
+		std::uint32_t useFurnitureInCombat{ 0 };
 
 	} tweaks;
 

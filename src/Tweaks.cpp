@@ -42,6 +42,9 @@ void Tweaks::Install()
 	if (tweaks.silentSneakPowerAttack) {
 		SilentSneakPowerAttack::Install();
 	}
+	if (tweaks.useFurnitureInCombat != 0) {
+		UseFurnitureInCombat::Install();
+	}
 #ifdef SKYRIMVR
 	if (tweaks.rememberLockPickAngle) {
 		RememberLockPickAngle::Install();

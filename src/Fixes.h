@@ -425,7 +425,7 @@ namespace AttachLightCrash
 				if (attachLightObj) {
 					root = attachLightObj;
 				}
-				if (root && root != a_this->actorRoot) {
+				if (root && root != a_this->attachRoot) {
 					a_this->attachLightNode = root;
 				}
 				if (a_this->attachLightNode) {
@@ -436,6 +436,7 @@ namespace AttachLightCrash
 			}
 			return RE::BSContainer::ForEachResult::kStop;
 		}
+
 #ifdef SKYRIM_AE
 		//FixedStrings::GetSingleton() got inlined
 		static inline constexpr std::size_t size{ 0xEC };

@@ -26,7 +26,7 @@ namespace FactionStealing
 			{
 				const auto favorCost = GetFavorCost(a_playerBase, a_npc);
 				return favorCost > 1 ?
-                           a_cost <= favorCost :
+				           a_cost <= favorCost :
                            false;
 			}
 		};
@@ -320,7 +320,7 @@ namespace NoRipplesOnHover
 	{
 		static bool IsLevitatingOnWater(const RE::Character* a_character, const RE::hkpCollidable* a_collidable)
 		{
-			if (const std::uint32_t colFilter = a_collidable->broadPhaseHandle.collisionFilterInfo & 127; colFilter == 30) {
+			if (const auto colLayer = static_cast<RE::COL_LAYER>(a_collidable->broadPhaseHandle.collisionFilterInfo & 0x7F); colLayer == RE::COL_LAYER::kCharController) {
 				if (bool levitating = false; a_character->GetGraphVariableBool(isLevitating, levitating) && levitating) {
 					return true;
 				}
@@ -584,7 +584,7 @@ namespace GrabbingIsStealing
 		EventResult ProcessEvent(const RE::TESGrabReleaseEvent* a_event, RE::BSTEventSource<RE::TESGrabReleaseEvent>*) override
 		{
 			const auto ref = a_event && a_event->grabbed ?
-                                 a_event->ref :
+			                     a_event->ref :
                                  RE::TESObjectREFRPtr();
 
 			if (ref) {
@@ -656,7 +656,7 @@ namespace LoadDoorPrompt
 					if (linkedCell && linkedCell->IsExteriorCell()) {
 						auto& [type, enter, exit] = Settings::GetSingleton()->tweaks.loadDoorPrompt;
 						return { kInterior, type == kReplaceCellAndPrompt ?
-                                                cell->GetName() :
+												cell->GetName() :
                                                 a_cellName };
 					}
 				}
@@ -673,7 +673,7 @@ namespace LoadDoorPrompt
 			}
 			if (a_type == kInterior) {
 				return type == kReplaceCellAndPrompt ?
-                           exit :
+				           exit :
                            enter;
 			}
 			return a_default;
@@ -780,6 +780,65 @@ namespace SilentSneakPowerAttack
 		stl::write_thunk_call<SayCombatDialogue>(target.address());
 
 		logger::info("Installed silent sneak power attack tweak"sv);
+	}
+}
+
+//use furniture in combat
+//credit to KernalsEgg for implementation
+namespace UseFurnitureInCombat
+{
+	//replace IsInCombat with unused? vfunc that returns false
+	namespace UseInCombat
+	{
+		inline void Install()
+		{
+			struct Patch : Xbyak::CodeGenerator
+			{
+				Patch()
+				{
+					call(qword[rax + 0x830]);
+				}
+			};
+
+			Patch patch;
+			patch.ready();
+
+			static REL::Relocation<std::uintptr_t> target{ REL_ID(17034, 17420) };  // TESFurniture::Activate
+
+		    REL::safe_write(target.address() + 0x81, std::span{ patch.getCode(), patch.getSize() });
+			REL::safe_write(target.address() + OFFSET(0x1B1, 0x1B2), std::span{ patch.getCode(), patch.getSize() });
+		}
+	}
+
+	namespace PreventKickOut
+	{
+		struct StopInteractingQuick
+		{
+			static void thunk(RE::Actor* a_actor, bool a_arg2)
+			{
+                const auto setting = Settings::GetSingleton()->tweaks.useFurnitureInCombat;
+				if (setting == 1 && a_actor->IsPlayerRef() || setting == 2) {
+					return;
+				}
+
+			    return func(a_actor, a_arg2);
+			}
+			static inline REL::Relocation<decltype(thunk)> func;
+		};
+
+		inline void Install()
+		{
+			REL::Relocation<std::uintptr_t> target{ REL_ID(37672, 38626), OFFSET(0x485, 0x480) };
+			stl::write_thunk_call<StopInteractingQuick>(target.address());
+
+			logger::info("Installed use furniture in combat tweak"sv);
+		}
+	}
+
+	inline void Install()
+	{
+		UseInCombat::Install();
+		PreventKickOut::Install();
 	}
 }
 
