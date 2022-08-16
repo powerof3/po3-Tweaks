@@ -780,12 +780,8 @@ namespace LoadFormEditorIDs
 			const RE::BSWriteLockGuard locker{ lock };
 			if (map) {
 				map->emplace(a_str, a_form);
+				Cache::EditorID::GetSingleton()->CacheEditorID(a_form, a_str);
 			}
-		}
-
-		static void cache_editorID(const RE::TESForm* a_form, const char* a_str)
-		{
-			Cache::EditorID::GetSingleton()->CacheEditorID(a_form, a_str);
 		}
 	};
 
@@ -795,21 +791,6 @@ namespace LoadFormEditorIDs
 		{
 			if (!a_this->IsDynamicForm() && !string::is_empty(a_str)) {
 				detail::add_to_game_map(a_this, a_str);
-			}
-			return func(a_this, a_str);
-		}
-		static inline REL::Relocation<decltype(thunk)> func;
-
-		static inline constexpr size_t idx{ 0x33 };
-	};
-
-	struct SetFormEditorID_Cache
-	{
-		static bool thunk(RE::TESForm* a_this, const char* a_str)
-		{
-			if (!a_this->IsDynamicForm() && !string::is_empty(a_str)) {
-				detail::add_to_game_map(a_this, a_str);
-				detail::cache_editorID(a_this, a_str);
 			}
 			return func(a_this, a_str);
 		}
@@ -880,7 +861,6 @@ namespace LoadFormEditorIDs
 		stl::write_vfunc<RE::TESRegion, SetFormEditorID>();
 		//stl::write_vfunc<RE::NavMeshInfoMap, SetFormEditorID>();
 		//stl::write_vfunc<RE::TESObjectCELL, SetFormEditorID>();
-
 		stl::write_vfunc<RE::TESObjectREFR, SetFormEditorID>();
 		stl::write_vfunc<RE::Actor, SetFormEditorID>();
 		stl::write_vfunc<RE::Character, SetFormEditorID>();
@@ -893,7 +873,6 @@ namespace LoadFormEditorIDs
 		stl::write_vfunc<RE::ConeProjectile, SetFormEditorID>();
 		stl::write_vfunc<RE::BarrierProjectile, SetFormEditorID>();
 		stl::write_vfunc<RE::Hazard, SetFormEditorID>();
-
 		//stl::write_vfunc<RE::TESWorldSpace, SetFormEditorID>();
 		//stl::write_vfunc<RE::TESObjectLAND, SetFormEditorID>();
 		//stl::write_vfunc<RE::NavMesh, SetFormEditorID>();
@@ -947,9 +926,7 @@ namespace LoadFormEditorIDs
 		stl::write_vfunc<RE::BGSAssociationType, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSOutfit, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSArtObject, SetFormEditorID>();
-
-		stl::write_vfunc<RE::BGSMaterialObject, SetFormEditorID_Cache>();
-
+		stl::write_vfunc<RE::BGSMaterialObject, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSMovementType, SetFormEditorID>();
 		//stl::write_vfunc<RE::BGSSoundDescriptorForm, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSDualCastData, SetFormEditorID>();
