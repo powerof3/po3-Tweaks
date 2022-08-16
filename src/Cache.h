@@ -24,7 +24,7 @@ namespace Cache
 				return it->second;
 			}
 
-		    static std::string emptyStr;
+			static std::string emptyStr;
 			return emptyStr;
 		}
 

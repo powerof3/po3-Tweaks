@@ -26,7 +26,7 @@ namespace FactionStealing
 			{
 				const auto favorCost = GetFavorCost(a_playerBase, a_npc);
 				return favorCost > 1 ?
-				           a_cost <= favorCost :
+                           a_cost <= favorCost :
                            false;
 			}
 		};
@@ -584,7 +584,7 @@ namespace GrabbingIsStealing
 		EventResult ProcessEvent(const RE::TESGrabReleaseEvent* a_event, RE::BSTEventSource<RE::TESGrabReleaseEvent>*) override
 		{
 			const auto ref = a_event && a_event->grabbed ?
-			                     a_event->ref :
+                                 a_event->ref :
                                  RE::TESObjectREFRPtr();
 
 			if (ref) {
@@ -656,7 +656,7 @@ namespace LoadDoorPrompt
 					if (linkedCell && linkedCell->IsExteriorCell()) {
 						auto& [type, enter, exit] = Settings::GetSingleton()->tweaks.loadDoorPrompt;
 						return { kInterior, type == kReplaceCellAndPrompt ?
-												cell->GetName() :
+                                                cell->GetName() :
                                                 a_cellName };
 					}
 				}
@@ -673,7 +673,7 @@ namespace LoadDoorPrompt
 			}
 			if (a_type == kInterior) {
 				return type == kReplaceCellAndPrompt ?
-				           exit :
+                           exit :
                            enter;
 			}
 			return a_default;
@@ -805,7 +805,7 @@ namespace UseFurnitureInCombat
 
 			static REL::Relocation<std::uintptr_t> target{ REL_ID(17034, 17420) };  // TESFurniture::Activate
 
-		    REL::safe_write(target.address() + 0x81, std::span{ patch.getCode(), patch.getSize() });
+			REL::safe_write(target.address() + 0x81, std::span{ patch.getCode(), patch.getSize() });
 			REL::safe_write(target.address() + OFFSET(0x1B1, 0x1B2), std::span{ patch.getCode(), patch.getSize() });
 		}
 	}
@@ -816,12 +816,12 @@ namespace UseFurnitureInCombat
 		{
 			static void thunk(RE::Actor* a_actor, bool a_arg2)
 			{
-                const auto setting = Settings::GetSingleton()->tweaks.useFurnitureInCombat;
+				const auto setting = Settings::GetSingleton()->tweaks.useFurnitureInCombat;
 				if (setting == 1 && a_actor->IsPlayerRef() || setting == 2) {
 					return;
 				}
 
-			    return func(a_actor, a_arg2);
+				return func(a_actor, a_arg2);
 			}
 			static inline REL::Relocation<decltype(thunk)> func;
 		};
