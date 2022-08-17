@@ -30,3 +30,8 @@ namespace Cache
 		return GetEditorID(a_form->GetFormID());
 	}
 }
+
+extern "C" DLLEXPORT const char* GetFormEditorID(std::uint32_t a_formID)
+{
+	return Cache::EditorID::GetSingleton()->GetEditorID(a_formID).c_str();
+}

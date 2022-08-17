@@ -58,7 +58,7 @@ void Fixes::Install()
 	}
 }
 
-void Fixes::Install(std::uint32_t a_skse_version)
+void Fixes::Install([[maybe_unused]] std::uint32_t a_skse_version)
 {
 #ifdef SKYRIMVR
 	const auto fixes = Settings::GetSingleton()->fixes;

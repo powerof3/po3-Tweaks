@@ -1,18 +1,15 @@
 #pragma once
 
+#define WIN32_LEAN_AND_MEAN
 #define NOMMNOSOUND
 
 #include "RE/Skyrim.h"
 #include "SKSE/SKSE.h"
 
-#pragma warning(disable: 4100)
-
-#pragma warning(push)
 #include <SimpleIni.h>
 #include <robin_hood.h>
 #include <spdlog/sinks/basic_file_sink.h>
 #include <xbyak/xbyak.h>
-#pragma warning(pop)
 
 namespace logger = SKSE::log;
 namespace string = SKSE::stl::string;
