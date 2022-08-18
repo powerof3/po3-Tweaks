@@ -1,23 +1,24 @@
 #include "Fixes.h"
+#include "Settings.h"
 
-void Fixes::Install()
+void Fixes::PostLoad::Install()
 {
 	const auto fixes = Settings::GetSingleton()->fixes;
 
 	logger::info("{:*^30}", "FIXES"sv);
 
 	if (fixes.distantRefLoadCrash) {
-		DistantRefLoadCrashFix::Install();
+		DistantRefLoadCrash::Install();
 	}
 	if (fixes.mapMarker) {
 		if (GetModuleHandle(L"DisableFastTravel")) {
 			logger::info("Detected DisableFastTravel, skipping mapMarker fix."sv);
 		} else {
-			MapMarker::Install();
+			MapMarkerPlacement::Install();
 		}
 	}
 	if (fixes.dontTakeBookFlag) {
-		CantTakeBook::Install();
+		RestoreCantTakeBook::Install();
 	}
 	if (fixes.projectileRange) {
 		ProjectileRange::Install();
@@ -26,44 +27,51 @@ void Fixes::Install()
 		CombatDialogue::Install();
 	}
 	if (fixes.addedSpell) {
-		Spells::ReapplyAdded::Install();
-		Spells::DispelAdded::Install();
+		ReapplySpellsOnLoad::Added::Install();
 	}
 	if (fixes.deathSpell) {
-		Spells::ReapplyOnDeath::Install();
+		ReapplySpellsOnLoad::OnDeath::Install();
 	}
 	if (fixes.furnitureAnimType) {
-		IsFurnitureAnimTypeFix::Install();
+		IsFurnitureAnimTypeForFurniture::Install();
 	}
 	if (fixes.lightAttachCrash) {
-		AttachLightCrash::Install();
+		AttachLightHitEffectCrash::Install();
 	}
 	if (fixes.effectShaderZBuffer) {
-		EffectShaderZBufferFix::Install();
+		EffectShaderZBuffer::Install();
 	}
 	if (fixes.collisionToggleFix) {
-		ToggleCollisionFix::Install();
+		ToggleCollision::Install();
 	}
 	if (fixes.skinnedDecalDelete) {
-		SkinnedDecalDeleteFix::Install();
+		SkinnedDecalDelete::Install();
 	}
 	if (fixes.jumpingBonusFix) {
-		JumpingBonusFix::Install();
+		RestoreJumpingBonus::Install();
 	}
-	if (fixes.toggleAIFreezeAllFix) {
-		//ToggleAIFreezeAllFix::Install(); fix character tpose when loading back in
+	if (fixes.toggleGlobalAIFix) {
+		ToggleGlobalAI::Install();
+	}
+	if (fixes.useFurnitureInCombat != 0) {
+		UseFurnitureInCombat::Install();
 	}
 	if (fixes.loadEditorIDs) {
-		LoadFormEditorIDs::Install();
+		CacheFormEditorIDs::Install();
 	}
 }
 
-void Fixes::Install([[maybe_unused]] std::uint32_t a_skse_version)
+void Fixes::PreLoad::Install([[maybe_unused]] std::uint32_t a_skse_version)
 {
 #ifdef SKYRIMVR
 	const auto fixes = Settings::GetSingleton()->fixes;
 	if (fixes.fixVRCrosshairRefEvent) {
-		FixCrosshairRefEvent::Install(a_skse_version);
+		CrosshairRefEventVR::Install(a_skse_version);
 	}
 #endif
+}
+
+void Fixes::DataLoaded::Install()
+{
+	FlagSpellsAsNoAbsorb::Install();
 }

@@ -11,20 +11,17 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_message)
 		{
 			logger::info("{:*^30}", "BEGIN POST LOAD PATCH"sv);
 
-			Fixes::Install();
-			Tweaks::Install();
+			Fixes::PostLoad::Install();
+			Tweaks::PostLoad::Install();
+
 			Experimental::Install();
 		}
 	case SKSE::MessagingInterface::kDataLoaded:
 		{
 			logger::info("{:*^30}", "BEGIN DATA LOADED PATCH"sv);
 
-			SpellNoAbsorb::Install();
-
-			auto& tweaks = Settings::GetSingleton()->tweaks;
-			if (tweaks.grabbingIsStealing) {
-				GrabbingIsStealing::Install();
-			}
+			Fixes::DataLoaded::Install();
+			Tweaks::DataLoaded::Install();
 		}
 		break;
 	default:
@@ -109,7 +106,7 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 
 	logger::info("{:*^30}", "BEGIN PRELOAD PATCH"sv);
 
-	Fixes::Install(a_skse->SKSEVersion());
+	Fixes::PreLoad::Install(a_skse->SKSEVersion());
 
 	auto papyrus = SKSE::GetPapyrusInterface();
 	papyrus->Register(Papyrus::Bind);

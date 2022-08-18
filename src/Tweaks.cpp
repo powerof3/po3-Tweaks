@@ -1,6 +1,7 @@
 #include "Tweaks.h"
+#include "Settings.h"
 
-void Tweaks::Install()
+void Tweaks::PostLoad::Install()
 {
 	const auto& tweaks = Settings::GetSingleton()->tweaks;
 
@@ -12,8 +13,8 @@ void Tweaks::Install()
 	if (tweaks.voiceModulationValue != 1.0f) {
 		VoiceModulation::Install();
 	}
-	if (tweaks.dopplerShift) {
-		DopplerShift::Install();
+	if (tweaks.gameTimeAffectsSounds) {
+		GameTimeAffectsSounds::Install();
 	}
 	if (tweaks.dynamicSnowMat) {
 		DynamicSnowMaterial::Install();
@@ -25,7 +26,7 @@ void Tweaks::Install()
 		ScreenshotToConsole::Install();
 	}
 	if (tweaks.noCritSneakMsg != 0) {
-		NoCritSneakMessage::Install(tweaks.noCritSneakMsg);
+		NoCritSneakMessages::Install(tweaks.noCritSneakMsg);
 	}
 	if (tweaks.sitToWait.active) {
 		SitToWait::Install();
@@ -40,14 +41,19 @@ void Tweaks::Install()
 		NoPoisonPrompt::Install(tweaks.noPoisonPrompt);
 	}
 	if (tweaks.silentSneakPowerAttack) {
-		SilentSneakPowerAttack::Install();
-	}
-	if (tweaks.useFurnitureInCombat != 0) {
-		UseFurnitureInCombat::Install();
+		SilentSneakPowerAttacks::Install();
 	}
 #ifdef SKYRIMVR
 	if (tweaks.rememberLockPickAngle) {
 		RememberLockPickAngle::Install();
 	}
 #endif
+}
+
+void Tweaks::DataLoaded::Install()
+{
+	const auto& tweaks = Settings::GetSingleton()->tweaks;
+	if (tweaks.grabbingIsStealing) {
+		GrabbingIsStealing::Install();
+	}
 }

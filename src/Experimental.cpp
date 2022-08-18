@@ -1,4 +1,5 @@
 #include "Experimental.h"
+#include "Settings.h"
 
 void Experimental::Install()
 {
@@ -6,15 +7,14 @@ void Experimental::Install()
 
 	logger::info("{:*^30}", "EXPERIMENTAL"sv);
 
-	const auto papyrus = SKSE::GetPapyrusInterface();
-	papyrus->Register(Script::Speedup);
+	ScriptSpeedup::Install();
 
 	if (experimental.orphanedAEFix) {
 		CleanupOrphanedActiveEffects::Install();
 	}
 
 	if (experimental.updateGameTimers) {
-		GameTimers::Install();
+		UpdateGameTimers::Install();
 	}
 
 	ModifySuspendedStackFlushTimeout::Install();
