@@ -7,7 +7,7 @@ namespace Tweaks::ScreenshotToConsole
 	{
 		static void thunk(const char* a_notification, [[maybe_unused]] const char* a_soundToPlay, [[maybe_unused]] bool a_cancelIfAlreadyQueued)
 		{
-            if (const auto log = RE::ConsoleLog::GetSingleton()) {
+			if (const auto log = RE::ConsoleLog::GetSingleton()) {
 				log->Print("%s", a_notification);
 			}
 		}

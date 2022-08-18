@@ -28,7 +28,7 @@ namespace Tweaks::NoCritSneakMessages
 		} else {
 			auto idx = a_type - 1;
 
-		    const auto& [start, end] = id[idx];
+			const auto& [start, end] = id[idx];
 			for (auto i = start; i < end; ++i) {
 				REL::safe_write(target.address() + i, REL::NOP);
 			}

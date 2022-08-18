@@ -1,5 +1,5 @@
-#include "Tweaks.h"
 #include "Settings.h"
+#include "Tweaks.h"
 
 //voice distortion while wearing a helmet
 namespace Tweaks::VoiceModulation

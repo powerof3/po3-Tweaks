@@ -1,5 +1,5 @@
-#include "Tweaks.h"
 #include "Settings.h"
+#include "Tweaks.h"
 
 //you can only wait while sitting down
 namespace Tweaks::SitToWait

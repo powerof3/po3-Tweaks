@@ -20,12 +20,12 @@ namespace Fixes
 
 namespace Fixes
 {
-    namespace AttachLightHitEffectCrash
+	namespace AttachLightHitEffectCrash
 	{
 		void Install();
 	}
 
-    namespace CacheFormEditorIDs
+	namespace CacheFormEditorIDs
 	{
 		void Install();
 	}
@@ -37,9 +37,9 @@ namespace Fixes
 
 #ifdef SKYRIM_VR
 	namespace CrosshairRefEventVR
-    {
+	{
 		void Install();
-    }
+	}
 #endif
 
 	namespace DistantRefLoadCrash
@@ -108,7 +108,7 @@ namespace Fixes
 	}
 
 	namespace UseFurnitureInCombat
-    {
+	{
 		void Install();
-    }
+	}
 }

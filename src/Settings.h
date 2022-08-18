@@ -5,15 +5,15 @@ class Settings
 public:
 	[[nodiscard]] static Settings* GetSingleton();
 
-    void Load();
+	void Load();
 
-    bool IsTweakInstalled(std::string_view a_tweak);
+	bool IsTweakInstalled(std::string_view a_tweak);
 
-    struct Fixes
+	struct Fixes
 	{
 		void Load(CSimpleIniA& a_ini);
 
-        bool distantRefLoadCrash{ true };
+		bool distantRefLoadCrash{ true };
 		bool mapMarker{ true };
 		bool dontTakeBookFlag{ true };
 		bool projectileRange{ true };
@@ -42,7 +42,7 @@ public:
 	{
 		void Load(CSimpleIniA& a_ini, bool a_clearOld);
 
-        bool factionStealing{ false };
+		bool factionStealing{ false };
 		float voiceModulationValue{ 1.0f };
 		bool gameTimeAffectsSounds{ false };
 		bool dynamicSnowMat{ false };
@@ -80,7 +80,7 @@ public:
 	{
 		void Load(CSimpleIniA& a_ini, bool a_clearOld);
 
-        bool fastRandomInt{ false };
+		bool fastRandomInt{ false };
 		bool fastRandomFloat{ false };
 		bool orphanedAEFix{ false };
 		bool updateGameTimers{ false };

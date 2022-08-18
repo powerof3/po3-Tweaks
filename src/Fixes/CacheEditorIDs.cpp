@@ -1,5 +1,5 @@
-#include "Fixes.h"
 #include "Cache.h"
+#include "Fixes.h"
 
 //Cache skipped formEditorIDs
 namespace Fixes::CacheFormEditorIDs
@@ -145,7 +145,7 @@ namespace Fixes::CacheFormEditorIDs
 
 		//stl::write_vfunc<RE::BGSVoiceType, SetFormEditorID>();
 
-	    stl::write_vfunc<RE::BGSMaterialType, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSMaterialType, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSImpactData, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSImpactDataSet, SetFormEditorID>();
 		stl::write_vfunc<RE::TESObjectARMA, SetFormEditorID>();

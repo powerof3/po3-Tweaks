@@ -1,5 +1,5 @@
-#include "Tweaks.h"
 #include "Settings.h"
+#include "Tweaks.h"
 
 //custom load door prompts when exiting or entering
 namespace Tweaks::LoadDoorPrompt
@@ -34,10 +34,10 @@ namespace Tweaks::LoadDoorPrompt
 					const auto linkedRef = linkedDoor.get();
 					const auto linkedCell = linkedRef ? linkedRef->GetSaveParentCell() : nullptr;
 
-				    if (linkedCell && linkedCell->IsExteriorCell()) {
+					if (linkedCell && linkedCell->IsExteriorCell()) {
 						auto& [type, enter, exit] = Settings::GetSingleton()->tweaks.loadDoorPrompt;
 						return { kInterior, type == kReplaceCellAndPrompt ?
-												cell->GetName() :
+                                                cell->GetName() :
                                                 a_cellName };
 					}
 				}
@@ -54,7 +54,7 @@ namespace Tweaks::LoadDoorPrompt
 			}
 			if (a_type == kInterior) {
 				return type == kReplaceCellAndPrompt ?
-				           exit :
+                           exit :
                            enter;
 			}
 			return a_default;
@@ -68,7 +68,7 @@ namespace Tweaks::LoadDoorPrompt
 			auto [result, cellName] = detail::GetName(a_cellName);
 			const auto doorLabel = detail::GetDoorLabel(result, a_openLbl);
 
-		    return func(a_dest, a_format, doorLabel.c_str(), cellName);
+			return func(a_dest, a_format, doorLabel.c_str(), cellName);
 		}
 		static inline REL::Relocation<decltype(thunk)> func;
 	};
@@ -79,7 +79,7 @@ namespace Tweaks::LoadDoorPrompt
 		{
 			auto [result, cellName] = detail::GetName(a_cellName);
 
-		    return func(a_dest, a_format, a_unlockLbl, cellName, a_markerLbl, a_lockLevel);
+			return func(a_dest, a_format, a_unlockLbl, cellName, a_markerLbl, a_lockLevel);
 		}
 		static inline REL::Relocation<decltype(thunk)> func;
 	};

@@ -2,15 +2,15 @@
 
 namespace Tweaks
 {
-    namespace PostLoad
-    {
+	namespace PostLoad
+	{
 		void Install();
-    }
+	}
 
 	namespace DataLoaded
-    {
+	{
 		void Install();
-    }
+	}
 }
 
 namespace Tweaks

@@ -18,7 +18,7 @@ namespace Tweaks::GrabbingIsStealing
 		EventResult ProcessEvent(const RE::TESGrabReleaseEvent* a_event, RE::BSTEventSource<RE::TESGrabReleaseEvent>*) override
 		{
 			const auto ref = a_event && a_event->grabbed ?
-			                     a_event->ref :
+                                 a_event->ref :
                                  RE::TESObjectREFRPtr();
 
 			const auto player = RE::PlayerCharacter::GetSingleton();
@@ -47,7 +47,7 @@ namespace Tweaks::GrabbingIsStealing
 
 	void Install()
 	{
-        if (auto scripts = RE::ScriptEventSourceHolder::GetSingleton()) {
+		if (auto scripts = RE::ScriptEventSourceHolder::GetSingleton()) {
 			scripts->AddEventSink(GrabReleaseHandler::GetSingleton());
 			logger::info("Installed Grabbing Is Stealing tweak"sv);
 		}

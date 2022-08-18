@@ -32,7 +32,7 @@ namespace Fixes::ReapplySpellsOnLoad
 			{
 				const auto actor = stl::adjust_pointer<RE::Character>(a_list, -0x70);
 				const auto caster = actor && !actor->IsPlayerRef() && !actor->addedSpells.empty() ?
-				                        actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
+                                        actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
                                         nullptr;
 				if (caster) {
 					PermanentMagicFunctor applier{ caster, actor };
@@ -97,7 +97,7 @@ namespace Fixes::ReapplySpellsOnLoad
 			{
 				const auto node = func(a_actor, a_backgroundLoading);
 				const auto caster = node && a_actor->IsDead() && !a_actor->IsPlayerRef() ?
-				                        a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
+                                        a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
                                         nullptr;
 				if (caster) {
 					PermanentMagicFunctor applier{ caster, a_actor };
