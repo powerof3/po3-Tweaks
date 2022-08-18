@@ -65,7 +65,7 @@ void Settings::Fixes::Load(CSimpleIniA& a_ini)
 	detail::get_value(a_ini, toggleGlobalAIFix, section, "Toggle Global AI Fix", "All NPCs are frozen/unfrozen when using TAI console command/Debug.ToggleAI() function");
 	detail::get_value(a_ini, useFurnitureInCombat, section, "Use Furniture In Combat", ";Use furniture in combat and prevent getting forced out of furniture when attacked.\n;0 - off, 1 - player only, 2 - player and NPCs");
 	detail::get_value(a_ini, offensiveSpellAI, section, "Offensive Spell AI", "Check spell condition validity before NPCs equip offensive spells");
-    detail::get_value(a_ini, loadEditorIDs, section, "Load EditorIDs", ";Loads editorIDs for skipped forms at runtime");
+	detail::get_value(a_ini, loadEditorIDs, section, "Load EditorIDs", ";Loads editorIDs for skipped forms at runtime");
 #ifdef SKYRIMVR
 	detail::get_value(a_ini, fixVRCrosshairRefEvent, section, "VR CrosshairRefEvent Fix", "; Trigger CrossHairRefEvent with hand selection (normally requires game controller to enable crosshair events)");
 #endif
