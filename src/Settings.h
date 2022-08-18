@@ -28,6 +28,7 @@ public:
 		bool skinnedDecalDelete{ true };
 		bool jumpingBonusFix{ true };
 		bool toggleGlobalAIFix{ true };
+		bool offensiveSpellAI{ true };
 
 		std::uint32_t useFurnitureInCombat{ 0 };
 

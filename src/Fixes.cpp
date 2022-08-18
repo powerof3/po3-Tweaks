@@ -56,6 +56,9 @@ void Fixes::PostLoad::Install()
 	if (fixes.useFurnitureInCombat != 0) {
 		UseFurnitureInCombat::Install();
 	}
+	if (fixes.offensiveSpellAI) {
+		OffensiveSpellAI::Install();
+	}
 	if (fixes.loadEditorIDs) {
 		CacheFormEditorIDs::Install();
 	}

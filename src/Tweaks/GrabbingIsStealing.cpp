@@ -24,11 +24,12 @@ namespace Tweaks::GrabbingIsStealing
 			const auto player = RE::PlayerCharacter::GetSingleton();
 
 			if (ref && !ref->IsAnOwner(player, true, false)) {
-				const auto base = ref->GetObjectReference();
-				const auto numItems = ref->extraList.GetCount();
-				const auto owner = ref->GetOwner();
+				if (const auto base = ref->GetObjectReference(); base && base->IsNot(RE::FormType::Door)) {
+					const auto numItems = ref->extraList.GetCount();
+					const auto owner = ref->GetOwner();
 
-				player->StealAlarm(ref.get(), base, numItems, 0, owner, true);
+					player->StealAlarm(ref.get(), base, numItems, 0, owner, true);
+				}
 			}
 
 			return EventResult::kContinue;

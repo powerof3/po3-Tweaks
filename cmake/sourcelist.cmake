@@ -15,6 +15,7 @@ set(sources ${sources}
 	src/Fixes/FlagSpellsAsNoAbsorb.cpp
 	src/Fixes/IsFurnitureAnimTypeForFurniture.cpp
 	src/Fixes/MapMarkerPlacement.cpp
+	src/Fixes/OffensiveSpellAI.cpp
 	src/Fixes/ProjectileRange.cpp
 	src/Fixes/ReapplySpellsOnLoad.cpp
 	src/Fixes/RestoreCantTakeBook.cpp
