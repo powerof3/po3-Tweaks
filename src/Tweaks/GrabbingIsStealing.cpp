@@ -3,7 +3,7 @@
 //send steal alarm when grabbing owned items
 namespace Tweaks::GrabbingIsStealing
 {
-    class GrabReleaseHandler final : public RE::BSTEventSink<RE::TESGrabReleaseEvent>
+	class GrabReleaseHandler final : public RE::BSTEventSink<RE::TESGrabReleaseEvent>
 	{
 	public:
 		[[nodiscard]] static GrabReleaseHandler* GetSingleton()
@@ -18,13 +18,13 @@ namespace Tweaks::GrabbingIsStealing
 		EventResult ProcessEvent(const RE::TESGrabReleaseEvent* a_event, RE::BSTEventSource<RE::TESGrabReleaseEvent>*) override
 		{
 			const auto ref = a_event && a_event->grabbed ?
-			                     a_event->ref :
+                                 a_event->ref :
                                  RE::TESObjectREFRPtr();
 
 			const auto player = RE::PlayerCharacter::GetSingleton();
 
 			if (ref && !ref->IsAnOwner(player, true, false)) {
-                if (const auto base = ref->GetObjectReference(); base && base->IsInventoryObject()) {
+				if (const auto base = ref->GetObjectReference(); base && base->IsInventoryObject()) {
 					const auto numItems = ref->extraList.GetCount();
 					const auto owner = ref->GetOwner();
 

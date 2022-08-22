@@ -29,7 +29,7 @@ namespace Fixes::UnderWaterCamera
 				RE::hkVector4 position;
 				cameraBody->GetPosition(position);
 
-				const bool underWater = std::roundf(a_waterHeight) > std::roundf(position.quad.m128_f32[2]); //doesn't really fix, inverts the bug
+				const bool underWater = std::roundf(a_waterHeight) > std::roundf(position.quad.m128_f32[2]);  //doesn't really fix, inverts the bug
 				if (underWater) {
 					worldWaterHeight = a_waterHeight * RE::bhkWorld::GetWorldScaleInverse();
 				}

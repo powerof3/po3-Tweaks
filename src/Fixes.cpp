@@ -66,7 +66,7 @@ void Fixes::PostLoad::Install()
 		FlagStolenProduce::Install();
 	}
 
-    //UnderWaterCamera::Install(); tbd
+	//UnderWaterCamera::Install(); tbd
 }
 
 void Fixes::PreLoad::Install([[maybe_unused]] std::uint32_t a_skse_version)

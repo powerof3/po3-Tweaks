@@ -3,9 +3,9 @@
 //mark produce as stolen if pulled from leveled lists
 namespace Fixes::FlagStolenProduce
 {
-	static REL::Relocation<std::uintptr_t> target{ REL_ID(14692, 14864) }; //TESProduceForm::HandleActivate
+	static REL::Relocation<std::uintptr_t> target{ REL_ID(14692, 14864) };  //TESProduceForm::HandleActivate
 
-    namespace AddStolenTag
+	namespace AddStolenTag
 	{
 		struct CALCED_OBJECT
 		{
@@ -50,7 +50,7 @@ namespace Fixes::FlagStolenProduce
 			static void AddCalcedObjectsToInventory(RE::BSScrapArray<CALCED_OBJECT>& a_calcedObjects, RE::TESObjectREFR* a_targetRef, bool a_unk03, RE::TESObjectREFR* a_sourceRef)
 			{
 				const auto owner = a_sourceRef->GetOwner();
-			    for (auto& calcedObject : a_calcedObjects) {
+				for (auto& calcedObject : a_calcedObjects) {
 					calcedObject.containerItem.owner = owner;
 				}
 				return _AddCalcedObjectsToInventory(a_calcedObjects, a_targetRef, a_unk03);
@@ -65,15 +65,15 @@ namespace Fixes::FlagStolenProduce
 	}
 
 	//consistent with other SendStealAlarm's
-    namespace AddWarning
-    {
+	namespace AddWarning
+	{
 		void Install()
 		{
 			struct Patch : Xbyak::CodeGenerator
 			{
 				Patch()
 				{
-					mov(byte[rsp + 0x30], 1); //a_allowWarning = true
+					mov(byte[rsp + 0x30], 1);  //a_allowWarning = true
 				}
 			};
 
@@ -82,7 +82,7 @@ namespace Fixes::FlagStolenProduce
 
 			REL::safe_write(target.address() + OFFSET(0x289, 0x299), std::span{ patch.getCode(), patch.getSize() });
 		}
-    }
+	}
 
 	void Install()
 	{
