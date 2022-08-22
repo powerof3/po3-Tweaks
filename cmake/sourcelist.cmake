@@ -13,6 +13,7 @@ set(sources ${sources}
 	src/Fixes/DistantRefLoadCrash.cpp
 	src/Fixes/EffectShaderZBuffer.cpp
 	src/Fixes/FlagSpellsAsNoAbsorb.cpp
+	src/Fixes/FlagStolenProduce.cpp
 	src/Fixes/IsFurnitureAnimTypeForFurniture.cpp
 	src/Fixes/MapMarkerPlacement.cpp
 	src/Fixes/OffensiveSpellAI.cpp
@@ -23,6 +24,7 @@ set(sources ${sources}
 	src/Fixes/SkinnedDecalDelete.cpp
 	src/Fixes/ToggleCollision.cpp
 	src/Fixes/ToggleGlobalAI.cpp
+	src/Fixes/UnderwaterCamera.cpp
 	src/Fixes/UseFurnitureInCombat.cpp
 	src/PCH.cpp
 	src/Papyrus.cpp

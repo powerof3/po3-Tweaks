@@ -62,6 +62,11 @@ void Fixes::PostLoad::Install()
 	if (fixes.loadEditorIDs) {
 		CacheFormEditorIDs::Install();
 	}
+	if (fixes.flagStolenProduce) {
+		FlagStolenProduce::Install();
+	}
+
+    //UnderWaterCamera::Install(); tbd
 }
 
 void Fixes::PreLoad::Install([[maybe_unused]] std::uint32_t a_skse_version)

@@ -3,55 +3,28 @@
 //disables ripples for levitating creatures
 namespace Tweaks::NoRipplesOnHover
 {
-	struct detail
+	struct GetCharController
 	{
-		static bool IsLevitatingOnWater(const RE::Character* a_character, const RE::hkpCollidable* a_collidable)
+		static RE::bhkCharacterController* thunk(RE::AIProcess* a_currentProcess)
 		{
-			if (const auto colLayer = static_cast<RE::COL_LAYER>(a_collidable->broadPhaseHandle.collisionFilterInfo & 0x7F); colLayer == RE::COL_LAYER::kCharController) {
-				if (bool levitating = false; a_character->GetGraphVariableBool(isLevitating, levitating) && levitating) {
-					return true;
+			if (const auto user = a_currentProcess ? a_currentProcess->GetUserData() : nullptr; user) {
+				bool levitating = false;
+				if (user->GetGraphVariableBool(isLevitating, levitating) && levitating) {
+					return nullptr;
 				}
 			}
-			return false;
+
+			return func(a_currentProcess);
 		}
+		static inline REL::Relocation<decltype(thunk)> func;
+
 		static inline constexpr std::string_view isLevitating{ "isLevitating"sv };
-	};
-
-	struct ProcessInWater
-	{
-		struct Player
-		{
-			static bool thunk(RE::PlayerCharacter* a_actor, RE::hkpCollidable* a_collidable, float a_waterHeight, float a_deltaTime)
-			{
-				if (detail::IsLevitatingOnWater(a_actor, a_collidable)) {
-					return false;
-				}
-				return func(a_actor, a_collidable, a_waterHeight, a_deltaTime);
-			}
-			static inline REL::Relocation<decltype(thunk)> func;
-
-			static inline constexpr std::size_t idx{ 0x9C };
-		};
-
-		struct NPC
-		{
-			static bool thunk(RE::Character* a_actor, RE::hkpCollidable* a_collidable, float a_waterHeight, float a_deltaTime)
-			{
-				if (detail::IsLevitatingOnWater(a_actor, a_collidable)) {
-					return false;
-				}
-				return func(a_actor, a_collidable, a_waterHeight, a_deltaTime);
-			}
-			static inline REL::Relocation<decltype(thunk)> func;
-
-			static inline constexpr std::size_t idx{ 0x9C };
-		};
 	};
 
 	void Install()
 	{
-		stl::write_vfunc<RE::PlayerCharacter, ProcessInWater::Player>();
-		stl::write_vfunc<RE::Character, ProcessInWater::NPC>();
+		REL::Relocation<std::uintptr_t> target{ REL_ID(36621, 37629), 0x35 };
+		stl::write_thunk_call<GetCharController>(target.address());
 
 		logger::info("Installed no ripples on hover tweak"sv);
 	}

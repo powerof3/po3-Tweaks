@@ -29,8 +29,9 @@ public:
 		bool jumpingBonusFix{ true };
 		bool toggleGlobalAIFix{ true };
 		bool offensiveSpellAI{ true };
+		bool flagStolenProduce{ true };
 
-		std::uint32_t useFurnitureInCombat{ 0 };
+		std::uint32_t useFurnitureInCombat{ 1 };
 
 		bool loadEditorIDs{ true };
 #ifdef SKYRIMVR
@@ -105,7 +106,7 @@ private:
 				a_ini.SetDoubleValue(a_section, a_key, a_value, a_comment);
 
 				GetSingleton()->settingsMap.emplace(a_key, a_value != 1.0);  //for the one setting that uses a float (Voice Modulation)
-			} else if constexpr (std::is_arithmetic_v<T>) {
+			} else if constexpr (std::is_arithmetic_v<T> || std::is_enum_v<T>) {
 				a_value = string::lexical_cast<T>(a_ini.GetValue(a_section, a_key, std::to_string(a_value).c_str()));
 				a_ini.SetValue(a_section, a_key, std::to_string(a_value).c_str(), a_comment);
 

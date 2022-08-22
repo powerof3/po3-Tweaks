@@ -16,6 +16,7 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_message)
 
 			Experimental::Install();
 		}
+		break;
 	case SKSE::MessagingInterface::kDataLoaded:
 		{
 			logger::info("{:*^30}", "BEGIN DATA LOADED PATCH"sv);

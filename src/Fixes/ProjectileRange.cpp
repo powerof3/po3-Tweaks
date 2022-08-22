@@ -5,11 +5,9 @@ namespace Fixes::ProjectileRange
 {
 	struct UpdateCombatThreat
 	{
-		static void thunk(/*RE::CombatManager::CombatThreats*/ std::uintptr_t a_threats, RE::Projectile* a_projectile)
+		static void thunk(RE::CombatThreatMap* a_threatMap, RE::Projectile* a_projectile)
 		{
-			using Type = RE::FormType;
-
-			if (a_projectile && a_projectile->Is(Type::ProjectileMissile, Type::ProjectileCone)) {
+			if (a_projectile && a_projectile->Is(RE::FormType::ProjectileMissile, RE::FormType::ProjectileCone)) {
 				const auto base = a_projectile->GetBaseObject();
 				const auto projectileBase = base ? base->As<RE::BGSProjectile>() : nullptr;
 				const auto baseSpeed = projectileBase ? projectileBase->data.speed : 0.0f;
@@ -19,7 +17,7 @@ namespace Fixes::ProjectileRange
 				}
 			}
 
-			func(a_threats, a_projectile);
+			func(a_threatMap, a_projectile);
 		}
 		static inline REL::Relocation<decltype(thunk)> func;
 	};

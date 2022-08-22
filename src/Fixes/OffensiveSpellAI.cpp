@@ -16,11 +16,13 @@ namespace Fixes::OffensiveSpellAI
 				return result;
 			}
 			static inline REL::Relocation<decltype(thunk)> func;
+
+			static inline std::size_t idx{ 0x6 };
 		};
 
 		void Install()
 		{
-			stl::write_vfunc<RE::CombatMagicCasterOffensive, 0x6, CheckStartCast>();
+			stl::write_vfunc<RE::CombatMagicCasterOffensive, CheckStartCast>();
 		}
 	}
 
@@ -40,5 +42,7 @@ namespace Fixes::OffensiveSpellAI
 	{
 		CombatInventoryMagic::Install();
 		CombatMagicCaster::Install();
+
+		logger::info("Installed offensive spell AI fix"sv);
 	}
 }
