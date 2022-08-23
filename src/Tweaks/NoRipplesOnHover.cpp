@@ -3,7 +3,9 @@
 //disables ripples for levitating creatures
 namespace Tweaks::NoRipplesOnHover
 {
-	struct GetCharController
+	static inline constexpr std::string_view isLevitating{ "isLevitating"sv };
+
+    struct GetCharController
 	{
 		static RE::bhkCharacterController* thunk(RE::AIProcess* a_currentProcess)
 		{
@@ -17,8 +19,6 @@ namespace Tweaks::NoRipplesOnHover
 			return func(a_currentProcess);
 		}
 		static inline REL::Relocation<decltype(thunk)> func;
-
-		static inline constexpr std::string_view isLevitating{ "isLevitating"sv };
 	};
 
 	void Install()

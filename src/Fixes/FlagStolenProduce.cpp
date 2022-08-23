@@ -43,7 +43,7 @@ namespace Fixes::FlagStolenProduce
 				auto& trampoline = SKSE::GetTrampoline();
 				SKSE::AllocTrampoline(31);
 
-				_AddCalcedObjectsToInventory = trampoline.write_call<5>(target.address() + OFFSET(0xA27, 0x21C), trampoline.allocate(patch));
+				_AddCalcedObjectsToInventory = trampoline.write_call<5>(target.address() + OFFSET(0x20B, 0x21C), trampoline.allocate(patch));
 			}
 
 		private:
@@ -51,7 +51,7 @@ namespace Fixes::FlagStolenProduce
 			{
 				const auto owner = a_sourceRef->GetOwner();
 				for (auto& calcedObject : a_calcedObjects) {
-					calcedObject.containerItem.owner = owner;
+				    calcedObject.containerItem.owner = owner;
 				}
 				return _AddCalcedObjectsToInventory(a_calcedObjects, a_targetRef, a_unk03);
 			}
