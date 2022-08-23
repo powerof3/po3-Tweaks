@@ -51,7 +51,7 @@ namespace Fixes::FlagStolenProduce
 			{
 				const auto owner = a_sourceRef->GetOwner();
 				for (auto& calcedObject : a_calcedObjects) {
-				    calcedObject.containerItem.owner = owner;
+					calcedObject.containerItem.owner = owner;
 				}
 				return _AddCalcedObjectsToInventory(a_calcedObjects, a_targetRef, a_unk03);
 			}
