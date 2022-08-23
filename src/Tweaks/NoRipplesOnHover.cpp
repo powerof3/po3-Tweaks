@@ -5,7 +5,7 @@ namespace Tweaks::NoRipplesOnHover
 {
 	static inline constexpr std::string_view isLevitating{ "isLevitating"sv };
 
-    struct GetCharController
+	struct GetCharController
 	{
 		static RE::bhkCharacterController* thunk(RE::AIProcess* a_currentProcess)
 		{
