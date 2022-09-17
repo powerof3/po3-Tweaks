@@ -2,8 +2,9 @@
 
 Yet another collection of bug fixes and gameplay tweaks for Skyrim Special Edition/AE/VR
 
-[SSE/AE](https://www.nexusmods.com/skyrimspecialedition/mods/51073)
-[VR](https://www.nexusmods.com/skyrimspecialedition/mods/59510)
+* [SSE/AE](https://www.nexusmods.com/skyrimspecialedition/mods/51073)
+* [VR](https://www.nexusmods.com/skyrimspecialedition/mods/59510)
+
 ## Requirements
 * [CMake](https://cmake.org/)
 	* Add this to your `PATH`
@@ -16,11 +17,11 @@ Yet another collection of bug fixes and gameplay tweaks for Skyrim Special Editi
 	* You need to build from the powerof3/dev branch
 	* Add this as as an environment variable `CommonLibSSEPath`
 * [CommonLibVR](https://github.com/alandtse/CommonLibVR/tree/vr)
-	* Add this as as an environment variable `CommonLibVRPath`
+	* Add this as as an environment variable `CommonLibVRPath` instead of /external
 
 ## User Requirements
 * [Address Library for SKSE](https://www.nexusmods.com/skyrimspecialedition/mods/32444)
-	* Needed for SSE
+	* Needed for SSE/AE
 * [VR Address Library for SKSEVR](https://www.nexusmods.com/skyrimspecialedition/mods/58101)
 	* Needed for VR
 
@@ -33,11 +34,20 @@ Yet another collection of bug fixes and gameplay tweaks for Skyrim Special Editi
 ```
 git clone https://github.com/powerof3/po3-Tweaks.git
 cd po3-Tweaks
+# pull commonlib /extern to override the path settings
+git submodule init
+# to update submodules to checked in build
+git submodule update
 ```
+
 ### SSE
 ```
-cmake --preset vs2022-windows-vcpkg
-# build or open po3_Tweaks.sln in Visual Studio
+cmake --preset vs2022-windows-vcpkg-se
+cmake --build build --config Release
+```
+### AE
+```
+cmake --preset vs2022-windows-vcpkg-ae
 cmake --build build --config Release
 ```
 ### VR
@@ -45,6 +55,5 @@ cmake --build build --config Release
 cmake --preset vs2022-windows-vcpkg-vr
 cmake --build buildvr --config Release
 ```
-
 ## License
 [MIT](LICENSE)
