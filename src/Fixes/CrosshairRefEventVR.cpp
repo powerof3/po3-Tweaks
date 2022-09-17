@@ -7,7 +7,7 @@ namespace Fixes::CrosshairRefEventVR
 {
 	struct LookupByHandle
 	{
-		static bool thunk(RefHandle& a_refHandle, NiPointer<TESObjectREFR>& a_refrOut)
+		static bool thunk(RE::RefHandle& a_refHandle, RE::NiPointer<RE::TESObjectREFR>& a_refrOut)
 		{
 			bool result = func(a_refHandle, a_refrOut);
 			if (patchSKSE)
@@ -26,7 +26,7 @@ namespace Fixes::CrosshairRefEventVR
 		static inline bool patchSKSE = false;
 	};
 
-	void Install(std::uint32_t skse_version)
+	void Install(std::uint32_t a_skse_version)
 	{
 		LookupByHandle::sksevr_base = reinterpret_cast<uintptr_t>(GetModuleHandleA("sksevr_1_4_15"));
 		bool code_match = true;
@@ -38,11 +38,11 @@ namespace Fixes::CrosshairRefEventVR
 			logger::info("VR CrosshairRefEvent: Read and write crosshair code is not expected"sv);
 			code_match = false;
 		}
-		if (skse_version == 33554624 && code_match) {  //2.0.12
+		if (a_skse_version == 33554624 && code_match) {  //2.0.12
 			LookupByHandle::patchSKSE = true;
-			logger::info("VR CrosshairRefEvent: Found patchable sksevr_1_4_15.dll version {} with base {}", skse_version, LookupByHandle::sksevr_base);
+			logger::info("VR CrosshairRefEvent: Found patchable sksevr_1_4_15.dll version {} with base {:x}", a_skse_version, LookupByHandle::sksevr_base);
 		} else
-			logger::info("VR CrosshairRefEvent: Found unknown sksevr_1_4_15.dll version {} with base {}; not patching", skse_version, LookupByHandle::sksevr_base);
+			logger::info("VR CrosshairRefEvent: Found unknown sksevr_1_4_15.dll version {} with base {:x}; not patching", a_skse_version, LookupByHandle::sksevr_base);
 		REL::Relocation<std::uintptr_t> target{ REL::Offset(0x6D2F82) };
 		stl::write_thunk_call<LookupByHandle>(target.address());
 

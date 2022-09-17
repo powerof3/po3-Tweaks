@@ -3,9 +3,9 @@
 #ifdef SKYRIMVR
 //Remember lock pick angle.
 //Based on offsets discovered by OnlyIWeDo (https://www.nexusmods.com/skyrimspecialedition/mods/24543) and updated by Umgak (https://www.nexusmods.com/skyrimspecialedition/mods/26838)
-namespace RememberLockPickAngle
+namespace Tweaks::RememberLockPickAngleVR
 {
-	void Install()
+	void Tweaks::RememberLockPickAngleVR::Install()
 	{
 		constexpr REL::ID LockpickBreakAddr{ 51093 };
 		static REL::Relocation<std::uintptr_t> target{ LockpickBreakAddr, 0x242 };
