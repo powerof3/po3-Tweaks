@@ -35,10 +35,10 @@ namespace Fixes
 		void Install();
 	}
 
-#ifdef SKYRIM_VR
+#ifdef SKYRIMVR
 	namespace CrosshairRefEventVR
 	{
-		void Install();
+		void Install(std::uint32_t a_skse_version);
 	}
 #endif
 

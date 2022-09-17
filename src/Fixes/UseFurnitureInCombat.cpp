@@ -23,8 +23,8 @@ namespace Fixes::UseFurnitureInCombat
 
 			static REL::Relocation<std::uintptr_t> target{ REL_ID(17034, 17420) };  // TESFurniture::Activate
 
-			REL::safe_write(target.address() + 0x81, std::span{ patch.getCode(), patch.getSize() });
-			REL::safe_write(target.address() + OFFSET(0x1B1, 0x1B2), std::span{ patch.getCode(), patch.getSize() });
+			REL::safe_write(target.address() + OFFSET_3(0x81, 0x81, 0x5a), std::span{ patch.getCode(), patch.getSize() });
+			REL::safe_write(target.address() + OFFSET_3(0x1B1, 0x1B2, 0x18a), std::span{ patch.getCode(), patch.getSize() });
 		}
 	}
 

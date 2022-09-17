@@ -45,7 +45,7 @@ void Tweaks::PostLoad::Install()
 	}
 #ifdef SKYRIMVR
 	if (tweaks.rememberLockPickAngle) {
-		RememberLockPickAngle::Install();
+		RememberLockPickAngleVR::Install();
 	}
 #endif
 }
