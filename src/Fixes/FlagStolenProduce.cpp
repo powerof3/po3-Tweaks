@@ -7,15 +7,6 @@ namespace Fixes::FlagStolenProduce
 
 	namespace AddStolenTag
 	{
-		struct CALCED_OBJECT
-		{
-			RE::TESForm* object;                   // 00
-			std::uint32_t count;                   // 08
-			std::uint32_t pad0C;                   // 0C
-			RE::ContainerItemExtra containerItem;  // 10
-		};
-		static_assert(sizeof(CALCED_OBJECT) == 0x28);
-
 		struct AddCalcedObjectsToInventoryPatch
 		{
 			static void Install()
@@ -47,7 +38,7 @@ namespace Fixes::FlagStolenProduce
 			}
 
 		private:
-			static void AddCalcedObjectsToInventory(RE::BSScrapArray<CALCED_OBJECT>& a_calcedObjects, RE::TESObjectREFR* a_targetRef, bool a_unk03, RE::TESObjectREFR* a_sourceRef)
+			static void AddCalcedObjectsToInventory(RE::BSScrapArray<RE::CALCED_OBJECT>& a_calcedObjects, RE::TESObjectREFR* a_targetRef, bool a_unk03, RE::TESObjectREFR* a_sourceRef)
 			{
 				const auto owner = a_sourceRef->GetOwner();
 				for (auto& calcedObject : a_calcedObjects) {
@@ -55,7 +46,7 @@ namespace Fixes::FlagStolenProduce
 				}
 				return _AddCalcedObjectsToInventory(a_calcedObjects, a_targetRef, a_unk03);
 			}
-			static inline REL::Relocation<void(const RE::BSScrapArray<CALCED_OBJECT>&, RE::TESObjectREFR*, bool)> _AddCalcedObjectsToInventory;
+			static inline REL::Relocation<void(const RE::BSScrapArray<RE::CALCED_OBJECT>&, RE::TESObjectREFR*, bool)> _AddCalcedObjectsToInventory;
 		};
 
 		void Install()
