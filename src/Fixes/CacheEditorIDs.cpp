@@ -25,7 +25,6 @@ namespace Fixes::CacheFormEditorIDs
 
 	void Install()
 	{
-		//stl::write_vfunc<RE::TESForm, SetFormEditorID>();
 		//stl::write_vfunc<RE::BGSKeyword, SetFormEditorID>();
 		//stl::write_vfunc<RE::BGSLocationRefType, SetFormEditorID>();
 		//stl::write_vfunc<RE::BGSAction, SetFormEditorID>();
