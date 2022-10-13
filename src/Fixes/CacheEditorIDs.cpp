@@ -13,8 +13,8 @@ namespace Fixes::CacheFormEditorIDs
 				const RE::BSWriteLockGuard locker{ lock };
 				if (map) {
 					map->emplace(a_str, a_this);
-					Cache::EditorID::GetSingleton()->CacheEditorID(a_this, a_str);
 				}
+				Cache::EditorID::GetSingleton()->CacheEditorID(a_this, a_str);
 			}
 			return func(a_this, a_str);
 		}
