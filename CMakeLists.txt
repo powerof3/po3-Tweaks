@@ -135,7 +135,7 @@ else ()
 endif()
 
 find_package(robin_hood CONFIG REQUIRED)
-find_path(SIMPLEINI_INCLUDE_DIRS "ConvertUTF.c")
+find_path(CLIB_UTIL_INCLUDE_DIRS "ClibUtil/utils.hpp")
 
 # ---- Add source files ----
 
@@ -187,7 +187,7 @@ target_include_directories(
 	PRIVATE
 		${CMAKE_CURRENT_BINARY_DIR}/include
 		${CMAKE_CURRENT_SOURCE_DIR}/src
-		${SIMPLEINI_INCLUDE_DIRS}
+		${CLIB_UTIL_INCLUDE_DIRS}
 )
 
 target_link_libraries(

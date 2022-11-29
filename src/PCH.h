@@ -6,13 +6,15 @@
 #include "RE/Skyrim.h"
 #include "SKSE/SKSE.h"
 
-#include <SimpleIni.h>
+#include <ClibUtil/simpleINI.hpp>
+#include <ClibUtil/string.hpp>
 #include <robin_hood.h>
 #include <spdlog/sinks/basic_file_sink.h>
 #include <xbyak/xbyak.h>
 
 namespace logger = SKSE::log;
-namespace string = SKSE::stl::string;
+namespace string = clib_util::string;
+namespace ini = clib_util::ini;
 
 using namespace std::literals;
 

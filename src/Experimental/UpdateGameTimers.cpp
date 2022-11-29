@@ -31,7 +31,7 @@ namespace Experimental::UpdateGameTimers
 			} else {
 				a_global->value = a_value;
 
-				if (stl::is_in(a_global->GetFormID(), detail::gameHour, detail::gameDay)) {
+				if (a_global->GetFormID() == detail::gameHour || a_global->GetFormID() == detail::gameDay) {
 					detail::GetSleeping() = false;
 					detail::UpdateTimers(RE::PlayerCharacter::GetSingleton());
 				}
