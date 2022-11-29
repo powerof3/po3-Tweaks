@@ -48,6 +48,9 @@ void Settings::Fixes::Load(CSimpleIniA& a_ini)
 	//1.6 - delete QueuedRef Crash
 	a_ini.Delete(section, "Queued Ref Crash", true);
 
+	//1.7.6 - delete Flag Stolen Produce
+	a_ini.Delete(section, "Flag Stolen Produce", true);
+
 	ini::get_value(a_ini, distantRefLoadCrash, section, "Distant Ref Load Crash", ";Fixes loading crash caused by missing 3D on distant references.");
 	ini::get_value(a_ini, mapMarker, section, "Map Marker Placement Fix", ";Allows placing map markers near fast travel destinations when fast travel is disabled");
 	ini::get_value(a_ini, dontTakeBookFlag, section, "Restore 'Can't Be Taken Book' Flag", ";Enables 'Can't be taken' book flag functionality.");
@@ -65,7 +68,6 @@ void Settings::Fixes::Load(CSimpleIniA& a_ini)
 	ini::get_value(a_ini, toggleGlobalAIFix, section, "Toggle Global AI Fix", ";TAI console command/Debug.ToggleAI() now toggles all loaded NPC AI");
 	ini::get_value(a_ini, useFurnitureInCombat, section, "Use Furniture In Combat", ";Use furniture in combat and prevent getting forced out of furniture when attacked.\n;0 - off, 1 - player only, 2 - player and NPCs");
 	ini::get_value(a_ini, offensiveSpellAI, section, "Offensive Spell AI", ";Check spell condition validity before NPCs equip offensive spells");
-	ini::get_value(a_ini, flagStolenProduce, section, "Flag Stolen Produce", ";Mark flora and tree items as stolen, when pulled from leveled lists");
 	ini::get_value(a_ini, loadEditorIDs, section, "Load EditorIDs", ";Loads editorIDs for skipped forms at runtime");
 #ifdef SKYRIMVR
 	ini::get_value(a_ini, fixVRCrosshairRefEvent, section, "VR CrosshairRefEvent Fix", "; Trigger CrossHairRefEvent with hand selection (normally requires game controller to enable crosshair events)");

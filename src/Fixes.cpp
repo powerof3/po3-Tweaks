@@ -62,9 +62,6 @@ void Fixes::PostLoad::Install()
 	if (fixes.loadEditorIDs) {
 		CacheFormEditorIDs::Install();
 	}
-	if (fixes.flagStolenProduce) {
-		//FlagStolenProduce::Install(); need fixing
-	}
 
 	//UnderWaterCamera::Install(); tbd
 }
