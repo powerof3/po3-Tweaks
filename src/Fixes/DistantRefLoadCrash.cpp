@@ -9,7 +9,7 @@ namespace Fixes::DistantRefLoadCrash
 		{
 			const auto root = a_ref->Get3D();
 
-            if (const auto fadeNode = root ? root->AsFadeNode() : nullptr) {
+			if (const auto fadeNode = root ? root->AsFadeNode() : nullptr) {
 #ifndef SKYRIMVR
 				fadeNode->unk144 = 0;
 #else

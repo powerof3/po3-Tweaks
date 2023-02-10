@@ -13,7 +13,6 @@ set(sources ${sources}
 	src/Fixes/DistantRefLoadCrash.cpp
 	src/Fixes/EffectShaderZBuffer.cpp
 	src/Fixes/FlagSpellsAsNoAbsorb.cpp
-	src/Fixes/FlagStolenProduce.cpp
 	src/Fixes/IsFurnitureAnimTypeForFurniture.cpp
 	src/Fixes/MapMarkerPlacement.cpp
 	src/Fixes/OffensiveSpellAI.cpp

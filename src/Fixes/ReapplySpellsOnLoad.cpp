@@ -20,7 +20,7 @@ namespace RE
 		std::uint8_t pad13{ 0 };
 		std::uint32_t pad14{ 0 };
 
-        BSContainer::ForEachResult operator()(MagicItem* a_spell)
+		BSContainer::ForEachResult operator()(MagicItem* a_spell)
 		{
 			using func_t = decltype(&PermanentMagicFunctor::operator());
 			REL::Relocation<func_t> func{ REL_ID(33684, 34464) };
@@ -46,9 +46,9 @@ namespace Fixes::ReapplySpellsOnLoad
 					auto* actor = stl::adjust_pointer<RE::Character>(a_list, -0x70);
 
 					if (auto* caster = actor && !actor->IsPlayerRef() && !actor->addedSpells.empty() ?
-					                       actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
-					                       nullptr) {
-                        RE::PermanentMagicFunctor applier{ caster, actor };
+                                           actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
+                                           nullptr) {
+						RE::PermanentMagicFunctor applier{ caster, actor };
 
 						for (const auto& spell : actor->addedSpells) {
 							if (spell && applier(spell) == RE::BSContainer::ForEachResult::kStop) {
@@ -116,9 +116,9 @@ namespace Fixes::ReapplySpellsOnLoad
 				auto* node = func(a_actor, a_backgroundLoading);
 
 				if (auto* caster = node && a_actor->IsDead() && !a_actor->IsPlayerRef() ?
-				                       a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
-				                       nullptr) {
-                    RE::PermanentMagicFunctor applier{ caster, a_actor };
+                                       a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
+                                       nullptr) {
+					RE::PermanentMagicFunctor applier{ caster, a_actor };
 
 					const auto npc = a_actor->GetActorBase();
 					const auto actorEffects = npc ? npc->actorEffects : nullptr;
