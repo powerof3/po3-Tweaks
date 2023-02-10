@@ -9,22 +9,21 @@ namespace Fixes::AttachLightHitEffectCrash
 		{
 			if (a_hitEffect->GetAttached()) {
 				auto root = a_hitEffect->GetAttachRoot();
-				const auto attachLightObj = root ?
-                                                root->GetObjectByName(RE::FixedStrings::GetSingleton()->attachLight) :  //crash here because no null check
-                                                nullptr;
-				if (attachLightObj) {
+				if (const auto attachLightObj = root ?
+				                                    root->GetObjectByName(RE::FixedStrings::GetSingleton()->attachLight) :  //crash here because no null check
+				                                    nullptr) {
 					root = attachLightObj;
 				}
 				if (root && root != a_this->attachRoot) {
 					a_this->attachLightNode = root;
 				}
 				if (a_this->attachLightNode) {
-					return RE::BSContainer::ForEachResult::kContinue;
+					return RE::BSContainer::ForEachResult::kStop;
 				}
 			} else {
-				a_this->unk18 = false;
+				a_this->allAttached = false;
 			}
-			return RE::BSContainer::ForEachResult::kStop;
+			return RE::BSContainer::ForEachResult::kContinue;
 		}
 
 #ifdef SKYRIM_AE

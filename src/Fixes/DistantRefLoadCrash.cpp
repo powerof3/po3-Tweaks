@@ -8,9 +8,8 @@ namespace Fixes::DistantRefLoadCrash
 		static void func([[maybe_unused]] RE::TESObjectCELL* a_cell, const RE::TESObjectREFR* a_ref)
 		{
 			const auto root = a_ref->Get3D();
-			const auto fadeNode = root ? root->AsFadeNode() : nullptr;
 
-			if (fadeNode) {
+            if (const auto fadeNode = root ? root->AsFadeNode() : nullptr) {
 #ifndef SKYRIMVR
 				fadeNode->unk144 = 0;
 #else

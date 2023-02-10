@@ -21,7 +21,7 @@ namespace Experimental::CleanupOrphanedActiveEffects
 		}
 	};
 
-	struct ReadFromSaveGame
+	struct LoadGame
 	{
 		static void thunk(RE::Character* a_this, std::uintptr_t a_buf)
 		{
@@ -61,7 +61,7 @@ namespace Experimental::CleanupOrphanedActiveEffects
 
 	void Install()
 	{
-		stl::write_vfunc<RE::Character, ReadFromSaveGame>();
+		stl::write_vfunc<RE::Character, LoadGame>();
 
 		logger::info("Installed orphan AE cleanup fix"sv);
 	}
