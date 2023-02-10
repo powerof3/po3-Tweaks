@@ -57,11 +57,6 @@ namespace Fixes
 		void Install();
 	}
 
-	namespace FlagStolenProduce
-	{
-		void Install();
-	}
-
 	namespace IsFurnitureAnimTypeForFurniture
 	{
 		void Install();
