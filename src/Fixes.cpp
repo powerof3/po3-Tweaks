@@ -80,7 +80,7 @@ void Fixes::DataLoaded::Install()
 	FlagSpellsAsNoAbsorb::Install();
 
 	const auto& fixes = Settings::GetSingleton()->fixes;
-    if (fixes.breathingSounds) {
+	if (fixes.breathingSounds) {
 		BreathingSounds::Install();
 	}
 }

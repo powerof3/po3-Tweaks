@@ -90,8 +90,8 @@ namespace Fixes
 				auto result = func(a_this, a_controller);
 				if (result) {
 					const auto target = a_controller->handleCount ?
-					                        a_controller->cachedTarget :
-					                        a_controller->targetHandle.get();
+                                            a_controller->cachedTarget :
+                                            a_controller->targetHandle.get();
 
 					return target && RE::CombatMagicCaster::CheckTargetValid(a_controller, target.get(), a_this);
 				}
