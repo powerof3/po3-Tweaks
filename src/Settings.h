@@ -29,6 +29,7 @@ public:
 		bool jumpingBonusFix{ true };
 		bool toggleGlobalAIFix{ true };
 		bool offensiveSpellAI{ true };
+		bool breathingSounds{ true };
 
 		std::uint32_t useFurnitureInCombat{ 1 };
 

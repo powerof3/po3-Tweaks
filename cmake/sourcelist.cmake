@@ -7,6 +7,7 @@ set(sources ${sources}
 	src/Experimental/UpdateGameTimers.cpp
 	src/Fixes.cpp
 	src/Fixes/AttachLightHitEffectCrash.cpp
+	src/Fixes/BreathingSounds.cpp
 	src/Fixes/CacheEditorIDs.cpp
 	src/Fixes/CombatDialogue.cpp
 	src/Fixes/CrosshairRefEventVR.cpp

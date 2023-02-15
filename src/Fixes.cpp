@@ -62,7 +62,6 @@ void Fixes::PostLoad::Install()
 	if (fixes.loadEditorIDs) {
 		CacheFormEditorIDs::Install();
 	}
-
 	//UnderWaterCamera::Install(); tbd
 }
 
@@ -79,4 +78,9 @@ void Fixes::PreLoad::Install([[maybe_unused]] std::uint32_t a_skse_version)
 void Fixes::DataLoaded::Install()
 {
 	FlagSpellsAsNoAbsorb::Install();
+
+	const auto& fixes = Settings::GetSingleton()->fixes;
+    if (fixes.breathingSounds) {
+		BreathingSounds::Install();
+	}
 }
