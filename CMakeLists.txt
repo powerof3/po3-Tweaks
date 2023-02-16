@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 set(NAME "po3_Tweaks" CACHE STRING "")
-set(VERSION 1.7.5 CACHE STRING "")
+set(VERSION 1.8.0 CACHE STRING "")
 set(AE_VERSION 1)
 set(VR_VERSION 1)
 
