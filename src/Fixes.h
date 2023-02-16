@@ -12,6 +12,11 @@ namespace Fixes
 		void Install();
 	}
 
+	namespace PostPostLoad
+	{
+		void Install();
+	}
+
 	namespace DataLoaded
 	{
 		void Install();
@@ -108,12 +113,12 @@ namespace Fixes
 		void Install();
 	}
 
-	namespace ReapplySpellsOnLoad::Added
+	namespace ReapplyAddedSpells
 	{
 		void Install();
 	}
 
-	namespace ReapplySpellsOnLoad::OnDeath
+	namespace ReapplyNoDeathDispelSpells
 	{
 		void Install();
 	}

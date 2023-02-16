@@ -125,6 +125,6 @@ namespace Fixes::ToggleCollision
 		REL::Relocation<std::uintptr_t> func{ REL_ID(22350, 22825) };
 		stl::asm_replace<ToggleCollision>(func.address());
 
-		logger::info("Installed toggle collision fix"sv);
+		logger::info("\t\tInstalled toggle collision fix"sv);
 	}
 }

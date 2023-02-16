@@ -12,7 +12,7 @@ namespace Tweaks::RememberLockPickAngleVR
 		for (uintptr_t i = 0; i < 7; ++i) {
 			REL::safe_write(target.address() + i, REL::NOP);
 		}
-		logger::info("Installed remember lock pick angle"sv);
+		logger::info("\t\tInstalled remember lock pick angle"sv);
 	}
 }
 #endif

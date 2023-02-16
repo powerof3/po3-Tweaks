@@ -45,6 +45,6 @@ namespace Experimental::UpdateGameTimers
 		REL::Relocation<std::uintptr_t> func{ REL_ID(55352, 55923) };
 		stl::asm_replace<SetGlobal>(func.address());
 
-		logger::info("Installed game hour timer fix"sv);
+		logger::info("\t\tInstalled game hour timer fix"sv);
 	}
 }

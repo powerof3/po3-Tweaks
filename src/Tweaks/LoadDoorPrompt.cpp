@@ -91,6 +91,6 @@ namespace Tweaks::LoadDoorPrompt
 		stl::write_thunk_call<Locked>(target.address() + 0x140);
 		stl::write_thunk_call<Normal>(target.address() + 0x168);
 
-		logger::info("Installed load door activate prompt tweak"sv);
+		logger::info("\t\tInstalled load door activate prompt tweak"sv);
 	}
 }

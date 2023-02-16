@@ -43,6 +43,6 @@ namespace Fixes::OffensiveSpellAI
 		CombatInventoryMagic::Install();
 		CombatMagicCaster::Install();
 
-		logger::info("Installed offensive spell AI fix"sv);
+		logger::info("\t\tInstalled offensive spell AI fix"sv);
 	}
 }

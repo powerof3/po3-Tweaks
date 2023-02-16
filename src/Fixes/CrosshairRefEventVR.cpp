@@ -46,7 +46,7 @@ namespace Fixes::CrosshairRefEventVR
 		REL::Relocation<std::uintptr_t> target{ REL::Offset(0x6D2F82) };
 		stl::write_thunk_call<LookupByHandle>(target.address());
 
-		logger::info("Installed VR CrosshairRefEvent fix"sv);
+		logger::info("\t\tInstalled VR CrosshairRefEvent fix"sv);
 	}
 }
 #endif

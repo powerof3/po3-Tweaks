@@ -66,6 +66,6 @@ namespace Fixes::RestoreCantTakeBook
 		BlockButton::Install();
 		BlockPrompt::Install();
 
-		logger::info("Installed 'Can't Be Taken' book flag fix"sv);
+		logger::info("\t\tInstalled 'Can't Be Taken' book flag fix"sv);
 	}
 }

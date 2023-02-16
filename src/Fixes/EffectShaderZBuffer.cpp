@@ -10,6 +10,6 @@ namespace Fixes::EffectShaderZBuffer
 		constexpr std::uint8_t zeroes[] = { 0x0, 0x0, 0x0, 0x0 };
 		REL::safe_write(target.address(), zeroes, 4);
 
-		logger::info("Installed effect shader z buffer fix"sv);
+		logger::info("\t\tInstalled effect shader z buffer fix"sv);
 	}
 }

@@ -63,6 +63,6 @@ namespace Experimental::CleanupOrphanedActiveEffects
 	{
 		stl::write_vfunc<RE::Character, LoadGame>();
 
-		logger::info("Installed orphan AE cleanup fix"sv);
+		logger::info("\t\tInstalled orphan AE cleanup fix"sv);
 	}
 }

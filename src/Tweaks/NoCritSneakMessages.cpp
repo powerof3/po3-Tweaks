@@ -34,6 +34,6 @@ namespace Tweaks::NoCritSneakMessages
 			}
 		}
 
-		logger::info("Installed crit/sneak message tweak"sv);
+		logger::info("\t\tInstalled crit/sneak message tweak"sv);
 	}
 }

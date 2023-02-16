@@ -1,3 +1,4 @@
+#include "Compatibility.h"
 #include "Experimental.h"
 #include "Fixes.h"
 #include "Papyrus.h"
@@ -9,17 +10,28 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_message)
 	switch (a_message->type) {
 	case SKSE::MessagingInterface::kPostLoad:
 		{
-			logger::info("{:*^30}", "BEGIN POST LOAD PATCH"sv);
+	        logger::info("{:*^50}", "POST LOAD PATCH"sv);
 
-			Fixes::PostLoad::Install();
+	        Fixes::PostLoad::Install();
 			Tweaks::PostLoad::Install();
 
 			Experimental::Install();
 		}
 		break;
+	case SKSE::MessagingInterface::kPostPostLoad:
+		{
+			logger::info("{:*^50}", "PLUGIN COMPATIBILITY CHECK"sv);
+
+			Compatibility::DoCheck();
+
+		    logger::info("{:*^50}", "POST POST LOAD PATCH"sv);
+
+		    Fixes::PostPostLoad::Install();
+		}
+		break;
 	case SKSE::MessagingInterface::kDataLoaded:
 		{
-			logger::info("{:*^30}", "BEGIN DATA LOADED PATCH"sv);
+			logger::info("{:*^50}", "DATA LOADED PATCH"sv);
 
 			Fixes::DataLoaded::Install();
 			Tweaks::DataLoaded::Install();
@@ -106,7 +118,7 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 		logger::error("Exception caught when loading settings! Default settings will be used");
 	}
 
-	logger::info("{:*^30}", "BEGIN PRELOAD PATCH"sv);
+	logger::info("{:*^50}", "PRELOAD PATCH"sv);
 
 	Fixes::PreLoad::Install(a_skse->SKSEVersion());
 

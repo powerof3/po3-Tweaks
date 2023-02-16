@@ -23,6 +23,6 @@ namespace Fixes::MapMarkerPlacement
 		REL::Relocation<std::uintptr_t> target{ REL_ID(52208, 53095), OFFSET_3(0x2C5, 0x328, 0x358) };
 		stl::write_thunk_call<IsFastTravelEnabled>(target.address());
 
-		logger::info("Installed map marker placement fix"sv);
+		logger::info("\t\tInstalled map marker placement fix"sv);
 	}
 }

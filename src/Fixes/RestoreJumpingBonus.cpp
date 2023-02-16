@@ -48,6 +48,6 @@ namespace Fixes::RestoreJumpingBonus
 	{
 		SetJumpHeightPatch::Install();
 
-		logger::info("Installed jumping bonus fix"sv);
+		logger::info("\t\tInstalled jumping bonus fix"sv);
 	}
 }

@@ -1,5 +1,6 @@
 set(sources ${sources}
 	src/Cache.cpp
+	src/Compatibility.cpp
 	src/Experimental.cpp
 	src/Experimental/CleanupOrphanedActiveEffects.cpp
 	src/Experimental/ModifySuspendedStackFlushTimeout.cpp

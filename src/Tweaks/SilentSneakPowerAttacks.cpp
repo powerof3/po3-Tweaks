@@ -20,6 +20,6 @@ namespace Tweaks::SilentSneakPowerAttacks
 		REL::Relocation<std::uintptr_t> target{ REL_ID(39577, 40663), 0xAA };
 		stl::write_thunk_call<SayCombatDialogue>(target.address());
 
-		logger::info("Installed silent sneak power attack tweak"sv);
+		logger::info("\t\tInstalled silent sneak power attack tweak"sv);
 	}
 }

@@ -58,7 +58,7 @@ namespace Fixes::BreathingSounds
 	{
 		if (auto scripts = RE::ScriptEventSourceHolder::GetSingleton()) {
 			scripts->AddEventSink(CellAttachDetachHandler::GetSingleton());
-			logger::info("Installed Breathing Sound Fix"sv);
+			logger::info("\t\tInstalled breathing sound fix"sv);
 		}
 	}
 }

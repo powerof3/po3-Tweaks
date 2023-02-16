@@ -68,6 +68,6 @@ namespace Fixes::IsFurnitureAnimTypeForFurniture
 		REL::Relocation<std::uintptr_t> func{ REL_ID(21211, 21668) };
 		stl::asm_replace<IsFurnitureAnimType>(func.address());
 
-		logger::info("Installed IsFurnitureAnimType fix"sv);
+		logger::info("\t\tInstalled IsFurnitureAnimType fix"sv);
 	}
 }

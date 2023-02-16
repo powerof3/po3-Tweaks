@@ -39,6 +39,6 @@ namespace Fixes::AttachLightHitEffectCrash
 		REL::Relocation<std::uintptr_t> func{ REL_ID(33610, 34388) };
 		stl::asm_replace<AttachLightHitEffectVisitor>(func.address());
 
-		logger::info("Installed light attach crash fix"sv);
+		logger::info("\t\tInstalled light attach crash fix"sv);
 	}
 }

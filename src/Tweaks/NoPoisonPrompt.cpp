@@ -43,6 +43,6 @@ namespace Tweaks::NoPoisonPrompt
 			break;
 		}
 
-		logger::info("Installed no poison message tweak"sv);
+		logger::info("\t\tInstalled no poison message tweak"sv);
 	}
 }

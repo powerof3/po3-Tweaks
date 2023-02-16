@@ -60,6 +60,6 @@ namespace Tweaks::NoCheatMode
 			break;
 		}
 
-		logger::info("Installed no cheat mode"sv);
+		logger::info("\t\tInstalled no cheat mode"sv);
 	}
 }

@@ -52,6 +52,6 @@ namespace Tweaks::SitToWait
 		REL::Relocation<std::uintptr_t> target{ REL_ID(51400, 52249), OFFSET_3(0x394, 0x379, 0x681) };
 		stl::write_thunk_call<HandleWaitRequest>(target.address());
 
-		logger::info("Installed sit to wait tweak"sv);
+		logger::info("\t\tInstalled sit to wait tweak"sv);
 	}
 }

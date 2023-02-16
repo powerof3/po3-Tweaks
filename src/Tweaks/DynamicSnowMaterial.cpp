@@ -115,6 +115,6 @@ namespace Tweaks::DynamicSnowMaterial
 	{
 		GetMaterialIDPatch::Install();
 
-		logger::info("Installed dynamic snow material tweak"sv);
+		logger::info("\t\tInstalled dynamic snow material tweak"sv);
 	}
 }

@@ -74,6 +74,6 @@ namespace Tweaks::FactionStealing
 		REL::Relocation<std::uintptr_t> func{ REL_ID(39584, 40670) };
 		stl::asm_replace<CanTake>(func.address());
 
-		logger::info("Installed faction stealing tweak"sv);
+		logger::info("\t\tInstalled faction stealing tweak"sv);
 	}
 }

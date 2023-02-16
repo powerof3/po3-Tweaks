@@ -1,18 +1,29 @@
 #include "Fixes.h"
 #include "Settings.h"
 
+void Fixes::PreLoad::Install([[maybe_unused]] std::uint32_t a_skse_version)
+{
+#ifdef SKYRIMVR
+	logger::info("\t[FIXES]");
+    const auto& fixes = Settings::GetSingleton()->GetFixes();
+	if (fixes.fixVRCrosshairRefEvent) {
+		CrosshairRefEventVR::Install(a_skse_version);
+	}
+#endif
+}
+
 void Fixes::PostLoad::Install()
 {
 	const auto& fixes = Settings::GetSingleton()->GetFixes();
 
-	logger::info("{:*^30}", "FIXES"sv);
+	logger::info("\t[FIXES]");
 
 	if (fixes.distantRefLoadCrash) {
 		DistantRefLoadCrash::Install();
 	}
 	if (fixes.mapMarker) {
 		if (GetModuleHandle(L"DisableFastTravel")) {
-			logger::info("Detected DisableFastTravel, skipping mapMarker fix."sv);
+			logger::info("\t\tDetected DisableFastTravel, skipping mapMarker fix."sv);
 		} else {
 			MapMarkerPlacement::Install();
 		}
@@ -25,12 +36,6 @@ void Fixes::PostLoad::Install()
 	}
 	if (fixes.combatDialogue) {
 		CombatDialogue::Install();
-	}
-	if (fixes.addedSpell) {
-		ReapplySpellsOnLoad::Added::Install();
-	}
-	if (fixes.deathSpell) {
-		ReapplySpellsOnLoad::OnDeath::Install();
 	}
 	if (fixes.furnitureAnimType) {
 		IsFurnitureAnimTypeForFurniture::Install();
@@ -65,19 +70,23 @@ void Fixes::PostLoad::Install()
 	//UnderWaterCamera::Install(); tbd
 }
 
-void Fixes::PreLoad::Install([[maybe_unused]] std::uint32_t a_skse_version)
+void Fixes::PostPostLoad::Install()
 {
-#ifdef SKYRIMVR
-	const auto& fixes = Settings::GetSingleton()->GetFixes();
-	if (fixes.fixVRCrosshairRefEvent) {
-		CrosshairRefEventVR::Install(a_skse_version);
+	logger::info("\t[FIXES]");
+    const auto& fixes = Settings::GetSingleton()->GetFixes();
+	if (fixes.addedSpell) {
+		ReapplyAddedSpells::Install();
 	}
-#endif
+	if (fixes.deathSpell) {
+		ReapplyNoDeathDispelSpells::Install();
+	}
 }
 
 void Fixes::DataLoaded::Install()
 {
-	FlagSpellsAsNoAbsorb::Install();
+	logger::info("\t[FIXES]");
+
+    FlagSpellsAsNoAbsorb::Install();
 
 	const auto& fixes = Settings::GetSingleton()->GetFixes();
 	if (fixes.breathingSounds) {

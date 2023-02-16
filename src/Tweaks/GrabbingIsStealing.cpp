@@ -50,7 +50,7 @@ namespace Tweaks::GrabbingIsStealing
 	{
 		if (auto scripts = RE::ScriptEventSourceHolder::GetSingleton()) {
 			scripts->AddEventSink(GrabReleaseHandler::GetSingleton());
-			logger::info("Installed Grabbing Is Stealing tweak"sv);
+			logger::info("\t\tInstalled Grabbing Is Stealing tweak"sv);
 		}
 	}
 }

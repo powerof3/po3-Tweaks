@@ -189,6 +189,6 @@ namespace Fixes::CacheFormEditorIDs
 		stl::write_vfunc<RE::BGSReverbParameters, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSLensFlare, SetFormEditorID>();
 
-		logger::info("Installed editorID cache"sv);
+		logger::info("\t\tInstalled editorID cache"sv);
 	}
 }

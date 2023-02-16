@@ -15,7 +15,7 @@ namespace Papyrus
 			return false;
 		}
 
-		logger::info("{:*^30}", "FUNCTIONS"sv);
+		logger::info("{:*^50}", "FUNCTIONS"sv);
 
 		a_vm->RegisterFunction("IsTweakInstalled"sv, "po3_Tweaks"sv, IsTweakInstalled, true);
 

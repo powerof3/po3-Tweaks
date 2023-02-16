@@ -49,7 +49,7 @@ namespace Fixes::UseFurnitureInCombat
 			REL::Relocation<std::uintptr_t> target{ REL_ID(37672, 38626), OFFSET(0x485, 0x480) };
 			stl::write_thunk_call<StopInteractingQuick>(target.address());
 
-			logger::info("Installed use furniture in combat tweak"sv);
+			logger::info("\t\tInstalled use furniture in combat fix"sv);
 		}
 	}
 

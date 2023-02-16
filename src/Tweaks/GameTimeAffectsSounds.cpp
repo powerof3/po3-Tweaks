@@ -79,6 +79,6 @@ namespace Tweaks::GameTimeAffectsSounds
 		DefaultSound::Install();
 		Dialogue::Install();
 
-		logger::info("Installed sound - time sync tweak"sv);
+		logger::info("\t\tInstalled sound - time sync tweak"sv);
 	}
 }
