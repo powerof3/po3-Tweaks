@@ -128,15 +128,15 @@ void Settings::Experimental::Load(CSimpleIniA& a_ini, bool a_clearOld)
 
 const Settings::Fixes& Settings::GetFixes() const
 {
-    return fixes;
+	return fixes;
 }
 
 const Settings::Tweaks& Settings::GetTweaks() const
 {
-    return tweaks;
+	return tweaks;
 }
 
 const Settings::Experimental& Settings::GetExperimental() const
 {
-    return experimental;
+	return experimental;
 }
