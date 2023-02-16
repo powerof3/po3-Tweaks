@@ -21,4 +21,5 @@ jobs:
       FOMOD_MOD_NAME: "powerofthree's Tweaks"
       FOMOD_MOD_AUTHOR: "powerofthree"
       FOMOD_MOD_NEXUS_ID: "51073"
+      FOMOD_REQUIRED_INSTALLATION_DIR: "Skyrim/Data"
       PUBLISH_ARCHIVE_TYPE: '7z'
