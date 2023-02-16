@@ -5,7 +5,7 @@ void Fixes::PreLoad::Install([[maybe_unused]] std::uint32_t a_skse_version)
 {
 #ifdef SKYRIMVR
 	logger::info("\t[FIXES]");
-    const auto& fixes = Settings::GetSingleton()->GetFixes();
+	const auto& fixes = Settings::GetSingleton()->GetFixes();
 	if (fixes.fixVRCrosshairRefEvent) {
 		CrosshairRefEventVR::Install(a_skse_version);
 	}
@@ -73,7 +73,7 @@ void Fixes::PostLoad::Install()
 void Fixes::PostPostLoad::Install()
 {
 	logger::info("\t[FIXES]");
-    const auto& fixes = Settings::GetSingleton()->GetFixes();
+	const auto& fixes = Settings::GetSingleton()->GetFixes();
 	if (fixes.addedSpell) {
 		ReapplyAddedSpells::Install();
 	}
@@ -86,7 +86,7 @@ void Fixes::DataLoaded::Install()
 {
 	logger::info("\t[FIXES]");
 
-    FlagSpellsAsNoAbsorb::Install();
+	FlagSpellsAsNoAbsorb::Install();
 
 	const auto& fixes = Settings::GetSingleton()->GetFixes();
 	if (fixes.breathingSounds) {

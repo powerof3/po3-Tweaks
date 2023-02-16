@@ -54,7 +54,7 @@ void Tweaks::DataLoaded::Install()
 {
 	logger::info("\t[TWEAKS]");
 
-    const auto& tweaks = Settings::GetSingleton()->GetTweaks();
+	const auto& tweaks = Settings::GetSingleton()->GetTweaks();
 	if (tweaks.grabbingIsStealing) {
 		GrabbingIsStealing::Install();
 	}

@@ -10,7 +10,7 @@ namespace Compatibility
 
 			if (REL::make_pattern<"24 F8">().match(attachHitEffectArt_ID.address())) {
 				logger::info("Scrambled Bugs : AttachHitEffect patch is enabled");
-			    attachHitEffectArt = true;
+				attachHitEffectArt = true;
 			} else {
 				logger::info("Scrambled Bugs : AttachHitEffect patch not enabled or found");
 			}

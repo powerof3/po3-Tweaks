@@ -10,9 +10,9 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_message)
 	switch (a_message->type) {
 	case SKSE::MessagingInterface::kPostLoad:
 		{
-	        logger::info("{:*^50}", "POST LOAD PATCH"sv);
+			logger::info("{:*^50}", "POST LOAD PATCH"sv);
 
-	        Fixes::PostLoad::Install();
+			Fixes::PostLoad::Install();
 			Tweaks::PostLoad::Install();
 
 			Experimental::Install();
@@ -24,9 +24,9 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_message)
 
 			Compatibility::DoCheck();
 
-		    logger::info("{:*^50}", "POST POST LOAD PATCH"sv);
+			logger::info("{:*^50}", "POST POST LOAD PATCH"sv);
 
-		    Fixes::PostPostLoad::Install();
+			Fixes::PostPostLoad::Install();
 		}
 		break;
 	case SKSE::MessagingInterface::kDataLoaded:

@@ -7,5 +7,5 @@ namespace Compatibility
 		inline bool attachHitEffectArt{ false };
 	}
 
-    void DoCheck();
+	void DoCheck();
 }
