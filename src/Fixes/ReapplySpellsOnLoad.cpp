@@ -12,12 +12,12 @@ namespace RE
 			flags = (flags & 0xF9) | 1;
 		}
 
-		MagicCaster* caster;
-		Actor* actor;
-		std::uint8_t isSpellType{ 0xFF };
-		std::uint8_t isNotSpellType{ 0xA };
-		std::uint8_t flags{ 0 };
-		std::uint8_t pad13{ 0 };
+		MagicCaster*  caster;
+		Actor*        actor;
+		std::uint8_t  isSpellType{ 0xFF };
+		std::uint8_t  isNotSpellType{ 0xA };
+		std::uint8_t  flags{ 0 };
+		std::uint8_t  pad13{ 0 };
 		std::uint32_t pad14{ 0 };
 
 		BSContainer::ForEachResult operator()(MagicItem* a_spell)

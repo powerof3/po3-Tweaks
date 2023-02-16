@@ -7,8 +7,8 @@ namespace Fixes::SkinnedDecalDelete
 	{
 		static RE::NiPointer<RE::BSTempEffect>*& thunk(
 			RE::BSTArray<RE::NiPointer<RE::BSTempEffect>>& a_this,
-			RE::NiPointer<RE::BSTempEffect>*& a_return,
-			RE::NiPointer<RE::BSTempEffect>*& a_item)
+			RE::NiPointer<RE::BSTempEffect>*&              a_return,
+			RE::NiPointer<RE::BSTempEffect>*&              a_item)
 		{
 			auto& result = func(a_this, a_return, a_item);
 

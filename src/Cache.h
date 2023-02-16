@@ -25,7 +25,7 @@ namespace Cache
 		EditorID& operator=(EditorID&&) = delete;
 
 	private:
-		mutable Lock _lock;
+		mutable Lock                                            _lock;
 		robin_hood::unordered_flat_map<RE::FormID, std::string> _formIDToEditorIDMap;
 	};
 }

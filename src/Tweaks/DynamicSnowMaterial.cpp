@@ -13,7 +13,7 @@ namespace Tweaks::DynamicSnowMaterial
 			if (const auto model = a_base->As<RE::TESModelTextureSwap>(); model && model->alternateTextures && model->numAlternateTextures > 0) {
 				std::span altTextures{ model->alternateTextures, model->numAlternateTextures };
 				return std::ranges::all_of(altTextures, [&](const auto& textures) {
-					const auto txst = textures.textureSet;
+					const auto  txst = textures.textureSet;
 					std::string path = txst ? txst->textures[0].textureName.c_str() : std::string();
 					return path.find(a_modelPath.first) != std::string::npos || path.find(a_modelPath.second) != std::string::npos;
 				});
