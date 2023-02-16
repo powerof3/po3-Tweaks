@@ -17,9 +17,7 @@ namespace Fixes::UnderWaterCamera
 	{
 		static bool thunk(RE::PlayerCharacter* a_actor, RE::hkpCollidable* a_collidable, float a_waterHeight, float a_deltaTime)
 		{
-			const auto colLayer = static_cast<RE::COL_LAYER>(a_collidable->broadPhaseHandle.collisionFilterInfo & 0x7F);
-
-			if (colLayer != RE::COL_LAYER::kCameraSphere) {
+			if (a_collidable->GetCollisionLayer() != RE::COL_LAYER::kCameraSphere) {
 				return func(a_actor, a_collidable, a_waterHeight, a_deltaTime);
 			}
 

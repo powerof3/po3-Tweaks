@@ -9,7 +9,7 @@ namespace RE
 			caster(a_caster),
 			actor(a_actor)
 		{
-			flags = flags & 0xF9 | 1;
+			flags = (flags & 0xF9) | 1;
 		}
 
 		MagicCaster* caster;
@@ -132,7 +132,7 @@ namespace Fixes::ReapplySpellsOnLoad
 						}
 					}
 
-					if (Settings::GetSingleton()->fixes.addedSpell) {
+					if (Settings::GetSingleton()->GetFixes().addedSpell) {
 						for (const auto& spell : a_actor->addedSpells) {
 							if (spell && has_no_death_dispel(*spell) && applier(spell) == RE::BSContainer::ForEachResult::kStop) {
 								break;

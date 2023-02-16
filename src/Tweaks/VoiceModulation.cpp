@@ -14,7 +14,7 @@ namespace Tweaks::VoiceModulation
 			const auto biped = user ? user->GetBiped() : nullptr;
 
 			if (biped && biped->objects[RE::BIPED_OBJECT::kHead].partClone.get()) {
-				static auto frequency = Settings::GetSingleton()->tweaks.voiceModulationValue;
+				static auto frequency = Settings::GetSingleton()->GetTweaks().voiceModulationValue;
 				a_handle.SetFrequency(frequency);
 			}
 		}

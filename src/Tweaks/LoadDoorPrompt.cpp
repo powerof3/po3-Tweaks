@@ -35,7 +35,7 @@ namespace Tweaks::LoadDoorPrompt
 					const auto linkedCell = linkedRef ? linkedRef->GetSaveParentCell() : nullptr;
 
 					if (linkedCell && linkedCell->IsExteriorCell()) {
-						auto& [type, enter, exit] = Settings::GetSingleton()->tweaks.loadDoorPrompt;
+						auto& [type, enter, exit] = Settings::GetSingleton()->GetTweaks().loadDoorPrompt;
 						return { kInterior, type == kReplaceCellAndPrompt ?
                                                 cell->GetName() :
                                                 a_cellName };
@@ -48,7 +48,7 @@ namespace Tweaks::LoadDoorPrompt
 
 		static std::string GetDoorLabel(CELL_TYPE a_type, const char* a_default)
 		{
-			auto& [type, enter, exit] = Settings::GetSingleton()->tweaks.loadDoorPrompt;
+			auto& [type, enter, exit] = Settings::GetSingleton()->GetTweaks().loadDoorPrompt;
 			if (a_type == kExterior) {
 				return enter;
 			}

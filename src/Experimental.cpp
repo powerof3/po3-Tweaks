@@ -3,7 +3,7 @@
 
 void Experimental::Install()
 {
-	const auto experimental = Settings::GetSingleton()->experimental;
+	const auto& experimental = Settings::GetSingleton()->GetExperimental();
 
 	logger::info("{:*^30}", "EXPERIMENTAL"sv);
 

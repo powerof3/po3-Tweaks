@@ -3,7 +3,7 @@
 
 void Tweaks::PostLoad::Install()
 {
-	const auto& tweaks = Settings::GetSingleton()->tweaks;
+	const auto& tweaks = Settings::GetSingleton()->GetTweaks();
 
 	logger::info("{:*^30}", "TWEAKS"sv);
 
@@ -52,7 +52,7 @@ void Tweaks::PostLoad::Install()
 
 void Tweaks::DataLoaded::Install()
 {
-	const auto& tweaks = Settings::GetSingleton()->tweaks;
+	const auto& tweaks = Settings::GetSingleton()->GetTweaks();
 	if (tweaks.grabbingIsStealing) {
 		GrabbingIsStealing::Install();
 	}

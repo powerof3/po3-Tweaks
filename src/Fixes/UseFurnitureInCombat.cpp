@@ -34,7 +34,7 @@ namespace Fixes::UseFurnitureInCombat
 		{
 			static void thunk(RE::Actor* a_actor, bool a_arg2)
 			{
-				static auto setting = Settings::GetSingleton()->fixes.useFurnitureInCombat;
+				static auto setting = Settings::GetSingleton()->GetFixes().useFurnitureInCombat;
 				if (setting == 1 && a_actor->IsPlayerRef() || setting == 2) {
 					return;
 				}

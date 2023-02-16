@@ -55,7 +55,7 @@ namespace Experimental::ModifySuspendedStackFlushTimeout
 
 	void Install()
 	{
-		if (const auto timeoutSeconds = Settings::GetSingleton()->experimental.stackDumpTimeoutModifier; timeoutSeconds != 30.0) {
+		if (const auto timeoutSeconds = Settings::GetSingleton()->GetExperimental().stackDumpTimeoutModifier; timeoutSeconds != 30.0) {
 			if (timeoutSeconds == 0.0) {
 				NoLimit::Install();
 			} else {

@@ -3,14 +3,9 @@
 class Settings
 {
 public:
-	[[nodiscard]] static Settings* GetSingleton();
-
-	void Load();
-
-	bool IsTweakInstalled(std::string_view a_tweak);
-
-	struct Fixes
+	class Fixes
 	{
+	public:
 		void Load(CSimpleIniA& a_ini);
 
 		bool distantRefLoadCrash{ true };
@@ -30,19 +25,30 @@ public:
 		bool toggleGlobalAIFix{ true };
 		bool offensiveSpellAI{ true };
 		bool breathingSounds{ true };
-
 		std::uint32_t useFurnitureInCombat{ 1 };
-
 		bool loadEditorIDs{ true };
 #ifdef SKYRIMVR
 		bool fixVRCrosshairRefEvent{ true };
 #endif
+	};
 
-	} fixes;
-
-	struct Tweaks
+	class Tweaks
 	{
+	public:
 		void Load(CSimpleIniA& a_ini, bool a_clearOld);
+
+		struct SitToWait
+		{
+			bool active{ false };
+			std::string message{ "You cannot wait while standing." };
+		};
+
+		struct LoadDoorPrompt
+		{
+			std::uint32_t type{ 0 };
+			std::string enter{ "Enter" };
+			std::string exit{ "Exit" };
+		};
 
 		bool factionStealing{ false };
 		float voiceModulationValue{ 1.0f };
@@ -54,32 +60,18 @@ public:
 #ifdef SKYRIMVR
 		bool rememberLockPickAngle{ false };
 #endif
-		struct
-		{
-			bool active{ false };
-			std::string message{ "You cannot wait while standing." };
-
-		} sitToWait;
-
+		SitToWait sitToWait{};
 		std::uint32_t noCheatMode{ 0 };
 		bool noHostileAbsorb{ false };
 		bool grabbingIsStealing{ false };
-
-		struct
-		{
-			std::uint32_t type{ 0 };
-			std::string enter{ "Enter" };
-			std::string exit{ "Exit" };
-
-		} loadDoorPrompt;
-
+		LoadDoorPrompt loadDoorPrompt{};
 		std::uint32_t noPoisonPrompt{ 0 };
 		bool silentSneakPowerAttack{ false };
+	};
 
-	} tweaks;
-
-	struct Experimental
+	class Experimental
 	{
+	public:
 		void Load(CSimpleIniA& a_ini, bool a_clearOld);
 
 		bool fastRandomInt{ false };
@@ -87,9 +79,22 @@ public:
 		bool orphanedAEFix{ false };
 		bool updateGameTimers{ false };
 		double stackDumpTimeoutModifier{ 30.0 };
+	};
 
-	} experimental;
+	[[nodiscard]] static Settings* GetSingleton();
+
+	void Load();
+
+	[[nodiscard]] const Fixes& GetFixes() const;
+	[[nodiscard]] const Tweaks& GetTweaks() const;
+	[[nodiscard]] const Experimental& GetExperimental() const;
+
+	bool IsTweakInstalled(std::string_view a_tweak);
 
 private:
+	Fixes fixes{};
+	Tweaks tweaks{};
+	Experimental experimental{};
+
 	robin_hood::unordered_flat_map<std::string, bool> settingsMap{};
 };

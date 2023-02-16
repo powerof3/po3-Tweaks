@@ -10,7 +10,7 @@ namespace Experimental::ScriptSpeedup
 			return false;
 		}
 
-		auto experimental = Settings::GetSingleton()->experimental;
+		const auto& experimental = Settings::GetSingleton()->GetExperimental();
 
 		if (experimental.fastRandomInt) {
 			a_vm->SetCallableFromTasklets("Utility", "RandomInt", true);

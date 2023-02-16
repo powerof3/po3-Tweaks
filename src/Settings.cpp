@@ -125,3 +125,18 @@ void Settings::Experimental::Load(CSimpleIniA& a_ini, bool a_clearOld)
 	ini::get_value(a_ini, updateGameTimers, section, "Update GameHour Timers", ";Updates game timers when advancing time using GameHour.SetValue.");
 	ini::get_value(a_ini, stackDumpTimeoutModifier, section, "Stack Dump Timeout Modifier", ";How many seconds Papyrus will try to dump script stacks (vanilla : 30 seconds). Setting this to 0 will disable the timeout (warning: this may result in a locked state if Skyrim can't dump stacks).");
 }
+
+const Settings::Fixes& Settings::GetFixes() const
+{
+    return fixes;
+}
+
+const Settings::Tweaks& Settings::GetTweaks() const
+{
+    return tweaks;
+}
+
+const Settings::Experimental& Settings::GetExperimental() const
+{
+    return experimental;
+}

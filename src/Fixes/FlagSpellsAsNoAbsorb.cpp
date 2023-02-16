@@ -13,8 +13,8 @@ namespace Fixes::FlagSpellsAsNoAbsorb
 
 		const auto settings = Settings::GetSingleton();
 
-		const auto noConj = settings->fixes.noConjurationAbsorb;
-		const auto noHostile = settings->tweaks.noHostileAbsorb;
+		const auto noConj = settings->GetFixes().noConjurationAbsorb;
+		const auto noHostile = settings->GetTweaks().noHostileAbsorb;
 
 		if (!noConj && !noHostile) {
 			return;

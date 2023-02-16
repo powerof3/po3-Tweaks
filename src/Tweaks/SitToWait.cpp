@@ -24,7 +24,7 @@ namespace Tweaks::SitToWait
 		{
 			const auto result = CanSleepWait(a_player, a_furniture);
 			if (result && a_player->GetSitSleepState() != RE::SIT_SLEEP_STATE::kIsSitting) {
-				static auto& message = Settings::GetSingleton()->tweaks.sitToWait.message;
+				static auto& message = Settings::GetSingleton()->GetTweaks().sitToWait.message;
 				RE::DebugNotification(message.c_str(), "UIMenuCancel");
 				return false;
 			}
