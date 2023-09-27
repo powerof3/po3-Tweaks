@@ -1,11 +1,5 @@
 #include "Settings.h"
 
-Settings* Settings::GetSingleton()
-{
-	static Settings singleton;
-	return std::addressof(singleton);
-}
-
 void Settings::Load()
 {
 	constexpr auto path = L"Data/SKSE/Plugins/po3_Tweaks.ini";
@@ -29,7 +23,7 @@ void Settings::Load()
 	//EXPERIMENTAL
 	experimental.Load(ini, usesOldPatches);
 
-	ini.SaveFile(path);
+	(void)ini.SaveFile(path);
 }
 
 bool Settings::IsTweakInstalled(std::string_view a_tweak)

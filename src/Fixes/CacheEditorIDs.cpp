@@ -96,7 +96,9 @@ namespace Fixes::CacheFormEditorIDs
 		//stl::write_vfunc<RE::TESObjectCELL, SetFormEditorID>();
 
 		stl::write_vfunc<RE::TESObjectREFR, SetFormEditorID>();
-		stl::write_vfunc<RE::Actor, SetFormEditorID>();
+
+		//stl::write_vfunc<RE::Actor, SetFormEditorID>();
+
 		stl::write_vfunc<RE::Character, SetFormEditorID>();
 		stl::write_vfunc<RE::PlayerCharacter, SetFormEditorID>();
 		stl::write_vfunc<RE::MissileProjectile, SetFormEditorID>();

@@ -25,7 +25,7 @@ namespace Tweaks::LoadDoorPrompt
 
 			auto ref = crosshairPickData->target.get();
 			if (!ref) {
-				ref = crosshairPickData->unk0C.get();
+				ref = crosshairPickData->grabPickRef.get();
 			}
 
 			if (const auto cell = ref ? ref->GetSaveParentCell() : nullptr) {

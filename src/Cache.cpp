@@ -2,12 +2,6 @@
 
 namespace Cache
 {
-	EditorID* EditorID::GetSingleton()
-	{
-		static EditorID singleton;
-		return std::addressof(singleton);
-	}
-
 	void EditorID::CacheEditorID(const RE::TESForm* a_form, const char* a_editorID)
 	{
 		Locker locker(_lock);

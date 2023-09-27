@@ -14,7 +14,7 @@ namespace Tweaks::GameTimeAffectsSounds
 
 			a_soundHandle.state = RE::BSSoundHandle::AssumedState::kPlaying;
 
-			if (const auto timeMult = RE::BSTimer::GetCurrentGlobalTimeMult(); timeMult != 1.0f) {
+			if (const auto timeMult = RE::BSTimer::QGlobalTimeMultiplier(); timeMult != 1.0f) {
 				a_soundHandle.SetFrequency(timeMult);
 			}
 

@@ -2,41 +2,6 @@
 #include "Fixes.h"
 #include "Settings.h"
 
-namespace RE
-{
-	using namespace Compatibility;
-
-	struct PermanentMagicFunctor
-	{
-		PermanentMagicFunctor(MagicCaster* a_caster, Actor* a_actor) :
-			caster(a_caster),
-			actor(a_actor)
-		{
-			if (ScrambledBugs::attachHitEffectArt) {
-				flags = flags & 0xF8;
-			} else {
-				flags = (flags & 0xF9) | 1;
-			}
-		}
-
-		MagicCaster*  caster;
-		Actor*        actor;
-		std::uint8_t  isSpellType{ 0xFF };
-		std::uint8_t  isNotSpellType{ 0xA };
-		std::uint8_t  flags{ 0 };
-		std::uint8_t  pad13{ 0 };
-		std::uint32_t pad14{ 0 };
-
-		BSContainer::ForEachResult operator()(MagicItem* a_spell)
-		{
-			using func_t = decltype(&PermanentMagicFunctor::operator());
-			REL::Relocation<func_t> func{ REL_ID(33684, 34464) };
-			return func(this, a_spell);
-		}
-	};
-	static_assert(sizeof(PermanentMagicFunctor) == 0x18);
-}
-
 //fixes added spells not being reapplied on actor load
 namespace Fixes::ReapplyAddedSpells
 {
@@ -49,9 +14,15 @@ namespace Fixes::ReapplyAddedSpells
 				auto* actor = stl::adjust_pointer<RE::Character>(a_list, -0x70);
 
 				if (auto* caster = actor && !actor->IsPlayerRef() && !actor->addedSpells.empty() ?
-                                       actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
-                                       nullptr) {
+				                       actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
+				                       nullptr) {
 					RE::PermanentMagicFunctor applier{ caster, actor };
+
+					if (Compatibility::ScrambledBugs::attachHitEffectArt) {
+						applier.flags = applier.flags & 0xF8;
+					} else {
+						applier.flags = (applier.flags & 0xF9) | 1;
+					}
 
 					for (const auto& spell : actor->addedSpells) {
 						if (spell && applier(spell) == RE::BSContainer::ForEachResult::kStop) {
@@ -81,11 +52,12 @@ namespace Fixes::ReapplyAddedSpells
 				auto* actor = stl::adjust_pointer<RE::Character>(a_list, -0x70);
 
 				if (actor && !actor->IsPlayerRef() && !actor->addedSpells.empty()) {
-					auto handle = RE::ActorHandle{};
-
-					for (const auto& spell : actor->addedSpells) {
-						if (spell && spell->IsValid()) {
-							actor->GetMagicTarget()->DispelEffect(spell, handle);
+					if (const auto magicTarget = actor->GetMagicTarget()) {
+						auto handle = RE::ActorHandle{};
+						for (const auto& spell : actor->addedSpells) {
+							if (spell && spell->IsPermanent()) {
+								magicTarget->DispelEffect(spell, handle);
+							}
 						}
 					}
 				}
@@ -118,10 +90,16 @@ namespace Fixes::ReapplyNoDeathDispelSpells
 		{
 			auto* node = func(a_actor, a_backgroundLoading);
 
-			if (auto* caster = node && a_actor->IsDead() && !a_actor->IsPlayerRef() ?
-                                   a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
-                                   nullptr) {
+			if (auto* caster = node && !a_actor->IsPlayerRef() && a_actor->IsDead() ?
+			                       a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
+			                       nullptr) {
 				RE::PermanentMagicFunctor applier{ caster, a_actor };
+
+				if (Compatibility::ScrambledBugs::attachHitEffectArt) {
+					applier.flags = applier.flags & 0xF8;
+				} else {
+					applier.flags = (applier.flags & 0xF9) | 1;
+				}
 
 				const auto npc = a_actor->GetActorBase();
 				const auto actorEffects = npc ? npc->actorEffects : nullptr;

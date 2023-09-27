@@ -7,7 +7,7 @@
   "dependencies": [
     "boost-stl-interfaces",
     "clib-util",
-    "robin-hood-hashing",
+    "unordered-dense",
     "rsm-binary-io",
     "spdlog",
     "xbyak"

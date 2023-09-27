@@ -134,7 +134,7 @@ else ()
 	)
 endif()
 
-find_package(robin_hood CONFIG REQUIRED)
+find_package(unordered_dense CONFIG REQUIRED)
 find_path(CLIB_UTIL_INCLUDE_DIRS "ClibUtil/utils.hpp")
 
 # ---- Add source files ----
@@ -194,7 +194,7 @@ target_link_libraries(
 	${PROJECT_NAME}
 	PRIVATE
 		${CommonLibName}::${CommonLibName}
-		robin_hood::robin_hood
+		unordered_dense::unordered_dense
 )
 
 target_precompile_headers(

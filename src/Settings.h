@@ -1,6 +1,6 @@
 #pragma once
 
-class Settings
+class Settings : public ISingleton<Settings>
 {
 public:
 	class Fixes
@@ -81,8 +81,6 @@ public:
 		double stackDumpTimeoutModifier{ 30.0 };
 	};
 
-	[[nodiscard]] static Settings* GetSingleton();
-
 	void Load();
 
 	[[nodiscard]] const Fixes&        GetFixes() const;
@@ -110,5 +108,5 @@ private:
 	Tweaks       tweaks{};
 	Experimental experimental{};
 
-	robin_hood::unordered_flat_map<std::string, bool> settingsMap{};
+	ankerl::unordered_dense::segmented_map<std::string, bool> settingsMap{};
 };
