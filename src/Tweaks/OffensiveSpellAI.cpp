@@ -1,7 +1,7 @@
-#include "Fixes.h"
+#include "Tweaks.h"
 
 //check spell condition validity before equipping offensive magic
-namespace Fixes::OffensiveSpellAI
+namespace Tweaks::OffensiveSpellAI
 {
 	namespace CombatMagicCaster
 	{
@@ -43,6 +43,6 @@ namespace Fixes::OffensiveSpellAI
 		CombatInventoryMagic::Install();
 		CombatMagicCaster::Install();
 
-		logger::info("\t\tInstalled offensive spell AI fix"sv);
+		logger::info("\t\tInstalled offensive spell AI tweak"sv);
 	}
 }

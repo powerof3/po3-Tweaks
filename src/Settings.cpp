@@ -45,6 +45,9 @@ void Settings::Fixes::Load(CSimpleIniA& a_ini)
 	//1.7.6 - delete Flag Stolen Produce
 	a_ini.Delete(section, "Flag Stolen Produce", true);
 
+	//1.8.1 - move Offensive Spell AI over to Tweaks
+	a_ini.Delete(section, "Offensive Spell AI", true);
+
 	get_value(a_ini, distantRefLoadCrash, section, "Distant Ref Load Crash", ";Fixes loading crash caused by missing 3D on distant references.");
 	get_value(a_ini, mapMarker, section, "Map Marker Placement Fix", ";Allows placing map markers near fast travel destinations when fast travel is disabled");
 	get_value(a_ini, dontTakeBookFlag, section, "Restore 'Can't Be Taken Book' Flag", ";Enables 'Can't be taken' book flag functionality.");
@@ -61,7 +64,6 @@ void Settings::Fixes::Load(CSimpleIniA& a_ini)
 	get_value(a_ini, jumpingBonusFix, section, "Jumping Bonus Fix", ";Jump height is multiplied by 1% per point of JumpingBonus actor value");
 	get_value(a_ini, toggleGlobalAIFix, section, "Toggle Global AI Fix", ";TAI console command/Debug.ToggleAI() now toggles all loaded NPC AI");
 	get_value(a_ini, useFurnitureInCombat, section, "Use Furniture In Combat", ";Use furniture in combat and prevent getting forced out of furniture when attacked.\n;0 - off, 1 - player only, 2 - player and NPCs");
-	get_value(a_ini, offensiveSpellAI, section, "Offensive Spell AI", ";Check spell condition validity before NPCs equip offensive spells");
 	get_value(a_ini, breathingSounds, section, "Breathing Sounds", ";Fix creature breathing sounds persisting after cell change");
 	get_value(a_ini, loadEditorIDs, section, "Load EditorIDs", ";Loads editorIDs for skipped forms at runtime");
 #ifdef SKYRIMVR
@@ -96,7 +98,9 @@ void Settings::Tweaks::Load(CSimpleIniA& a_ini, bool a_clearOld)
 #ifdef SKYRIMVR
 	get_value(a_ini, rememberLockPickAngle, section, "Remember Lock Pick Angle", ";Angle is preserved after break");
 #endif
-	if (a_clearOld) {
+	get_value(a_ini, offensiveSpellAI, section, "Offensive Spell AI", ";Check spell condition validity before NPCs equip offensive spells");
+
+    if (a_clearOld) {
 		logger::info("Replacing old Patches section with Tweaks");
 		a_ini.Delete("Patches", nullptr, true);
 	}

@@ -23,7 +23,6 @@ public:
 		bool          skinnedDecalDelete{ true };
 		bool          jumpingBonusFix{ true };
 		bool          toggleGlobalAIFix{ true };
-		bool          offensiveSpellAI{ true };
 		bool          breathingSounds{ true };
 		std::uint32_t useFurnitureInCombat{ 1 };
 		bool          loadEditorIDs{ true };
@@ -67,6 +66,7 @@ public:
 		LoadDoorPrompt loadDoorPrompt{};
 		std::uint32_t  noPoisonPrompt{ 0 };
 		bool           silentSneakPowerAttack{ false };
+		bool           offensiveSpellAI{ false };
 	};
 
 	class Experimental

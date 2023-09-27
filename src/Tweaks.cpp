@@ -43,6 +43,9 @@ void Tweaks::PostLoad::Install()
 	if (tweaks.silentSneakPowerAttack) {
 		SilentSneakPowerAttacks::Install();
 	}
+	if (tweaks.offensiveSpellAI) {
+		OffensiveSpellAI::Install();
+	}
 #ifdef SKYRIMVR
 	if (tweaks.rememberLockPickAngle) {
 		RememberLockPickAngleVR::Install();

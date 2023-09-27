@@ -17,7 +17,6 @@ set(sources ${sources}
 	src/Fixes/FlagSpellsAsNoAbsorb.cpp
 	src/Fixes/IsFurnitureAnimTypeForFurniture.cpp
 	src/Fixes/MapMarkerPlacement.cpp
-	src/Fixes/OffensiveSpellAI.cpp
 	src/Fixes/ProjectileRange.cpp
 	src/Fixes/ReapplySpellsOnLoad.cpp
 	src/Fixes/RestoreCantTakeBook.cpp
@@ -40,6 +39,7 @@ set(sources ${sources}
 	src/Tweaks/NoCritSneakMessages.cpp
 	src/Tweaks/NoPoisonPrompt.cpp
 	src/Tweaks/NoRipplesOnHover.cpp
+	src/Tweaks/OffensiveSpellAI.cpp
 	src/Tweaks/RememberLockPickAngleVR.cpp
 	src/Tweaks/ScreenshotToConsole.cpp
 	src/Tweaks/SilentSneakPowerAttacks.cpp
