@@ -100,7 +100,7 @@ void Settings::Tweaks::Load(CSimpleIniA& a_ini, bool a_clearOld)
 #endif
 	get_value(a_ini, offensiveSpellAI, section, "Offensive Spell AI", ";Check spell condition validity before NPCs equip offensive spells");
 
-    if (a_clearOld) {
+	if (a_clearOld) {
 		logger::info("Replacing old Patches section with Tweaks");
 		a_ini.Delete("Patches", nullptr, true);
 	}
