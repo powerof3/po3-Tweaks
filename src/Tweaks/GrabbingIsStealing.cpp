@@ -18,8 +18,8 @@ namespace Tweaks::GrabbingIsStealing
 		EventResult ProcessEvent(const RE::TESGrabReleaseEvent* a_event, RE::BSTEventSource<RE::TESGrabReleaseEvent>*) override
 		{
 			const auto ref = a_event && a_event->grabbed ?
-                                 a_event->ref :
-                                 RE::TESObjectREFRPtr();
+			                     a_event->ref :
+			                     RE::TESObjectREFRPtr();
 
 			const auto player = RE::PlayerCharacter::GetSingleton();
 

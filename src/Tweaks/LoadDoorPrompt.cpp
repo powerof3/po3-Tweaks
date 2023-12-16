@@ -46,8 +46,8 @@ namespace Tweaks::LoadDoorPrompt
 					if (linkedCell && linkedCell->IsExteriorCell()) {
 						auto& [type, enter, exit] = Settings::GetSingleton()->GetTweaks().loadDoorPrompt;
 						return { kInterior, type == kReplaceCellAndPrompt ?
-                                                cell->GetName() :
-                                                a_cellName };
+												cell->GetName() :
+												a_cellName };
 					}
 				}
 				return { kExterior, a_cellName };
@@ -63,8 +63,8 @@ namespace Tweaks::LoadDoorPrompt
 			}
 			if (a_type == kInterior) {
 				return type == kReplaceCellAndPrompt ?
-                           exit :
-                           enter;
+				           exit :
+				           enter;
 			}
 			return a_default;
 		}

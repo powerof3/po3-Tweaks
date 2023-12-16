@@ -18,8 +18,8 @@ namespace Fixes::BreathingSounds
 		EventResult ProcessEvent(const RE::TESCellAttachDetachEvent* a_event, RE::BSTEventSource<RE::TESCellAttachDetachEvent>*) override
 		{
 			const auto actor = a_event && a_event->reference ?
-                                   a_event->reference->As<RE::Actor>() :
-                                   nullptr;
+			                       a_event->reference->As<RE::Actor>() :
+			                       nullptr;
 
 			if (actor) {
 				if (const auto awakeSound = actor->extraList.GetByType<RE::ExtraCreatureAwakeSound>()) {
