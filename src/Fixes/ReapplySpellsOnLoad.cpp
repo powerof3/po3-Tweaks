@@ -14,8 +14,8 @@ namespace Fixes::ReapplyAddedSpells
 				auto* actor = stl::adjust_pointer<RE::Character>(a_list, -0x70);
 
 				if (auto* caster = actor && !actor->IsPlayerRef() && !actor->addedSpells.empty() ?
-                                       actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
-                                       nullptr) {
+				                       actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
+				                       nullptr) {
 					RE::PermanentMagicFunctor applier{ caster, actor };
 
 					if (Compatibility::ScrambledBugs::attachHitEffectArt) {
@@ -91,8 +91,8 @@ namespace Fixes::ReapplyNoDeathDispelSpells
 			auto* node = func(a_actor, a_backgroundLoading);
 
 			if (auto* caster = node && !a_actor->IsPlayerRef() && a_actor->IsDead() ?
-                                   a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
-                                   nullptr) {
+			                       a_actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
+			                       nullptr) {
 				RE::PermanentMagicFunctor applier{ caster, a_actor };
 
 				if (Compatibility::ScrambledBugs::attachHitEffectArt) {

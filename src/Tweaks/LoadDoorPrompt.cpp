@@ -22,10 +22,19 @@ namespace Tweaks::LoadDoorPrompt
 		static std::pair<CELL_TYPE, const char*> GetName(const char* a_cellName)
 		{
 			const auto crosshairPickData = RE::CrosshairPickData::GetSingleton();
-
+#ifndef SKYRIMVR
 			auto ref = crosshairPickData->target.get();
+#else
+			auto player = RE::PlayerCharacter::GetSingleton();
+			auto hand = player->isRightHandMainHand ? RE::VR_DEVICE::kRightController : RE::VR_DEVICE::kLeftController;
+			auto ref = crosshairPickData->target[hand].get();
+#endif
 			if (!ref) {
+#ifndef SKYRIMVR
 				ref = crosshairPickData->grabPickRef.get();
+#else
+				ref = crosshairPickData->grabPickRef[hand].get();
+#endif
 			}
 
 			if (const auto cell = ref ? ref->GetSaveParentCell() : nullptr) {
@@ -37,8 +46,8 @@ namespace Tweaks::LoadDoorPrompt
 					if (linkedCell && linkedCell->IsExteriorCell()) {
 						auto& [type, enter, exit] = Settings::GetSingleton()->GetTweaks().loadDoorPrompt;
 						return { kInterior, type == kReplaceCellAndPrompt ?
-                                                cell->GetName() :
-                                                a_cellName };
+												cell->GetName() :
+												a_cellName };
 					}
 				}
 				return { kExterior, a_cellName };
@@ -54,8 +63,8 @@ namespace Tweaks::LoadDoorPrompt
 			}
 			if (a_type == kInterior) {
 				return type == kReplaceCellAndPrompt ?
-                           exit :
-                           enter;
+				           exit :
+				           enter;
 			}
 			return a_default;
 		}

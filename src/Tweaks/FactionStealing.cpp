@@ -18,8 +18,8 @@ namespace Tweaks::FactionStealing
 			{
 				const auto favorCost = GetFavorCost(a_playerBase, a_npc);
 				return favorCost > 1 ?
-                           a_cost <= favorCost :
-                           false;
+				           a_cost <= favorCost :
+				           false;
 			}
 		};
 
