@@ -10,8 +10,8 @@ namespace Fixes::AttachLightHitEffectCrash
 			if (a_hitEffect->GetAttached()) {
 				auto root = a_hitEffect->GetAttachRoot();
 				if (const auto attachLightObj = root ?
-                                                    root->GetObjectByName(RE::FixedStrings::GetSingleton()->attachLight) :  //crash here because no null check
-                                                    nullptr) {
+				                                    root->GetObjectByName(RE::FixedStrings::GetSingleton()->attachLight) :  //crash here because no null check
+				                                    nullptr) {
 					root = attachLightObj;
 				}
 				if (root && root != a_this->attachRoot) {
