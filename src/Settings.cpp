@@ -37,7 +37,7 @@ void Settings::Fixes::Load(CSimpleIniA& a_ini)
 	static const char* section = "Fixes";
 
 	logger::info("Settings - Loading [{}]", section);
-	
+
 	//1.5 - remove GetEquippedFix()
 	a_ini.Delete(section, "GetEquipped Fix", true);
 
@@ -78,7 +78,7 @@ void Settings::Tweaks::Load(CSimpleIniA& a_ini, bool a_clearOld)
 	const char* section = a_clearOld ? "Patches" : "Tweaks";
 
 	logger::info("Settings - Loading [{}]", section);
-	
+
 	//1.5 - delete AIFadeOut()
 	a_ini.Delete(section, "Load Door Fade Out", true);
 
@@ -115,7 +115,7 @@ void Settings::Experimental::Load(CSimpleIniA& a_ini, bool a_clearOld)
 	const char* section = "Experimental";
 
 	logger::info("Settings - Loading [{}]", section);
-	
+
 	if (a_clearOld) {
 		a_ini.Delete("Experimental", nullptr, true);  //delete and recreate it below tweaks section
 	}
