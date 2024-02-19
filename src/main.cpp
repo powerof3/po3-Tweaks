@@ -12,6 +12,10 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_message)
 		{
 			logger::info("{:*^50}", "POST LOAD PATCH"sv);
 
+#ifndef SKYRIMVR
+			Settings::GetSingleton()->Load();
+#endif
+
 			Fixes::PostLoad::Install();
 			Tweaks::PostLoad::Install();
 
@@ -112,6 +116,7 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 
 	SKSE::Init(a_skse);
 
+#ifdef SKYRIMVR
 	try {
 		Settings::GetSingleton()->Load();
 	} catch (...) {
@@ -121,6 +126,7 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 	logger::info("{:*^50}", "PRELOAD PATCH"sv);
 
 	Fixes::PreLoad::Install(a_skse->SKSEVersion());
+#endif
 
 	auto papyrus = SKSE::GetPapyrusInterface();
 	papyrus->Register(Papyrus::Bind);

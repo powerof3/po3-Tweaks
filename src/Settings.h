@@ -108,5 +108,5 @@ private:
 	Tweaks       tweaks{};
 	Experimental experimental{};
 
-	ankerl::unordered_dense::segmented_map<std::string, bool> settingsMap{};
+	ankerl::unordered_dense::map<std::string, bool> settingsMap{};
 };

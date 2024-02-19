@@ -3,23 +3,18 @@
 //send steal alarm when grabbing owned items
 namespace Tweaks::GrabbingIsStealing
 {
-	class GrabReleaseHandler final : public RE::BSTEventSink<RE::TESGrabReleaseEvent>
+	class GrabReleaseHandler final :
+		public ISingleton<GrabReleaseHandler>,
+		public RE::BSTEventSink<RE::TESGrabReleaseEvent>
 	{
 	public:
-		[[nodiscard]] static GrabReleaseHandler* GetSingleton()
-		{
-			static GrabReleaseHandler singleton;
-			return std::addressof(singleton);
-		}
-
-	protected:
 		using EventResult = RE::BSEventNotifyControl;
 
 		EventResult ProcessEvent(const RE::TESGrabReleaseEvent* a_event, RE::BSTEventSource<RE::TESGrabReleaseEvent>*) override
 		{
 			const auto ref = a_event && a_event->grabbed ?
-                                 a_event->ref :
-                                 RE::TESObjectREFRPtr();
+			                     a_event->ref :
+			                     RE::TESObjectREFRPtr();
 
 			const auto player = RE::PlayerCharacter::GetSingleton();
 
@@ -34,16 +29,6 @@ namespace Tweaks::GrabbingIsStealing
 
 			return EventResult::kContinue;
 		}
-
-	private:
-		GrabReleaseHandler() = default;
-		GrabReleaseHandler(const GrabReleaseHandler&) = delete;
-		GrabReleaseHandler(GrabReleaseHandler&&) = delete;
-
-		~GrabReleaseHandler() override = default;
-
-		GrabReleaseHandler& operator=(const GrabReleaseHandler&) = delete;
-		GrabReleaseHandler& operator=(GrabReleaseHandler&&) = delete;
 	};
 
 	void Install()

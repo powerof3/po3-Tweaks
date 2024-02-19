@@ -3,15 +3,10 @@
 //update breathing sounds during cell detach/attach
 namespace Fixes::BreathingSounds
 {
-	class CellAttachDetachHandler final : public RE::BSTEventSink<RE::TESCellAttachDetachEvent>
+	class CellAttachDetachHandler final :
+		public ISingleton<CellAttachDetachHandler>,
+		public RE::BSTEventSink<RE::TESCellAttachDetachEvent>
 	{
-	public:
-		[[nodiscard]] static CellAttachDetachHandler* GetSingleton()
-		{
-			static CellAttachDetachHandler singleton;
-			return std::addressof(singleton);
-		}
-
 	protected:
 		using EventResult = RE::BSEventNotifyControl;
 
@@ -42,16 +37,6 @@ namespace Fixes::BreathingSounds
 
 			return EventResult::kContinue;
 		}
-
-	private:
-		CellAttachDetachHandler() = default;
-		CellAttachDetachHandler(const CellAttachDetachHandler&) = delete;
-		CellAttachDetachHandler(CellAttachDetachHandler&&) = delete;
-
-		~CellAttachDetachHandler() override = default;
-
-		CellAttachDetachHandler& operator=(const CellAttachDetachHandler&) = delete;
-		CellAttachDetachHandler& operator=(CellAttachDetachHandler&&) = delete;
 	};
 
 	void Install()
