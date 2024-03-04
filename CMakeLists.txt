@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 set(NAME "po3_Tweaks" CACHE STRING "")
 set(VERSION 1.9.0 CACHE STRING "")
 set(AE_VERSION 1)
-set(VR_VERSION 2)
+set(VR_VERSION 1)
 
 # ---- Options ----
 option(COPY_BUILD "Copy the build output to the Skyrim directory." TRUE)
