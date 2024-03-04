@@ -126,4 +126,9 @@ namespace Fixes
 	{
 		void Install();
 	}
+
+	namespace ValidateScreenshotFolder
+	{
+		void Install();
+	}
 }

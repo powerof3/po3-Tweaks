@@ -67,6 +67,7 @@ void Settings::Fixes::Load(CSimpleIniA& a_ini)
 	get_value(a_ini, toggleGlobalAIFix, section, "Toggle Global AI Fix", ";TAI console command/Debug.ToggleAI() now toggles all loaded NPC AI");
 	get_value(a_ini, useFurnitureInCombat, section, "Use Furniture In Combat", ";Use furniture in combat and prevent getting forced out of furniture when attacked.\n;0 - off, 1 - player only, 2 - player and NPCs");
 	get_value(a_ini, breathingSounds, section, "Breathing Sounds", ";Fix creature breathing sounds persisting after cell change");
+	get_value(a_ini, validateScreenshotFolder, section, "Validate Screenshot Location", ";Validates game screenshot location.\n;Defaults to Skyrim root directory if sScreenshotBaseName ini setting is empty or folder path does not exist");
 	get_value(a_ini, loadEditorIDs, section, "Load EditorIDs", ";Loads editorIDs for skipped forms at runtime");
 #ifdef SKYRIMVR
 	get_value(a_ini, fixVRCrosshairRefEvent, section, "VR CrosshairRefEvent Fix", "; Trigger CrossHairRefEvent with hand selection (normally requires game controller to enable crosshair events)");

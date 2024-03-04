@@ -23,8 +23,9 @@ public:
 		bool          skinnedDecalDelete{ true };
 		bool          jumpingBonusFix{ true };
 		bool          toggleGlobalAIFix{ true };
-		bool          breathingSounds{ true };
 		std::uint32_t useFurnitureInCombat{ 1 };
+		bool          breathingSounds{ true };
+		bool          validateScreenshotFolder{ true };
 		bool          loadEditorIDs{ true };
 #ifdef SKYRIMVR
 		bool fixVRCrosshairRefEvent{ true };

@@ -26,6 +26,7 @@ set(sources ${sources}
 	src/Fixes/ToggleGlobalAI.cpp
 	src/Fixes/UnderwaterCamera.cpp
 	src/Fixes/UseFurnitureInCombat.cpp
+	src/Fixes/ValidateScreenshotFolder.cpp
 	src/PCH.cpp
 	src/Papyrus.cpp
 	src/Settings.cpp

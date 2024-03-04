@@ -82,11 +82,15 @@ void Fixes::PostPostLoad::Install()
 void Fixes::DataLoaded::Install()
 {
 	logger::info("\t[FIXES]");
+	const auto& fixes = Settings::GetSingleton()->GetFixes();
 
 	FlagSpellsAsNoAbsorb::Install();
 
-	const auto& fixes = Settings::GetSingleton()->GetFixes();
 	if (fixes.breathingSounds) {
 		BreathingSounds::Install();
+	}
+
+	if (fixes.validateScreenshotFolder) {
+		ValidateScreenshotFolder::Install();
 	}
 }
