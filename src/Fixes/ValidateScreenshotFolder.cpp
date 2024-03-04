@@ -33,7 +33,7 @@ namespace Fixes::ValidateScreenshotFolder
 						newBaseName = "Screenshot";
 					}
 				} else {
-					// folder will be generated in skyrim root					
+					// folder will be generated in skyrim root
 					screenshotFolder = std::filesystem::current_path() /= screenshotFolder;
 					screenshotFolder.remove_filename();
 				}
