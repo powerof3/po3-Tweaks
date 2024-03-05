@@ -10,9 +10,9 @@ namespace Fixes::ValidateScreenshotFolder
 	{
 		using func_t = decltype(&set_ini_string);
 		REL::Relocation<func_t> func{ RELOCATION_ID(73882, 75619) };
-		return func(a_setting,a_str);
+		return func(a_setting, a_str);
 	}
-	
+
 	bool has_root_directory(const std::filesystem::path& a_path)
 	{
 		auto path = a_path.string();
@@ -57,7 +57,7 @@ namespace Fixes::ValidateScreenshotFolder
 
 			if (!newBaseName.empty()) {
 				set_ini_string(setting, newBaseName.c_str());
-				
+
 				if (emptyPath) {
 					RE::ConsoleLog::GetSingleton()->Print("[po3 Tweaks] sScreenShotBaseName:Display ini setting is empty");
 				} else {
