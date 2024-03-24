@@ -16,14 +16,14 @@ namespace Fixes::FirstPersonAlpha
 		}
 
 	private:
-		static RE::BSFadeNode* SetFPAlpha(RE::Character* a, float alpha_value)
+		static RE::BSFadeNode* SetFPAlpha(RE::Character* player, float alpha_value)
 		{
 			// fade == false -> alpha_value = 2 to 3
 			// fade == true -> alpha_value = 0 to 1
 			if (alpha_value >= 2) {
 				alpha_value -= 2;
 			}
-			a->Get3D(true)->UpdateMaterialAlpha(alpha_value, false);
+			player->Get3D(true)->UpdateMaterialAlpha(alpha_value, false);
 			return nullptr; // Return null so that the original fade function for 1st person doesn't execute
 		}
 		static inline REL::Relocation<decltype(SetFPAlpha)> _SetFPAlpha;
