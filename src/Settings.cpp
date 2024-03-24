@@ -69,6 +69,7 @@ void Settings::Fixes::Load(CSimpleIniA& a_ini)
 	get_value(a_ini, breathingSounds, section, "Breathing Sounds", ";Fix creature breathing sounds persisting after cell change");
 	get_value(a_ini, validateScreenshotFolder, section, "Validate Screenshot Location", ";Validates game screenshot location.\n;Defaults to Skyrim root directory if sScreenshotBaseName ini setting is empty or folder path does not exist");
 	get_value(a_ini, loadEditorIDs, section, "Load EditorIDs", ";Loads editorIDs for skipped forms at runtime");
+	get_value(a_ini, firstPersonAlpha, section, "First Person SetAlpha Fix", ";Fixes SetAlpha function making hands invisible for first person");
 #ifdef SKYRIMVR
 	get_value(a_ini, fixVRCrosshairRefEvent, section, "VR CrosshairRefEvent Fix", "; Trigger CrossHairRefEvent with hand selection (normally requires game controller to enable crosshair events)");
 #endif
