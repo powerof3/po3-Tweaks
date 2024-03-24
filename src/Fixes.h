@@ -62,6 +62,11 @@ namespace Fixes
 		void Install();
 	}
 
+	namespace FirstPersonAlpha
+	{
+		void Install();
+	}
+
 	namespace FlagSpellsAsNoAbsorb
 	{
 		void Install();
