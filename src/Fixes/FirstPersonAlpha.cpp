@@ -16,7 +16,7 @@ namespace Fixes::FirstPersonAlpha
 		}
 
 	private:
-		static RE::BSFadeNode* SetFPAlpha(RE::PlayerCharacter* player, float alpha_value)
+		static RE::NiAVObject* SetFPAlpha(RE::PlayerCharacter* player, float alpha_value)
 		{
 			// fade == false -> alpha_value = 2 to 3
 			// fade == true -> alpha_value = 0 to 1
