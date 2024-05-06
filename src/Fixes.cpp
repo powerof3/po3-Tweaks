@@ -64,6 +64,9 @@ void Fixes::PostLoad::Install()
 	if (fixes.loadEditorIDs) {
 		CacheFormEditorIDs::Install();
 	}
+	if (fixes.firstPersonAlpha) {
+		FirstPersonAlpha::Install();
+	}
 	//UnderWaterCamera::Install(); tbd
 }
 

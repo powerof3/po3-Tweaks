@@ -27,6 +27,7 @@ public:
 		bool          breathingSounds{ true };
 		bool          validateScreenshotFolder{ true };
 		bool          loadEditorIDs{ true };
+		bool          firstPersonAlpha{ true };
 #ifdef SKYRIMVR
 		bool fixVRCrosshairRefEvent{ true };
 #endif
