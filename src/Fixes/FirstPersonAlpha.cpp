@@ -7,7 +7,7 @@ namespace Fixes::FirstPersonAlpha
 	{
 		static void Install()
 		{
-			REL::Relocation<std::uintptr_t> target { REL_ID(37777, 38722), 0x55 };
+			REL::Relocation<std::uintptr_t> target{ REL_ID(37777, 38722), 0x55 };
 
 			auto& trampoline = SKSE::GetTrampoline();
 			SKSE::AllocTrampoline(14);
@@ -24,7 +24,7 @@ namespace Fixes::FirstPersonAlpha
 				alpha_value -= 2;
 			}
 			player->Get3D(true)->UpdateMaterialAlpha(alpha_value, false);
-			return nullptr; // Return null so that the original fade function for 1st person doesn't execute
+			return nullptr;  // Return null so that the original fade function for 1st person doesn't execute
 		}
 		static inline REL::Relocation<decltype(SetFPAlpha)> _SetFPAlpha;
 	};
