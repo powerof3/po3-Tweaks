@@ -5,7 +5,7 @@ namespace Cache
 	void EditorID::CacheEditorID(const RE::TESForm* a_form, const char* a_editorID)
 	{
 		Locker locker(_lock);
-		_formIDToEditorIDMap.emplace(a_form->GetFormID(), a_editorID);
+		_formIDToEditorIDMap.try_emplace(a_form->GetFormID(), a_editorID);
 	}
 
 	const std::string& EditorID::GetEditorID(RE::FormID a_formID)
