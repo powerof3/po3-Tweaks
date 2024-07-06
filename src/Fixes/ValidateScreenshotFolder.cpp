@@ -70,7 +70,6 @@ namespace Fixes::ValidateScreenshotFolder
 					logger::info("\t\tValidated screenshot location ({} -> {})"sv, screenshotFolder.string(), gameDirectory.string());
 				}
 			} else {
-				RE::ConsoleLog::GetSingleton()->Print(std::format("[po3 Tweaks] Screenshot folder ({}) validated successfully\n", screenshotFolder.string()).c_str());
 				logger::info("\t\tValidated screenshot location ({})"sv, screenshotFolder.string());
 			}
 		}

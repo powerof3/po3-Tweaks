@@ -33,13 +33,13 @@ namespace stl
 		asm_replace(a_from, T::size, reinterpret_cast<std::uintptr_t>(T::func));
 	}
 
-	template <class T>
+	template <class T, size_t N = 5>
 	void write_thunk_call(std::uintptr_t a_src)
 	{
 		auto& trampoline = SKSE::GetTrampoline();
 		SKSE::AllocTrampoline(14);
 
-		T::func = trampoline.write_call<5>(a_src, T::thunk);
+		T::func = trampoline.write_call<N>(a_src, T::thunk);
 	}
 
 	template <class F, size_t offset, class T>
