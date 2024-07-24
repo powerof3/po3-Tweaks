@@ -40,12 +40,13 @@ namespace Fixes::ValidateScreenshotFolder
 			if (emptyPath) {
 				screenshotFolder = gameDirectory;
 				newBaseName = "Screenshot";
-			} else {
+			} else {			
 				screenshotFolder = folder;
 				screenshotFolder.make_preferred();
 
 				if (has_root_directory(screenshotFolder)) {
-					if (!is_subpath(screenshotFolder, gameDirectory) && !std::filesystem::exists(screenshotFolder)) {
+					std::error_code ec;
+					if (!is_subpath(screenshotFolder, gameDirectory) && !std::filesystem::exists(screenshotFolder, ec)) {
 						newBaseName = "Screenshot";
 					}
 				} else {
@@ -65,12 +66,12 @@ namespace Fixes::ValidateScreenshotFolder
 				}
 				RE::ConsoleLog::GetSingleton()->Print(std::format("[po3 Tweaks] Defaulting to {} folder\n", gameDirectory.string()).c_str());
 				if (emptyPath) {
-					logger::info("\t\tValidated screenshot location ({})"sv, screenshotFolder.string());
+					logger::info("\t\t[Screenshot Location Fix] '' -> {}"sv, screenshotFolder.string());
 				} else {
-					logger::info("\t\tValidated screenshot location ({} -> {})"sv, screenshotFolder.string(), gameDirectory.string());
+					logger::info("\t\t[Screenshot Location Fix] {} -> {}"sv, screenshotFolder.string(), gameDirectory.string());
 				}
 			} else {
-				logger::info("\t\tValidated screenshot location ({})"sv, screenshotFolder.string());
+				logger::info("\t\t[Screenshot Location Fix] No fixes required ({})"sv, folder);
 			}
 		}
 	}
