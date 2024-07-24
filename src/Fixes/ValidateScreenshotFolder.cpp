@@ -40,7 +40,7 @@ namespace Fixes::ValidateScreenshotFolder
 			if (emptyPath) {
 				screenshotFolder = gameDirectory;
 				newBaseName = "Screenshot";
-			} else {			
+			} else {
 				screenshotFolder = folder;
 				screenshotFolder.make_preferred();
 
