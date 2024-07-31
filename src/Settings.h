@@ -28,6 +28,7 @@ public:
 		bool          validateScreenshotFolder{ true };
 		bool          loadEditorIDs{ true };
 		bool          firstPersonAlpha{ true };
+		bool          wornRestrictionsForWeapons{ true };
 #ifdef SKYRIMVR
 		bool fixVRCrosshairRefEvent{ true };
 #endif

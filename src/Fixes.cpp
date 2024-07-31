@@ -68,6 +68,13 @@ void Fixes::PostLoad::Install()
 		// broken on some setups
 		//FirstPersonAlpha::Install();
 	}
+	if (fixes.wornRestrictionsForWeapons) {
+		if (GetModuleHandle(L"AmmoEnchanting")) {
+			logger::info("\t\tDetected AmmoEnchanting, skipping ExpandedWornRestrictions patch."sv);
+		} else {
+			WornRestrictionsForWeapons::Install();
+		}
+	}
 	//UnderWaterCamera::Install(); tbd
 }
 

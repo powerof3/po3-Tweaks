@@ -136,4 +136,9 @@ namespace Fixes
 	{
 		void Install();
 	}
+
+	namespace WornRestrictionsForWeapons
+	{
+		void Install();
+	}
 }
