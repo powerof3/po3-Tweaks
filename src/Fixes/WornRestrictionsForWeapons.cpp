@@ -18,7 +18,7 @@ namespace Fixes::WornRestrictionsForWeapons
 			auto wornRestrictionList = a_effect->data->data.wornRestrictions;
 			auto keywordForm = a_item->data->object->As<RE::BGSKeywordForm>();
 
-			if (!wornRestrictionList || !keywordForm) {
+			if (!wornRestrictionList) {
 				return true;
 			}
 

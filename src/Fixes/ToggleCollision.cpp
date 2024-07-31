@@ -12,7 +12,7 @@ namespace Fixes::ToggleCollision
 			static void ToggleGlobalCollision()
 			{
 				using func_t = decltype(&ToggleGlobalCollision);
-				REL::Relocation<func_t> func{ REL_ID(13224, 13375) };
+				static REL::Relocation<func_t> func{ REL_ID(13224, 13375) };
 				return func();
 			}
 

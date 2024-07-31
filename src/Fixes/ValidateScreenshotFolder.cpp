@@ -9,7 +9,7 @@ namespace Fixes::ValidateScreenshotFolder
 	RE::Setting* set_ini_string(RE::Setting* a_setting, const char* a_str)
 	{
 		using func_t = decltype(&set_ini_string);
-		REL::Relocation<func_t> func{ RELOCATION_ID(73882, 75619) };
+		static REL::Relocation<func_t> func{ RELOCATION_ID(73882, 75619) };
 		return func(a_setting, a_str);
 	}
 

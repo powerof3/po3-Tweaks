@@ -10,7 +10,7 @@ namespace Fixes::IsFurnitureAnimTypeForFurniture
 			static std::uint32_t GetEquippedFurnitureType(RE::Actor* a_actor)
 			{
 				using func_t = decltype(&GetEquippedFurnitureType);
-				REL::Relocation<func_t> func{ REL_ID(36720, 37732) };
+				static REL::Relocation<func_t> func{ REL_ID(36720, 37732) };
 				return func(a_actor);
 			}
 

@@ -44,7 +44,7 @@ namespace Tweaks::GameTimeAffectsSounds
 		static void Play(RE::BSAudioManager* a_manager, std::int32_t a_soundID)
 		{
 			using func_t = decltype(&Play);
-			REL::Relocation<func_t> func{ REL_ID(66408, 67671) };
+			static REL::Relocation<func_t> func{ REL_ID(66408, 67671) };
 			return func(a_manager, a_soundID);
 		}
 	};
@@ -69,7 +69,7 @@ namespace Tweaks::GameTimeAffectsSounds
 		static void PlayAfter(RE::BSAudioManager* a_manager, std::int32_t a_soundID, std::uint32_t a_unk03)
 		{
 			using func_t = decltype(&PlayAfter);
-			REL::Relocation<func_t> func{ REL_ID(66409, 67672) };
+			static REL::Relocation<func_t> func{ REL_ID(66409, 67672) };
 			return func(a_manager, a_soundID, a_unk03);
 		}
 	};
