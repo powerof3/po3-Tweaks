@@ -9,7 +9,7 @@ namespace Fixes::ValidateScreenshotFolder
 	RE::Setting* set_ini_string(RE::Setting* a_setting, const char* a_str)
 	{
 		using func_t = decltype(&set_ini_string);
-		REL::Relocation<func_t> func{ RELOCATION_ID(73882, 75619) };
+		static REL::Relocation<func_t> func{ RELOCATION_ID(73882, 75619) };
 		return func(a_setting, a_str);
 	}
 
@@ -45,7 +45,8 @@ namespace Fixes::ValidateScreenshotFolder
 				screenshotFolder.make_preferred();
 
 				if (has_root_directory(screenshotFolder)) {
-					if (!is_subpath(screenshotFolder, gameDirectory) && !std::filesystem::exists(screenshotFolder)) {
+					std::error_code ec;
+					if (!is_subpath(screenshotFolder, gameDirectory) && !std::filesystem::exists(screenshotFolder, ec)) {
 						newBaseName = "Screenshot";
 					}
 				} else {
@@ -65,12 +66,12 @@ namespace Fixes::ValidateScreenshotFolder
 				}
 				RE::ConsoleLog::GetSingleton()->Print(std::format("[po3 Tweaks] Defaulting to {} folder\n", gameDirectory.string()).c_str());
 				if (emptyPath) {
-					logger::info("\t\tValidated screenshot location ({})"sv, screenshotFolder.string());
+					logger::info("\t\t[Screenshot Location Fix] '' -> {}"sv, screenshotFolder.string());
 				} else {
-					logger::info("\t\tValidated screenshot location ({} -> {})"sv, screenshotFolder.string(), gameDirectory.string());
+					logger::info("\t\t[Screenshot Location Fix] {} -> {}"sv, screenshotFolder.string(), gameDirectory.string());
 				}
 			} else {
-				logger::info("\t\tValidated screenshot location ({})"sv, screenshotFolder.string());
+				logger::info("\t\t[Screenshot Location Fix] No fixes required ({})"sv, folder);
 			}
 		}
 	}

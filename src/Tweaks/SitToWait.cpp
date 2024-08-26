@@ -9,14 +9,14 @@ namespace Tweaks::SitToWait
 		static bool ProcessMenu(const RE::BSFixedString& a_menuName, RE::UI_MESSAGE_TYPE a_type, bool a_unk03)
 		{
 			using func_t = decltype(&ProcessMenu);
-			REL::Relocation<func_t> func{ REL_ID(80077, 82180) };
+			static REL::Relocation<func_t> func{ REL_ID(80077, 82180) };
 			return func(a_menuName, a_type, a_unk03);
 		}
 
 		static bool CanSleepWait(RE::PlayerCharacter* a_player, RE::TESObjectREFR* a_furniture)
 		{
 			using func_t = decltype(&CanSleepWait);
-			REL::Relocation<func_t> func{ REL_ID(39371, 40443) };
+			static REL::Relocation<func_t> func{ REL_ID(39371, 40443) };
 			return func(a_player, a_furniture);
 		}
 

@@ -7,7 +7,7 @@ namespace Fixes::ToggleGlobalAI
 		static void ClearPath(RE::Actor* a_actor)
 		{
 			using func_t = decltype(&ClearPath);
-			REL::Relocation<func_t> func{ REL_ID(36802, 37818) };
+			static REL::Relocation<func_t> func{ REL_ID(36802, 37818) };
 			return func(a_actor);
 		}
 

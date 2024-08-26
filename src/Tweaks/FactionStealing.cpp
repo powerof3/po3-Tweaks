@@ -10,7 +10,7 @@ namespace Tweaks::FactionStealing
 			static std::int32_t GetFavorCost(RE::TESNPC* a_player, RE::TESNPC* a_owner)
 			{
 				using func_t = decltype(&GetFavorCost);
-				REL::Relocation<func_t> func{ REL_ID(23626, 24078) };
+				static REL::Relocation<func_t> func{ REL_ID(23626, 24078) };
 				return func(a_player, a_owner);
 			}
 

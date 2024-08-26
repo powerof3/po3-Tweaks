@@ -8,7 +8,7 @@ namespace Experimental::UpdateGameTimers
 		static void UpdateTimers(RE::PlayerCharacter* a_player)
 		{
 			using func_t = decltype(&UpdateTimers);
-			REL::Relocation<func_t> func{ REL_ID(39410, 40485) };
+			static REL::Relocation<func_t> func{ REL_ID(39410, 40485) };
 			return func(a_player);
 		}
 

@@ -37,7 +37,7 @@ namespace Fixes::RestoreCantTakeBook
 		{
 			static RE::UI_MESSAGE_RESULTS thunk(RE::BookMenu* a_this, RE::UIMessage& a_message)
 			{
-				if (a_this->bookModel && a_this->bookInitialized == 1) {
+				if (a_this->bookModel && a_this->bookInitialized) {
 					const auto ref = RE::BookMenu::GetTargetReference();  //is not in inventory
 					const auto data = ref ? static_cast<RE::BSUIMessageData*>(a_message.data) : nullptr;
 
