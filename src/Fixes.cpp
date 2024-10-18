@@ -75,6 +75,9 @@ void Fixes::PostLoad::Install()
 			WornRestrictionsForWeapons::Install();
 		}
 	}
+	if (fixes.magicItemFindKeywordFunctorCrash) {
+		MagicItemFindKeywordFunctorCrash::Install();
+	}
 	//UnderWaterCamera::Install(); tbd
 }
 

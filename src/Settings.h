@@ -29,6 +29,7 @@ public:
 		bool          loadEditorIDs{ true };
 		bool          firstPersonAlpha{ true };
 		bool          wornRestrictionsForWeapons{ true };
+		bool          magicItemFindKeywordFunctorCrash{ true };
 #ifdef SKYRIMVR
 		bool fixVRCrosshairRefEvent{ true };
 #endif
