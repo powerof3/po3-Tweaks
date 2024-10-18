@@ -43,6 +43,7 @@ namespace Fixes::ValidateScreenshotFolder
 			} else {
 				screenshotFolder = folder;
 				screenshotFolder.make_preferred();
+				screenshotFolder.remove_filename(); // remove screenshot prefix (not a directory)
 
 				if (has_root_directory(screenshotFolder)) {
 					std::error_code ec;
