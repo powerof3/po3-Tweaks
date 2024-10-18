@@ -112,5 +112,5 @@ private:
 	Tweaks       tweaks{};
 	Experimental experimental{};
 
-	ankerl::unordered_dense::map<std::string, bool> settingsMap{};
+	StringMap<bool> settingsMap{};
 };

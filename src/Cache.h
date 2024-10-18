@@ -14,7 +14,7 @@ namespace Cache
 		using Lock = std::mutex;
 		using Locker = std::scoped_lock<Lock>;
 
-		mutable Lock                                          _lock;
-		ankerl::unordered_dense::map<RE::FormID, std::string> _formIDToEditorIDMap;
+		mutable Lock                 _lock;
+		Map<RE::FormID, std::string> _formIDToEditorIDMap;
 	};
 }
