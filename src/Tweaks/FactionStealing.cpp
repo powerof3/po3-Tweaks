@@ -1,27 +1,28 @@
 #include "Tweaks.h"
+#include "Cache.h"
 
 //removes steal tag if all faction members have appropriate relationship rank
 namespace Tweaks::FactionStealing
 {
 	struct detail
 	{
-		static std::int32_t GetFavorCost(RE::TESNPC* a_player, RE::TESNPC* a_owner)
+		static std::int32_t GetRelationshipFavorPointsValue(RE::TESNPC* a_player, RE::TESNPC* a_owner)
 		{
-			using func_t = decltype(&GetFavorCost);
+			using func_t = decltype(&GetRelationshipFavorPointsValue);
 			static REL::Relocation<func_t> func{ REL_ID(23626, 24078) };
 			return func(a_player, a_owner);
 		}
 
 		static bool CanTake(RE::TESNPC* a_playerBase, RE::TESNPC* a_npc, std::int32_t a_cost)
 		{
-			const auto favorCost = GetFavorCost(a_playerBase, a_npc);
-			return favorCost > 1 ?
-			           a_cost <= favorCost :
+			const auto favorPoints = GetRelationshipFavorPointsValue(a_playerBase, a_npc);
+			return favorPoints > 1 ?
+			           a_cost <= favorPoints :
 			           false;
 		}
 	};
 
-	struct CanTake
+	struct IsFriendAnOwner
 	{
 		static bool func(const RE::PlayerCharacter* a_player, RE::TESForm* a_owner, std::int32_t a_cost)
 		{
@@ -43,21 +44,24 @@ namespace Tweaks::FactionStealing
 					return true;
 				}
 
-				std::vector<RE::TESNPC*> factionNPCs{};
-
-				for (auto& npc : RE::TESDataHandler::GetSingleton()->GetFormArray<RE::TESNPC>()) {
-					if (npc && !npc->IsDeleted()) {
-						if (npc->IsInFaction(faction)) {
-							factionNPCs.push_back(npc);
-						} else if (auto actor = npc->GetUniqueActor(); actor && actor->IsInFaction(faction)) {
-							factionNPCs.push_back(npc);
+				static Map<RE::TESFaction*, std::vector<RE::TESNPC*>> factionNPCMap{};
+				if (factionNPCMap.empty()) {
+					for (auto& npc : RE::TESDataHandler::GetSingleton()->GetFormArray<RE::TESNPC>()) {
+						if (npc && !npc->IsDeleted()) {
+							for (auto& factionRank : npc->factions) {
+								if (factionRank.faction) {
+									factionNPCMap[factionRank.faction].push_back(npc);
+								}
+							}
 						}
 					}
 				}
 
-				return std::ranges::all_of(factionNPCs, [&](const auto& npc) {
-					return detail::CanTake(playerBase, npc, a_cost);
-				});
+				if (auto it = factionNPCMap.find(faction); it != factionNPCMap.end()) {
+					return std::ranges::all_of(it->second, [&](const auto& npc) {
+						return detail::CanTake(playerBase, npc, a_cost);
+					});
+				}
 			}
 
 			return false;
@@ -73,7 +77,7 @@ namespace Tweaks::FactionStealing
 	void Install()
 	{
 		REL::Relocation<std::uintptr_t> func{ REL_ID(39584, 40670) };
-		stl::asm_replace<CanTake>(func.address());
+		stl::asm_replace<IsFriendAnOwner>(func.address());
 
 		logger::info("\t\tInstalled faction stealing tweak"sv);
 	}
