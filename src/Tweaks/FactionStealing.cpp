@@ -1,5 +1,5 @@
-#include "Tweaks.h"
 #include "Cache.h"
+#include "Tweaks.h"
 
 //removes steal tag if all faction members have appropriate relationship rank
 namespace Tweaks::FactionStealing
