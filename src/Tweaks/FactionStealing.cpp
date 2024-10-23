@@ -1,5 +1,5 @@
-#include "Tweaks.h"
 #include "Cache.h"
+#include "Tweaks.h"
 
 //removes steal tag if all faction members have appropriate relationship rank
 namespace Tweaks::FactionStealing
@@ -35,22 +35,18 @@ namespace Tweaks::FactionStealing
 				return true;
 			}
 
-			if (const auto npc = a_owner->As<RE::TESNPC>(); npc) {
+			if (const auto npc = a_owner->As<RE::TESNPC>()) {
 				return detail::CanTake(playerBase, npc, a_cost);
 			}
 
-			if (const auto faction = a_owner->As<RE::TESFaction>(); faction) {
-				if (a_player->IsInFaction(faction)) {
-					return true;
-				}
-
+			if (const auto faction = a_owner->As<RE::TESFaction>()) {
 				static Map<RE::TESFaction*, std::vector<RE::TESNPC*>> factionNPCMap{};
-				if (factionNPCMap.empty()) {
+				if (factionNPCMap.empty()) {				
 					for (auto& npc : RE::TESDataHandler::GetSingleton()->GetFormArray<RE::TESNPC>()) {
 						if (npc && !npc->IsDeleted()) {
 							for (auto& factionRank : npc->factions) {
-								if (factionRank.faction) {
-									factionNPCMap[factionRank.faction].push_back(npc);
+								if (auto npcFaction = factionRank.faction; npcFaction && (npcFaction->data.flags & RE::FACTION_DATA::Flag::kCanBeOwner) != 0) {
+									factionNPCMap[npcFaction].push_back(npc);
 								}
 							}
 						}
@@ -58,10 +54,12 @@ namespace Tweaks::FactionStealing
 				}
 
 				if (auto it = factionNPCMap.find(faction); it != factionNPCMap.end()) {
-					return std::ranges::all_of(it->second, [&](const auto& npc) {
-						return detail::CanTake(playerBase, npc, a_cost);
-					});
+					if (std::ranges::all_of(it->second, [&](const auto& npc) { return detail::CanTake(playerBase, npc, a_cost); })) {
+						return true;
+					}
 				}
+
+				return a_player->IsInFaction(faction);
 			}
 
 			return false;

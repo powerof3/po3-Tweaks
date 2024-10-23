@@ -17,4 +17,7 @@ namespace Cache
 		mutable Lock                 _lock;
 		Map<RE::FormID, std::string> _formIDToEditorIDMap;
 	};
+
+	const std::string& GetEditorID(RE::FormID a_formID);
+	const std::string& GetEditorID(const RE::TESForm* a_form);
 }
