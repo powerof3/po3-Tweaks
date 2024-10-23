@@ -41,7 +41,7 @@ namespace Tweaks::FactionStealing
 
 			if (const auto faction = a_owner->As<RE::TESFaction>()) {
 				static Map<RE::TESFaction*, std::vector<RE::TESNPC*>> factionNPCMap{};
-				if (factionNPCMap.empty()) {				
+				if (factionNPCMap.empty()) {
 					for (auto& npc : RE::TESDataHandler::GetSingleton()->GetFormArray<RE::TESNPC>()) {
 						if (npc && !npc->IsDeleted()) {
 							for (auto& factionRank : npc->factions) {
