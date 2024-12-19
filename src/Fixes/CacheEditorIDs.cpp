@@ -19,8 +19,22 @@ namespace Fixes::CacheFormEditorIDs
 			return func(a_this, a_str);
 		}
 		static inline REL::Relocation<decltype(thunk)> func;
+		static inline constexpr size_t                 idx{ 0x33 };
+	};
 
-		static inline constexpr size_t idx{ 0x33 };
+	struct TESFile_GetChunkData
+	{
+		static bool thunk(RE::TESFile* a_this, void* ptr, std::uint32_t a_chunkSize)
+		{
+			auto result = func(a_this, ptr, a_chunkSize);
+			if (result) {
+				if (auto str = static_cast<const char* const>(ptr); !string::is_empty(str) && a_this->currentform.formID != 0) {
+					Cache::EditorID::GetSingleton()->CacheEditorID(a_this->currentform.formID, str);
+				}
+			}
+			return result;
+		}
+		static inline REL::Relocation<decltype(thunk)> func;
 	};
 
 	void Install()
@@ -86,7 +100,9 @@ namespace Fixes::CacheFormEditorIDs
 		stl::write_vfunc<RE::BGSHazard, SetFormEditorID>();
 		stl::write_vfunc<RE::TESSoulGem, SetFormEditorID>();
 		stl::write_vfunc<RE::TESLevItem, SetFormEditorID>();
+
 		stl::write_vfunc<RE::TESWeather, SetFormEditorID>();
+
 		stl::write_vfunc<RE::TESClimate, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSShaderParticleGeometryData, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSReferenceEffect, SetFormEditorID>();
@@ -190,6 +206,11 @@ namespace Fixes::CacheFormEditorIDs
 		stl::write_vfunc<RE::BGSColorForm, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSReverbParameters, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSLensFlare, SetFormEditorID>();
+
+#ifdef SKYRIM_AE
+		REL::Relocation<std::uintptr_t> target{ REL_ID(0, 20396), 0x403 }; //TESWeather::Load
+		stl::write_thunk_call<TESFile_GetChunkData>(target.address());
+#endif
 
 		logger::info("\t\tInstalled editorID cache"sv);
 	}
