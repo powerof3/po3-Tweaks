@@ -99,8 +99,8 @@ void InitializeLog()
 
 	auto log = std::make_shared<spdlog::logger>("global log"s, std::move(sink));
 
-	log->set_level(spdlog::level::info);
-	log->flush_on(spdlog::level::info);
+	log->set_level(spdlog::level::debug);
+	log->flush_on(spdlog::level::debug);
 
 	spdlog::set_default_logger(std::move(log));
 	spdlog::set_pattern("[%H:%M:%S:%e] %v"s);
@@ -115,6 +115,8 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 	logger::info("Game version : {}", a_skse->RuntimeVersion());
 
 	SKSE::Init(a_skse, false);
+
+	SKSE::AllocTrampoline(450); // max trampoline space need + an extra thunk_call
 
 #ifdef SKYRIMVR
 	try {

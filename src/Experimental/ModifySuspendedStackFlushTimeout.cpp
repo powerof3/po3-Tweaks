@@ -32,8 +32,6 @@ namespace Experimental::ModifySuspendedStackFlushTimeout
 			code.ready();
 
 			auto& trampoline = SKSE::GetTrampoline();
-			SKSE::AllocTrampoline(38);
-
 			trampoline.write_branch<6>(
 				target.address(),
 				trampoline.allocate(code));

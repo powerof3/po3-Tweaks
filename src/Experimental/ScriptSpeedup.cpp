@@ -14,11 +14,11 @@ namespace Experimental::ScriptSpeedup
 
 		if (experimental.fastRandomInt) {
 			a_vm->SetCallableFromTasklets("Utility", "RandomInt", true);
-			logger::info("patched Utility.RandomInt"sv);
+			logger::info("Patched Utility.RandomInt"sv);
 		}
 		if (experimental.fastRandomFloat) {
 			a_vm->SetCallableFromTasklets("Utility", "RandomFloat", true);
-			logger::info("patched Utility.RandomFloat"sv);
+			logger::info("Patched Utility.RandomFloat"sv);
 		}
 
 		return true;

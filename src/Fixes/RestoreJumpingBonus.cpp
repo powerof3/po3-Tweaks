@@ -28,8 +28,6 @@ namespace Fixes::RestoreJumpingBonus
 			patch.ready();
 
 			auto& trampoline = SKSE::GetTrampoline();
-			SKSE::AllocTrampoline(31);
-
 			_SetJumpHeight = trampoline.write_call<5>(target.address(), trampoline.allocate(patch));
 		}
 
