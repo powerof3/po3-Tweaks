@@ -104,7 +104,7 @@ namespace Fixes::ReapplyNoDeathDispelSpells
 				const auto npc = a_actor->GetActorBase();
 				const auto actorEffects = npc ? npc->actorEffects : nullptr;
 
-				if (actorEffects && actorEffects->spells) {
+				if (actorEffects && actorEffects->spells && actorEffects->numSpells > 0) {
 					const std::span span(actorEffects->spells, actorEffects->numSpells);
 					for (const auto& spell : span) {
 						if (spell && has_no_death_dispel(*spell) && applier(spell) == RE::BSContainer::ForEachResult::kStop) {
