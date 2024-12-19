@@ -116,7 +116,7 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 
 	SKSE::Init(a_skse, false);
 
-	SKSE::AllocTrampoline(450); // max trampoline space need + an extra thunk_call
+	SKSE::AllocTrampoline(450);  // max trampoline space need + an extra thunk_call
 
 #ifdef SKYRIMVR
 	try {

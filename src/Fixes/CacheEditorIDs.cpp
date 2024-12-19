@@ -208,7 +208,7 @@ namespace Fixes::CacheFormEditorIDs
 		stl::write_vfunc<RE::BGSLensFlare, SetFormEditorID>();
 
 #ifdef SKYRIM_AE
-		REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(0, 20396), 0x403 }; //TESWeather::Load
+		REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(0, 20396), 0x403 };  //TESWeather::Load
 		stl::write_thunk_call<TESFile_GetChunkData>(target.address());
 #endif
 
