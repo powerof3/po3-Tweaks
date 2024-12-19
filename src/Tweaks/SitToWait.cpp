@@ -9,14 +9,14 @@ namespace Tweaks::SitToWait
 		static bool ProcessMenu(const RE::BSFixedString& a_menuName, RE::UI_MESSAGE_TYPE a_type, bool a_unk03)
 		{
 			using func_t = decltype(&ProcessMenu);
-			static REL::Relocation<func_t> func{ REL_ID(80077, 82180) };
+			static REL::Relocation<func_t> func{ RELOCATION_ID(80077, 82180) };
 			return func(a_menuName, a_type, a_unk03);
 		}
 
 		static bool CanSleepWait(RE::PlayerCharacter* a_player, RE::TESObjectREFR* a_furniture)
 		{
 			using func_t = decltype(&CanSleepWait);
-			static REL::Relocation<func_t> func{ REL_ID(39371, 40443) };
+			static REL::Relocation<func_t> func{ RELOCATION_ID(39371, 40443) };
 			return func(a_player, a_furniture);
 		}
 
@@ -49,7 +49,7 @@ namespace Tweaks::SitToWait
 
 	void Install()
 	{
-		REL::Relocation<std::uintptr_t> target{ REL_ID(51400, 52249), OFFSET_3(0x394, 0x379, 0x681) };
+		REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(51400, 52249), OFFSET_3(0x394, 0x379, 0x681) };
 		stl::write_thunk_call<HandleWaitRequest>(target.address());
 
 		logger::info("\t\tInstalled sit to wait tweak"sv);

@@ -5,7 +5,7 @@ namespace Tweaks::NoCritSneakMessages
 {
 	void Install(std::uint32_t a_type)
 	{
-		REL::Relocation<std::uintptr_t> target{ REL_ID(37633, 38586) };
+		REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(37633, 38586) };
 
 #ifdef SKYRIM_AE
 		std::array id{

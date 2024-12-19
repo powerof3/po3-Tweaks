@@ -8,7 +8,7 @@ namespace Fixes::RestoreJumpingBonus
 	{
 		static void Install()
 		{
-			REL::Relocation<std::uintptr_t> target{ REL_ID(36271, 37257), OFFSET(0x1BB, 0x1AA) };
+			REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(36271, 37257), OFFSET(0x1BB, 0x1AA) };
 
 			struct Patch : Xbyak::CodeGenerator
 			{

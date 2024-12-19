@@ -9,7 +9,7 @@ namespace Tweaks::FactionStealing
 		static std::int32_t GetRelationshipFavorPointsValue(RE::TESNPC* a_player, RE::TESNPC* a_owner)
 		{
 			using func_t = decltype(&GetRelationshipFavorPointsValue);
-			static REL::Relocation<func_t> func{ REL_ID(23626, 24078) };
+			static REL::Relocation<func_t> func{ RELOCATION_ID(23626, 24078) };
 			return func(a_player, a_owner);
 		}
 
@@ -74,7 +74,7 @@ namespace Tweaks::FactionStealing
 
 	void Install()
 	{
-		REL::Relocation<std::uintptr_t> func{ REL_ID(39584, 40670) };
+		REL::Relocation<std::uintptr_t> func{ RELOCATION_ID(39584, 40670) };
 		stl::asm_replace<IsFriendAnOwner>(func.address());
 
 		logger::info("\t\tInstalled faction stealing tweak"sv);

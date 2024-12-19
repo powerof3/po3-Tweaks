@@ -24,7 +24,7 @@ namespace Tweaks::NoPoisonPrompt
 
 	void Install(std::uint32_t a_type)
 	{
-		REL::Relocation<std::uintptr_t> target{ REL_ID(39406, 40481) };
+		REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(39406, 40481) };
 
 		switch (a_type) {
 		case 1:

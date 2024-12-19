@@ -12,13 +12,13 @@ namespace Fixes::ToggleCollision
 			static void ToggleGlobalCollision()
 			{
 				using func_t = decltype(&ToggleGlobalCollision);
-				static REL::Relocation<func_t> func{ REL_ID(13224, 13375) };
+				static REL::Relocation<func_t> func{ RELOCATION_ID(13224, 13375) };
 				return func();
 			}
 
 			static bool GetCollisionState()
 			{
-				REL::Relocation<bool*> collision_state{ REL_ID(514184, 400334) };
+				REL::Relocation<bool*> collision_state{ RELOCATION_ID(514184, 400334) };
 				return *collision_state;
 			}
 		};
@@ -119,10 +119,10 @@ namespace Fixes::ToggleCollision
 
 	void Install()
 	{
-		REL::Relocation<std::uintptr_t> target{ REL_ID(36359, 37350), OFFSET(0xF0, 0xFB) };
+		REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(36359, 37350), OFFSET(0xF0, 0xFB) };
 		stl::write_thunk_call<ApplyMovementDelta>(target.address());
 
-		REL::Relocation<std::uintptr_t> func{ REL_ID(22350, 22825) };
+		REL::Relocation<std::uintptr_t> func{ RELOCATION_ID(22350, 22825) };
 		stl::asm_replace<ToggleCollision>(func.address());
 
 		logger::info("\t\tInstalled toggle collision fix"sv);

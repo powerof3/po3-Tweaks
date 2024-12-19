@@ -95,7 +95,7 @@ namespace Tweaks::LoadDoorPrompt
 
 	void Install()
 	{
-		REL::Relocation<std::uintptr_t> target{ REL_ID(17522, 17923) };
+		REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(17522, 17923) };
 
 		stl::write_thunk_call<Locked>(target.address() + 0x140);
 		stl::write_thunk_call<Normal>(target.address() + 0x168);

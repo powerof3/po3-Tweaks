@@ -21,7 +21,7 @@ namespace Fixes::UseFurnitureInCombat
 			Patch patch;
 			patch.ready();
 
-			static REL::Relocation<std::uintptr_t> target{ REL_ID(17034, 17420) };  // TESFurniture::Activate
+			static REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(17034, 17420) };  // TESFurniture::Activate
 
 			REL::safe_write(target.address() + OFFSET_3(0x81, 0x81, 0x5a), std::span{ patch.getCode(), patch.getSize() });
 			REL::safe_write(target.address() + OFFSET_3(0x1B1, 0x1B2, 0x18a), std::span{ patch.getCode(), patch.getSize() });
@@ -46,7 +46,7 @@ namespace Fixes::UseFurnitureInCombat
 
 		void Install()
 		{
-			REL::Relocation<std::uintptr_t> target{ REL_ID(37672, 38626), OFFSET(0x485, 0x480) };
+			REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(37672, 38626), OFFSET(0x485, 0x480) };
 			stl::write_thunk_call<StopInteractingQuick>(target.address());
 
 			logger::info("\t\tInstalled use furniture in combat fix"sv);

@@ -31,7 +31,7 @@ namespace Fixes::SkinnedDecalDelete
 
 	void Install()
 	{
-		REL::Relocation<std::uintptr_t> target{ REL_ID(15118, 15295), 0x12B };
+		REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(15118, 15295), 0x12B };
 		stl::write_thunk_call<RemoveItem>(target.address());
 
 		logger::info("\t\tInstalled skinned decal delete fix"sv);
