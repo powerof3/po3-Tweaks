@@ -1,6 +1,6 @@
 {
   "name": "po3tweaks",
-  "version-string": "1.12.2",
+  "version-string": "1.13.0",
   "description": "Collection of bug fixes and tweaks for Skyrim SE/AE/VR",
   "homepage": "https://github.com/powerof3/po3-Tweaks/",
   "license": "MIT",
@@ -11,5 +11,5 @@
     "spdlog",
     "xbyak"
   ],
-  "builtin-baseline": "4d22d579c2299aaf1e0bd6b7aa64832658330c88"
+  "builtin-baseline": "54f4adb7f1da7ddeb4f5718b865a708989356c8a"
 }
