@@ -60,7 +60,7 @@ namespace Fixes::IsFurnitureAnimTypeForFurniture
 
 			return true;
 		}
-		static inline constexpr std::size_t size{ 0x87 };
+		static constexpr std::size_t size{ 0x87 };
 	};
 
 	void Install()

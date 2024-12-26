@@ -55,7 +55,7 @@ namespace Tweaks::LoadDoorPrompt
 			return { kNone, a_cellName };
 		}
 
-		static std::string GetDoorLabel(CELL_TYPE a_type, const char* a_default)
+		static std::string_view GetDoorLabel(CELL_TYPE a_type, const char* a_default)
 		{
 			auto& [type, enter, exit] = Settings::GetSingleton()->GetTweaks().loadDoorPrompt;
 			if (a_type == kExterior) {
@@ -77,7 +77,7 @@ namespace Tweaks::LoadDoorPrompt
 			auto [result, cellName] = detail::GetName(a_cellName);
 			const auto doorLabel = detail::GetDoorLabel(result, a_openLbl);
 
-			return func(a_dest, a_format, doorLabel.c_str(), cellName);
+			return func(a_dest, a_format, doorLabel.data(), cellName);
 		}
 		static inline REL::Relocation<decltype(thunk)> func;
 	};

@@ -6,24 +6,27 @@
 
 namespace Fixes::ValidateScreenshotFolder
 {
-	RE::Setting* set_ini_string(RE::Setting* a_setting, const char* a_str)
+	struct detail
 	{
-		using func_t = decltype(&set_ini_string);
-		static REL::Relocation<func_t> func{ RELOCATION_ID(73882, 75619) };
-		return func(a_setting, a_str);
-	}
+		static RE::Setting* set_ini_string(RE::Setting* a_setting, const char* a_str)
+		{
+			using func_t = decltype(&set_ini_string);
+			static REL::Relocation<func_t> func{ RELOCATION_ID(73882, 75619) };
+			return func(a_setting, a_str);
+		}
 
-	bool has_root_directory(const std::filesystem::path& a_path)
-	{
-		auto path = a_path.string();
-		return path.contains(":\\") || path.contains(":/");
-	}
+		static bool has_root_directory(const std::filesystem::path& a_path)
+		{
+			auto path = a_path.string();
+			return path.contains(":\\") || path.contains(":/");
+		}
 
-	bool is_subpath(const std::filesystem::path& a_path, const std::filesystem::path& a_base)
-	{
-		const auto mismatch_pair = std::mismatch(a_path.begin(), a_path.end(), a_base.begin(), a_base.end());
-		return mismatch_pair.second == a_base.end();
-	}
+		static bool is_subpath(const std::filesystem::path& a_path, const std::filesystem::path& a_base)
+		{
+			const auto mismatch_pair = std::mismatch(a_path.begin(), a_path.end(), a_base.begin(), a_base.end());
+			return mismatch_pair.second == a_base.end();
+		}
+	};
 
 	void Install()
 	{
@@ -45,9 +48,9 @@ namespace Fixes::ValidateScreenshotFolder
 				screenshotFolder.make_preferred();
 				screenshotFolder.remove_filename();  // remove screenshot prefix (not a directory)
 
-				if (has_root_directory(screenshotFolder)) {
+				if (detail::has_root_directory(screenshotFolder)) {
 					std::error_code ec;
-					if (!is_subpath(screenshotFolder, gameDirectory) && !std::filesystem::exists(screenshotFolder, ec)) {
+					if (!detail::is_subpath(screenshotFolder, gameDirectory) && !std::filesystem::exists(screenshotFolder, ec)) {
 						newBaseName = "Screenshot";
 					}
 				} else {
@@ -58,7 +61,7 @@ namespace Fixes::ValidateScreenshotFolder
 			}
 
 			if (!newBaseName.empty()) {
-				set_ini_string(setting, newBaseName.c_str());
+				detail::set_ini_string(setting, newBaseName.c_str());
 
 				if (emptyPath) {
 					RE::ConsoleLog::GetSingleton()->Print("[po3 Tweaks] sScreenShotBaseName:Display ini setting is empty");

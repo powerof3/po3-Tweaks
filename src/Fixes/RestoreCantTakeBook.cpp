@@ -51,8 +51,7 @@ namespace Fixes::RestoreCantTakeBook
 				return func(a_this, a_message);
 			}
 			static inline REL::Relocation<decltype(thunk)> func;
-
-			static inline constexpr std::size_t idx{ 0x04 };
+			static constexpr std::size_t                   idx{ 0x04 };
 		};
 
 		void Install()

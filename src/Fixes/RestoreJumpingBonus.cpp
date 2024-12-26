@@ -37,7 +37,7 @@ namespace Fixes::RestoreJumpingBonus
 			const auto jumpingBonus = 1.0f + (a_actor->GetActorValue(RE::ActorValue::kJumpingBonus) / 100.0f);
 			const auto newJumpHeight = a_jumpHeight * jumpingBonus;
 
-			return _SetJumpHeight(a_controller, newJumpHeight);
+			_SetJumpHeight(a_controller, newJumpHeight);
 		}
 		static inline REL::Relocation<void(RE::bhkCharacterController*, float)> _SetJumpHeight;
 	};
