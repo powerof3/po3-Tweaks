@@ -77,6 +77,11 @@ namespace Fixes
 		void Install();
 	}
 
+	namespace MagicItemFindKeywordFunctorCrash
+	{
+		void Install();
+	}
+
 	namespace MapMarkerPlacement
 	{
 		void Install();

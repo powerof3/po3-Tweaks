@@ -23,7 +23,7 @@ namespace Tweaks::VoiceModulation
 
 	void Install()
 	{
-		REL::Relocation<std::uintptr_t> target{ REL_ID(36541, 37542), OFFSET_3(0x6F3, 0x7A2, 0x6E6) };
+		REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(36541, 37542), OFFSET_3(0x6F3, 0x7A2, 0x6E6) };
 		stl::write_thunk_call<SetObjectToFollow>(target.address());
 
 		logger::info("\t\tInstalled voice modulation tweak"sv);

@@ -23,7 +23,7 @@ namespace Tweaks::NoRipplesOnHover
 
 	void Install()
 	{
-		REL::Relocation<std::uintptr_t> target{ REL_ID(36621, 37629), 0x35 };
+		REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(36621, 37629), 0x35 };
 		stl::write_thunk_call<GetCharController>(target.address());
 
 		logger::info("\t\tInstalled no ripples on hover tweak"sv);

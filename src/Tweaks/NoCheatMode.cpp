@@ -17,7 +17,7 @@ namespace Tweaks::NoCheatMode
 
 		static void Install()
 		{
-			REL::Relocation<std::uintptr_t> func{ REL_ID(22339, 22814) };
+			REL::Relocation<std::uintptr_t> func{ RELOCATION_ID(22339, 22814) };
 			stl::asm_replace<GodMode>(func.address());
 		}
 	};
@@ -36,7 +36,7 @@ namespace Tweaks::NoCheatMode
 
 		static void Install()
 		{
-			REL::Relocation<std::uintptr_t> func{ REL_ID(22340, 22815) };
+			REL::Relocation<std::uintptr_t> func{ RELOCATION_ID(22340, 22815) };
 			stl::asm_replace<ImmortalMode>(func.address());
 		}
 	};

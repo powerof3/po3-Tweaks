@@ -26,7 +26,7 @@ namespace Fixes::RestoreCantTakeBook
 
 		void Install()
 		{
-			REL::Relocation<std::uintptr_t> target{ REL_ID(50126, 51057), OFFSET_3(0x634, 0x636, 0x64A) };
+			REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(50126, 51057), OFFSET_3(0x634, 0x636, 0x64A) };
 			stl::write_thunk_call<ShowTakeButton>(target.address());
 		}
 	}

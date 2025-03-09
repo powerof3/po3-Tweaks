@@ -21,6 +21,23 @@ namespace ini = clib_util::ini;
 using namespace std::literals;
 using namespace clib_util::singleton;
 
+template <class K, class D>
+using Map = ankerl::unordered_dense::map<K, D>;
+
+struct string_hash
+{
+	using is_transparent = void;  // enable heterogeneous overloads
+	using is_avalanching = void;  // mark class as high quality avalanching hash
+
+	[[nodiscard]] std::uint64_t operator()(std::string_view str) const noexcept
+	{
+		return ankerl::unordered_dense::hash<std::string_view>{}(str);
+	}
+};
+
+template <class D>
+using StringMap = ankerl::unordered_dense::map<std::string, D, string_hash, std::equal_to<>>;
+
 namespace stl
 {
 	using namespace SKSE::stl;
@@ -37,8 +54,6 @@ namespace stl
 	void write_thunk_call(std::uintptr_t a_src)
 	{
 		auto& trampoline = SKSE::GetTrampoline();
-		SKSE::AllocTrampoline(14);
-
 		T::func = trampoline.write_call<N>(a_src, T::thunk);
 	}
 
@@ -54,23 +69,18 @@ namespace stl
 	{
 		write_vfunc<F, 0, T>();
 	}
-
-	inline std::string as_string(std::string_view a_view)
-	{
-		return { a_view.data(), a_view.size() };
-	}
 }
 
 #ifdef SKYRIM_AE
-#	define REL_ID(se, ae) REL::ID(ae)
+#	define RELOCATION_ID(se, ae) REL::ID(ae)
 #	define OFFSET(se, ae) ae
 #	define OFFSET_3(se, ae, vr) ae
 #elif SKYRIMVR
-#	define REL_ID(se, ae) REL::ID(se)
+#	define RELOCATION_ID(se, ae) REL::ID(se)
 #	define OFFSET(se, ae) se
 #	define OFFSET_3(se, ae, vr) vr
 #else
-#	define REL_ID(se, ae) REL::ID(se)
+#	define RELOCATION_ID(se, ae) REL::ID(se)
 #	define OFFSET(se, ae) se
 #	define OFFSET_3(se, ae, vr) se
 #endif

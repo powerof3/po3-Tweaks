@@ -38,7 +38,7 @@ namespace Fixes::ReapplyAddedSpells
 
 		void Install()
 		{
-			REL::Relocation<std::uintptr_t> target{ REL_ID(37804, 38753), 0x115 };
+			REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(37804, 38753), 0x115 };
 			stl::write_thunk_call<GetAliasInstanceArray>(target.address());
 		}
 	}
@@ -69,7 +69,7 @@ namespace Fixes::ReapplyAddedSpells
 
 		void Install()
 		{
-			REL::Relocation<std::uintptr_t> target{ REL_ID(37805, 38754), 0x131 };
+			REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(37805, 38754), 0x131 };
 			stl::write_thunk_call<GetAliasInstanceArray>(target.address());
 		}
 	}
@@ -104,7 +104,7 @@ namespace Fixes::ReapplyNoDeathDispelSpells
 				const auto npc = a_actor->GetActorBase();
 				const auto actorEffects = npc ? npc->actorEffects : nullptr;
 
-				if (actorEffects && actorEffects->spells) {
+				if (actorEffects && actorEffects->spells && actorEffects->numSpells > 0) {
 					const std::span span(actorEffects->spells, actorEffects->numSpells);
 					for (const auto& spell : span) {
 						if (spell && has_no_death_dispel(*spell) && applier(spell) == RE::BSContainer::ForEachResult::kStop) {
@@ -138,7 +138,7 @@ namespace Fixes::ReapplyNoDeathDispelSpells
 
 	void Install()
 	{
-		REL::Relocation<std::uintptr_t> target{ REL_ID(36198, 37177), OFFSET(0x12, 0xD) };
+		REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(36198, 37177), OFFSET(0x12, 0xD) };
 		stl::write_thunk_call<Load3D>(target.address());
 
 		logger::info("\t\tInstalled no death dispel spell reapply fix"sv);

@@ -7,7 +7,7 @@ namespace Fixes::ToggleGlobalAI
 		static void ClearPath(RE::Actor* a_actor)
 		{
 			using func_t = decltype(&ClearPath);
-			static REL::Relocation<func_t> func{ REL_ID(36802, 37818) };
+			static REL::Relocation<func_t> func{ RELOCATION_ID(36802, 37818) };
 			return func(a_actor);
 		}
 
@@ -39,7 +39,7 @@ namespace Fixes::ToggleGlobalAI
 
 	void Install()
 	{
-		REL::Relocation<std::uintptr_t> func{ REL_ID(40317, 41327) };
+		REL::Relocation<std::uintptr_t> func{ RELOCATION_ID(40317, 41327) };
 		stl::asm_replace<ToggleAI>(func.address());
 
 		logger::info("\t\tInstalled toggle global AI fix"sv);

@@ -4,6 +4,26 @@
 //Cache skipped formEditorIDs
 namespace Fixes::CacheFormEditorIDs
 {
+	const char* GetGameVersionImpl()
+	{
+		using func_t = decltype(&GetGameVersionImpl);
+		static REL::Relocation<func_t> func{ RELOCATION_ID(15485, 15650) };
+		return func();
+	}
+
+	REL::Version GetGameVersion()
+	{
+		std::stringstream            ss(GetGameVersionImpl());
+		std::string                  token;
+		std::array<std::uint16_t, 4> version{};
+
+		for (std::size_t i = 0; i < 4 && std::getline(ss, token, '.'); ++i) {
+			version[i] = static_cast<std::uint16_t>(std::stoi(token));
+		}
+
+		return REL::Version(version);
+	}
+
 	struct SetFormEditorID
 	{
 		static bool thunk(RE::TESForm* a_this, const char* a_str)
@@ -19,8 +39,22 @@ namespace Fixes::CacheFormEditorIDs
 			return func(a_this, a_str);
 		}
 		static inline REL::Relocation<decltype(thunk)> func;
+		static inline constexpr size_t                 idx{ 0x33 };
+	};
 
-		static inline constexpr size_t idx{ 0x33 };
+	struct TESFile_GetChunkData
+	{
+		static bool thunk(RE::TESFile* a_this, void* ptr, std::uint32_t a_chunkSize)
+		{
+			auto result = func(a_this, ptr, a_chunkSize);
+			if (result) {
+				if (auto str = static_cast<const char* const>(ptr); !string::is_empty(str) && a_this->currentform.formID != 0) {
+					Cache::EditorID::GetSingleton()->CacheEditorID(a_this->currentform.formID, str);
+				}
+			}
+			return result;
+		}
+		static inline REL::Relocation<decltype(thunk)> func;
 	};
 
 	void Install()
@@ -86,7 +120,9 @@ namespace Fixes::CacheFormEditorIDs
 		stl::write_vfunc<RE::BGSHazard, SetFormEditorID>();
 		stl::write_vfunc<RE::TESSoulGem, SetFormEditorID>();
 		stl::write_vfunc<RE::TESLevItem, SetFormEditorID>();
+
 		stl::write_vfunc<RE::TESWeather, SetFormEditorID>();
+
 		stl::write_vfunc<RE::TESClimate, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSShaderParticleGeometryData, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSReferenceEffect, SetFormEditorID>();
@@ -190,6 +226,15 @@ namespace Fixes::CacheFormEditorIDs
 		stl::write_vfunc<RE::BGSColorForm, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSReverbParameters, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSLensFlare, SetFormEditorID>();
+
+#ifdef SKYRIM_AE
+		if (GetGameVersion() >= SKSE::RUNTIME_LATEST) {
+			REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(0, 20396), 0x403 };  //TESWeather::Load
+			stl::write_thunk_call<TESFile_GetChunkData>(target.address());
+
+			logger::info("\t\tInstalled TESWeather editorID patch"sv);
+		}
+#endif
 
 		logger::info("\t\tInstalled editorID cache"sv);
 	}

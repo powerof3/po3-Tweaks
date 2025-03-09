@@ -2,10 +2,15 @@
 
 namespace Cache
 {
-	void EditorID::CacheEditorID(const RE::TESForm* a_form, const char* a_editorID)
+	void EditorID::CacheEditorID(RE::FormID a_formID, const char* a_editorID)
 	{
 		Locker locker(_lock);
-		_formIDToEditorIDMap.try_emplace(a_form->GetFormID(), a_editorID);
+		_formIDToEditorIDMap.try_emplace(a_formID, a_editorID);
+	}
+
+	void EditorID::CacheEditorID(const RE::TESForm* a_form, const char* a_editorID)
+	{
+		CacheEditorID(a_form->GetFormID(), a_editorID);
 	}
 
 	const std::string& EditorID::GetEditorID(RE::FormID a_formID)
@@ -22,6 +27,16 @@ namespace Cache
 	const std::string& EditorID::GetEditorID(const RE::TESForm* a_form)
 	{
 		return GetEditorID(a_form->GetFormID());
+	}
+
+	const std::string& GetEditorID(RE::FormID a_formID)
+	{
+		return EditorID::GetSingleton()->GetEditorID(a_formID);
+	}
+
+	const std::string& GetEditorID(const RE::TESForm* a_form)
+	{
+		return EditorID::GetSingleton()->GetEditorID(a_form);
 	}
 }
 

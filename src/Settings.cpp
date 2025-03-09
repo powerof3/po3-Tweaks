@@ -28,7 +28,7 @@ void Settings::Load()
 
 bool Settings::IsTweakInstalled(std::string_view a_tweak)
 {
-	const auto it = settingsMap.find(stl::as_string(a_tweak));
+	const auto it = settingsMap.find(a_tweak);
 	return it != settingsMap.end() ? it->second : false;
 }
 
@@ -71,6 +71,7 @@ void Settings::Fixes::Load(CSimpleIniA& a_ini)
 	get_value(a_ini, loadEditorIDs, section, "Load EditorIDs", ";Loads editorIDs for skipped forms at runtime");
 	get_value(a_ini, firstPersonAlpha, section, "First Person SetAlpha Fix", ";Fixes SetAlpha function making hands invisible for first person");
 	get_value(a_ini, wornRestrictionsForWeapons, section, "Worn Restrictions For Weapons", ";Enable enchantment 'Worn Restrictions' feature on weapons");
+	get_value(a_ini, magicItemFindKeywordFunctorCrash, section, "MagicItemFindKeywordFunctor Crash", ";Fixes a game function crash when attempting to lookup keywords on effects with missing magic effects");
 #ifdef SKYRIMVR
 	get_value(a_ini, fixVRCrosshairRefEvent, section, "VR CrosshairRefEvent Fix", "; Trigger CrossHairRefEvent with hand selection (normally requires game controller to enable crosshair events)");
 #endif

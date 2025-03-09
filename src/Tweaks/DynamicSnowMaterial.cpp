@@ -69,7 +69,7 @@ namespace Tweaks::DynamicSnowMaterial
 	{
 		static void Install()
 		{
-			REL::Relocation<std::uintptr_t> target{ REL_ID(35320, 36215), OFFSET(0x600, 0x6A4) };  //BGSImpactManager::PlayImpactEffect
+			REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(35320, 36215), OFFSET(0x600, 0x6A4) };  //BGSImpactManager::PlayImpactEffect
 
 			struct Patch : Xbyak::CodeGenerator
 			{
@@ -92,8 +92,6 @@ namespace Tweaks::DynamicSnowMaterial
 			patch.ready();
 
 			auto& trampoline = SKSE::GetTrampoline();
-			SKSE::AllocTrampoline(31);
-
 			_GetMaterialID = trampoline.write_call<5>(target.address(), trampoline.allocate(patch));
 		}
 

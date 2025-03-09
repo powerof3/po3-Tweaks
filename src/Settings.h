@@ -29,6 +29,7 @@ public:
 		bool          loadEditorIDs{ true };
 		bool          firstPersonAlpha{ true };
 		bool          wornRestrictionsForWeapons{ true };
+		bool          magicItemFindKeywordFunctorCrash{ true };
 #ifdef SKYRIMVR
 		bool fixVRCrosshairRefEvent{ true };
 #endif
@@ -111,5 +112,5 @@ private:
 	Tweaks       tweaks{};
 	Experimental experimental{};
 
-	ankerl::unordered_dense::map<std::string, bool> settingsMap{};
+	StringMap<bool> settingsMap{};
 };

@@ -8,7 +8,7 @@ namespace Fixes::UnderWaterCamera
 		static void UpdateUnderWaterVariables(RE::TESWaterSystem* a_manager, bool a_underWater, float a_waterHeight)
 		{
 			using func_t = decltype(&UpdateUnderWaterVariables);
-			static REL::Relocation<func_t> func{ REL_ID(31409, 32216) };
+			static REL::Relocation<func_t> func{ RELOCATION_ID(31409, 32216) };
 			return func(a_manager, a_underWater, a_waterHeight);
 		}
 	};
