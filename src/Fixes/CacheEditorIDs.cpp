@@ -24,7 +24,7 @@ namespace Fixes::CacheFormEditorIDs
 			}
 
 			return REL::Version(version);
-		}		
+		}
 	};
 
 	struct SetFormEditorID

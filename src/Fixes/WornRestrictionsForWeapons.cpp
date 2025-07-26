@@ -67,7 +67,7 @@ namespace Fixes::WornRestrictionsForWeapons
 					compatibleRestrictions = detail::GetCompatibleRestrictions(item, effect);
 				}
 				break;
-			default: 
+			default:
 				break;
 			}
 
