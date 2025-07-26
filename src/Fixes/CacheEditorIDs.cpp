@@ -220,7 +220,7 @@ namespace Fixes::CacheFormEditorIDs
 		stl::write_vfunc<RE::BGSMaterialObject, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSMovementType, SetFormEditorID>();
 
-		//stl::write_vfunc<RE::BGSSoundDescriptorForm, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSSoundDescriptorForm, SetFormEditorID>();
 
 		stl::write_vfunc<RE::BGSDualCastData, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSSoundCategory, SetFormEditorID>();
