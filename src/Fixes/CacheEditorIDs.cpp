@@ -45,6 +45,19 @@ namespace Fixes::CacheFormEditorIDs
 		static constexpr size_t                        idx{ 0x33 };
 	};
 
+	struct SetFormEditorID_SNDR
+	{
+		static bool thunk(RE::TESForm* a_this, const char* a_str)
+		{
+			if (!string::is_empty(a_str) && !a_this->IsDynamicForm()) {
+				Cache::EditorID::GetSingleton()->CacheEditorID(a_this, a_str);
+			}
+			return func(a_this, a_str);
+		}
+		static inline REL::Relocation<decltype(thunk)> func;
+		static constexpr size_t                        idx{ 0x33 };
+	};
+
 	struct TESFile_GetChunkData
 	{
 		static bool thunk(RE::TESFile* a_this, void* ptr, std::uint32_t a_chunkSize)
@@ -220,7 +233,7 @@ namespace Fixes::CacheFormEditorIDs
 		stl::write_vfunc<RE::BGSMaterialObject, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSMovementType, SetFormEditorID>();
 
-		stl::write_vfunc<RE::BGSSoundDescriptorForm, SetFormEditorID>();
+		stl::write_vfunc<RE::BGSSoundDescriptorForm, SetFormEditorID_SNDR>();
 
 		stl::write_vfunc<RE::BGSDualCastData, SetFormEditorID>();
 		stl::write_vfunc<RE::BGSSoundCategory, SetFormEditorID>();
