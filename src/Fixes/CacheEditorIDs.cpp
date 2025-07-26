@@ -231,7 +231,7 @@ namespace Fixes::CacheFormEditorIDs
 		stl::write_vfunc<RE::BGSLensFlare, SetFormEditorID>();
 
 #ifdef SKYRIM_AE
-		if (detail::GetGameVersion() >= SKSE::RUNTIME_LATEST) {
+		if (detail::GetGameVersion() >= SKSE::RUNTIME_SSE_LATEST) {
 			REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(0, 20396), 0x403 };  //TESWeather::Load
 			stl::write_thunk_call<TESFile_GetChunkData>(target.address());
 

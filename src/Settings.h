@@ -1,6 +1,6 @@
 #pragma once
 
-class Settings : public ISingleton<Settings>
+class Settings : public REX::Singleton<Settings>
 {
 public:
 	class Fixes

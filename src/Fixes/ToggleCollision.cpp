@@ -3,8 +3,6 @@
 //adds selective collision toggle on console reference
 namespace Fixes::ToggleCollision
 {
-	constexpr auto no_collision_flag = static_cast<std::uint32_t>(RE::CFilter::Flag::kNoCollision);
-
 	struct ToggleCollision
 	{
 		struct detail
@@ -32,12 +30,7 @@ namespace Fixes::ToggleCollision
 
 						RE::BSVisit::TraverseScenegraphCollision(root, [&](RE::bhkNiCollisionObject* a_col) -> RE::BSVisit::BSVisitControl {
 							if (auto hkpBody = a_col->body ? static_cast<RE::hkpWorldObject*>(a_col->body->referencedObject.get()) : nullptr; hkpBody) {
-								auto& filter = hkpBody->collidable.broadPhaseHandle.collisionFilterInfo;
-								if (a_disable) {
-									filter |= no_collision_flag;
-								} else {
-									filter &= ~no_collision_flag;
-								}
+								hkpBody->collidable.broadPhaseHandle.collisionFilterInfo.SetNoCollision(a_disable);
 							}
 							return RE::BSVisit::BSVisitControl::kContinue;
 						});
@@ -86,7 +79,7 @@ namespace Fixes::ToggleCollision
 				}
 
 				auto& filter = bumpedColObj->collidable.broadPhaseHandle.collisionFilterInfo;
-				if (filter & no_collision_flag) {
+				if (filter.QNoCollision()) {
 					return false;
 				}
 
@@ -94,11 +87,11 @@ namespace Fixes::ToggleCollision
 					return false;
 				}
 
-				filter |= no_collision_flag;
+				filter.SetNoCollision(true);
 
 				func(a_actor, a_delta);
 
-				filter &= ~no_collision_flag;
+				filter.SetNoCollision(false);
 
 				return true;
 			}
