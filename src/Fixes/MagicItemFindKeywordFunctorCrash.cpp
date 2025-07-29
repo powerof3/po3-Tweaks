@@ -1,6 +1,4 @@
-#include "Cache.h"
 #include "Fixes.h"
-#include "Settings.h"
 
 namespace Fixes::MagicItemFindKeywordFunctorCrash
 {
@@ -11,7 +9,7 @@ namespace Fixes::MagicItemFindKeywordFunctorCrash
 			return a_effect && a_effect->baseEffect && a_effect->baseEffect->HasKeyword(a_this->keyword);
 		}
 		[[maybe_unused]] static inline REL::Relocation<decltype(thunk)> func;
-		static inline constexpr std::size_t                             idx = 0x2;
+		static constexpr std::size_t                                    idx = 0x2;
 	};
 
 	void Install()

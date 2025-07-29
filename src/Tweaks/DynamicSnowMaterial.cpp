@@ -4,8 +4,6 @@
 //applies snow havok material to objects using snow dir mat
 namespace Tweaks::DynamicSnowMaterial
 {
-	using MAT = RE::MATERIAL_ID;
-
 	struct detail
 	{
 		static bool must_only_contain_textureset(const RE::TESBoundObject* a_base, const std::pair<std::string_view, std::string_view>& a_modelPath)
@@ -13,9 +11,11 @@ namespace Tweaks::DynamicSnowMaterial
 			if (const auto model = a_base->As<RE::TESModelTextureSwap>(); model && model->alternateTextures && model->numAlternateTextures > 0) {
 				std::span altTextures{ model->alternateTextures, model->numAlternateTextures };
 				return std::ranges::all_of(altTextures, [&](const auto& textures) {
-					const auto  txst = textures.textureSet;
-					std::string path = txst ? txst->textures[0].textureName.c_str() : std::string();
-					return path.find(a_modelPath.first) != std::string::npos || path.find(a_modelPath.second) != std::string::npos;
+					if (const auto txst = textures.textureSet) {
+						const std::string_view path{ txst->textures[0].textureName.c_str() };
+						return path.contains(a_modelPath.first) || path.contains(a_modelPath.second);
+					}
+					return false;
 				});
 			}
 
@@ -40,7 +40,7 @@ namespace Tweaks::DynamicSnowMaterial
 			}
 
 			if (!result && !matObject) {                                          // snow variants
-				result = must_only_contain_textureset(base, { "Snow", "Mask" });  //dirtcliffmask
+				result = must_only_contain_textureset(base, { "Snow", "Mask" });  // dirtcliffmask
 			}
 
 			if (!result) {  //seasons
@@ -51,18 +51,18 @@ namespace Tweaks::DynamicSnowMaterial
 			return result;
 		}
 
-		static bool is_stairs(MAT a_matID)
+		static bool is_stairs(RE::MATERIAL_ID a_matID)
 		{
 			return std::ranges::find(stairsMat, a_matID) != stairsMat.end();
 		}
 
-		static bool is_blacklisted(MAT a_matID)
+		static bool is_blacklisted(RE::MATERIAL_ID a_matID)
 		{
 			return std::ranges::find(blacklistedMat, a_matID) != blacklistedMat.end();
 		}
 
-		static inline constexpr std::array blacklistedMat{ MAT::kSnow, MAT::kSnowStairs, MAT::kIce, MAT::kCloth, MAT::kGlass, MAT::kBone, MAT::kBarrel };
-		static inline constexpr std::array stairsMat{ MAT::kStoneStairs, MAT::kStoneAsStairs, MAT::kStoneStairsBroken, MAT::kWoodAsStairs, MAT::kWoodStairs };
+		static constexpr std::array blacklistedMat{ RE::MATERIAL_ID::kSnow, RE::MATERIAL_ID::kSnowStairs, RE::MATERIAL_ID::kIce, RE::MATERIAL_ID::kCloth, RE::MATERIAL_ID::kGlass, RE::MATERIAL_ID::kBone, RE::MATERIAL_ID::kBarrel };
+		static constexpr std::array stairsMat{ RE::MATERIAL_ID::kStoneStairs, RE::MATERIAL_ID::kStoneAsStairs, RE::MATERIAL_ID::kStoneStairsBroken, RE::MATERIAL_ID::kWoodAsStairs, RE::MATERIAL_ID::kWoodStairs };
 	};
 
 	struct GetMaterialIDPatch
@@ -96,17 +96,17 @@ namespace Tweaks::DynamicSnowMaterial
 		}
 
 	private:
-		static MAT GetMaterialID(RE::bhkShape* a_shape, std::uint32_t a_ID, RE::hkpCollidable* a_collidable)
+		static RE::MATERIAL_ID GetMaterialID(RE::bhkShape* a_shape, std::uint32_t a_ID, RE::hkpCollidable* a_collidable)
 		{
 			auto matID = _GetMaterialID(a_shape, a_ID);
 			if (a_collidable && !detail::is_blacklisted(matID)) {
 				if (const auto ref = RE::TESHavokUtilities::FindCollidableRef(*a_collidable); ref && detail::is_snow_object(ref)) {
-					matID = detail::is_stairs(matID) ? MAT::kSnowStairs : MAT::kSnow;
+					matID = detail::is_stairs(matID) ? RE::MATERIAL_ID::kSnowStairs : RE::MATERIAL_ID::kSnow;
 				}
 			}
 			return matID;
 		}
-		static inline REL::Relocation<MAT(RE::bhkShape*, std::uint32_t)> _GetMaterialID;
+		static inline REL::Relocation<RE::MATERIAL_ID(RE::bhkShape*, std::uint32_t)> _GetMaterialID;
 	};
 
 	void Install()

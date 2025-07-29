@@ -18,11 +18,11 @@ namespace Experimental::UpdateGameTimers
 			return *sleeping;
 		}
 
-		static inline constexpr RE::FormID gameHour{ 0x38 };
-		static inline constexpr RE::FormID gameDay{ 0x37 };
+		static constexpr RE::FormID gameHour{ 0x38 };
+		static constexpr RE::FormID gameDay{ 0x37 };
 	};
 
-	struct SetGlobal
+	struct Papyrus_SetGlobal
 	{
 		static void func(RE::BSScript::IVirtualMachine* a_vm, RE::VMStackID a_stackID, RE::TESGlobal* a_global, float a_value)
 		{
@@ -37,13 +37,13 @@ namespace Experimental::UpdateGameTimers
 				}
 			}
 		}
-		static inline constexpr std::size_t size = 0x29;
+		static constexpr std::size_t size = 0x29;
 	};
 
 	void Install()
 	{
 		REL::Relocation<std::uintptr_t> func{ RELOCATION_ID(55352, 55923) };
-		stl::asm_replace<SetGlobal>(func.address());
+		stl::asm_replace<Papyrus_SetGlobal>(func.address());
 
 		logger::info("\t\tInstalled game hour timer fix"sv);
 	}

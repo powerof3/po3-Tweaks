@@ -17,7 +17,7 @@ namespace Fixes::DistantRefLoadCrash
 #endif
 			}
 		}
-		static inline constexpr std::size_t size{ 0x2D };
+		static constexpr std::size_t size{ 0x2D };
 	};
 
 	void Install()

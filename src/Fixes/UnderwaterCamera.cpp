@@ -9,7 +9,7 @@ namespace Fixes::UnderWaterCamera
 		{
 			using func_t = decltype(&UpdateUnderWaterVariables);
 			static REL::Relocation<func_t> func{ RELOCATION_ID(31409, 32216) };
-			return func(a_manager, a_underWater, a_waterHeight);
+			func(a_manager, a_underWater, a_waterHeight);
 		}
 	};
 
@@ -40,8 +40,7 @@ namespace Fixes::UnderWaterCamera
 			return false;
 		}
 		static inline REL::Relocation<decltype(thunk)> func;
-
-		static inline constexpr std::size_t idx{ 0x9C };
+		static constexpr std::size_t                   idx{ 0x9C };
 	};
 
 	void Install()

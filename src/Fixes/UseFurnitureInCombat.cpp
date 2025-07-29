@@ -39,7 +39,7 @@ namespace Fixes::UseFurnitureInCombat
 					return;
 				}
 
-				return func(a_actor, a_arg2);
+				func(a_actor, a_arg2);
 			}
 			static inline REL::Relocation<decltype(thunk)> func;
 		};

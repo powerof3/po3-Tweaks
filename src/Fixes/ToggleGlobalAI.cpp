@@ -8,7 +8,7 @@ namespace Fixes::ToggleGlobalAI
 		{
 			using func_t = decltype(&ClearPath);
 			static REL::Relocation<func_t> func{ RELOCATION_ID(36802, 37818) };
-			return func(a_actor);
+			func(a_actor);
 		}
 
 		static void UpdateHighProcess(RE::ProcessLists* a_processLists, bool a_enable)
@@ -33,8 +33,7 @@ namespace Fixes::ToggleGlobalAI
 
 			detail::UpdateHighProcess(a_processLists, runSchedules);
 		}
-
-		static inline constexpr std::size_t size{ OFFSET(0x19, 0xAC) };
+		static constexpr std::size_t size{ OFFSET(0x19, 0xAC) };
 	};
 
 	void Install()

@@ -67,6 +67,8 @@ namespace Fixes::WornRestrictionsForWeapons
 					compatibleRestrictions = detail::GetCompatibleRestrictions(item, effect);
 				}
 				break;
+			default:
+				break;
 			}
 
 			if (!compatibleRestrictions) {
@@ -114,7 +116,7 @@ namespace Fixes::WornRestrictionsForWeapons
 
 			return true;
 		}
-		static inline constexpr std::size_t size{ OFFSET(0x27D, 0x1E9) };
+		static constexpr std::size_t size{ OFFSET(0x27D, 0x1E9) };
 	};
 
 	void Install()

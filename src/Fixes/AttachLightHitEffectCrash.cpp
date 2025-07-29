@@ -28,9 +28,9 @@ namespace Fixes::AttachLightHitEffectCrash
 
 #ifdef SKYRIM_AE
 		//FixedStrings::GetSingleton() got inlined
-		static inline constexpr std::size_t size{ 0xEC };
+		static constexpr std::size_t size{ 0xEC };
 #else
-		static inline constexpr std::size_t size{ 0x86 };
+		static constexpr std::size_t size{ 0x86 };
 #endif
 	};
 

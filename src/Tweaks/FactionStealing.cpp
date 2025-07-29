@@ -66,9 +66,9 @@ namespace Tweaks::FactionStealing
 		}
 #ifdef SKYRIM_AE
 		//extra inlining
-		static inline constexpr std::size_t size{ 0x163 };
+		static constexpr std::size_t size{ 0x163 };
 #else
-		static inline constexpr std::size_t size{ 0xAC };
+		static constexpr std::size_t size{ 0xAC };
 #endif
 	};
 

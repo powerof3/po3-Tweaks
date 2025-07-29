@@ -5,15 +5,18 @@ namespace Experimental::CleanupOrphanedActiveEffects
 {
 	struct detail
 	{
-		static void init_ability_perk_map(std::map<RE::SpellItem*, std::set<RE::BGSPerk*>>& a_map)
+		static void init_ability_perk_map(Map<RE::SpellItem*, Set<RE::BGSPerk*>>& a_map)
 		{
-			if (const auto dataHandler = RE::TESDataHandler::GetSingleton(); dataHandler) {
-				for (const auto& perk : dataHandler->GetFormArray<RE::BGSPerk>()) {
-					for (const auto& entry : perk->perkEntries) {
-						if (entry && entry->GetType() == RE::PERK_ENTRY_TYPE::kAbility) {
-							if (const auto abilityEntry = static_cast<RE::BGSAbilityPerkEntry*>(entry); abilityEntry && abilityEntry->ability) {
-								a_map[abilityEntry->ability].insert(perk);
-							}
+			const auto dataHandler = RE::TESDataHandler::GetSingleton();
+			if (!dataHandler) {
+				return;
+			}
+
+			for (const auto& perk : dataHandler->GetFormArray<RE::BGSPerk>()) {
+				for (const auto& entry : perk->perkEntries) {
+					if (entry && entry->GetType() == RE::PERK_ENTRY_TYPE::kAbility) {
+						if (const auto abilityEntry = static_cast<RE::BGSAbilityPerkEntry*>(entry); abilityEntry && abilityEntry->ability) {
+							a_map[abilityEntry->ability].insert(perk);
 						}
 					}
 				}
@@ -28,7 +31,7 @@ namespace Experimental::CleanupOrphanedActiveEffects
 			func(a_this, a_buf);
 
 			if (a_this && !a_this->IsPlayerRef()) {
-				static std::map<RE::SpellItem*, std::set<RE::BGSPerk*>> abilityPerkMap;
+				static Map<RE::SpellItem*, Set<RE::BGSPerk*>> abilityPerkMap;
 				if (abilityPerkMap.empty()) {
 					detail::init_ability_perk_map(abilityPerkMap);
 				}
@@ -55,8 +58,7 @@ namespace Experimental::CleanupOrphanedActiveEffects
 			}
 		}
 		static inline REL::Relocation<decltype(thunk)> func;
-
-		static inline constexpr std::size_t idx{ 0x0F };
+		static constexpr std::size_t                   idx{ 0x0F };
 	};
 
 	void Install()

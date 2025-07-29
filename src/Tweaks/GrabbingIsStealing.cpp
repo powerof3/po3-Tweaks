@@ -4,7 +4,7 @@
 namespace Tweaks::GrabbingIsStealing
 {
 	class GrabReleaseHandler final :
-		public ISingleton<GrabReleaseHandler>,
+		public REX::Singleton<GrabReleaseHandler>,
 		public RE::BSTEventSink<RE::TESGrabReleaseEvent>
 	{
 	public:

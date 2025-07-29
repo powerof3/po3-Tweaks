@@ -4,7 +4,7 @@
 namespace Fixes::BreathingSounds
 {
 	class CellAttachDetachHandler final :
-		public ISingleton<CellAttachDetachHandler>,
+		public REX::Singleton<CellAttachDetachHandler>,
 		public RE::BSTEventSink<RE::TESCellAttachDetachEvent>
 	{
 	protected:

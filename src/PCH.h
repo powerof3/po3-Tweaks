@@ -4,6 +4,7 @@
 #define NOMMNOSOUND
 
 #include "RE/Skyrim.h"
+#include "REX/REX/Singleton.h"
 #include "SKSE/SKSE.h"
 
 #include <ankerl/unordered_dense.h>
@@ -11,7 +12,6 @@
 #include <xbyak/xbyak.h>
 
 #include <ClibUtil/simpleINI.hpp>
-#include <ClibUtil/singleton.hpp>
 #include <ClibUtil/string.hpp>
 
 namespace logger = SKSE::log;
@@ -19,10 +19,11 @@ namespace string = clib_util::string;
 namespace ini = clib_util::ini;
 
 using namespace std::literals;
-using namespace clib_util::singleton;
 
 template <class K, class D>
 using Map = ankerl::unordered_dense::map<K, D>;
+template <class K>
+using Set = ankerl::unordered_dense::set<K>;
 
 struct string_hash
 {

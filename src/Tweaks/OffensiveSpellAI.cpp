@@ -16,8 +16,7 @@ namespace Tweaks::OffensiveSpellAI
 				return result;
 			}
 			static inline REL::Relocation<decltype(thunk)> func;
-
-			static inline std::size_t idx{ 0x6 };
+			static constexpr std::size_t                   idx{ 0x6 };
 		};
 
 		void Install()

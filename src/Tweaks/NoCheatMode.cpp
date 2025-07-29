@@ -7,13 +7,12 @@ namespace Tweaks::NoCheatMode
 	{
 		static bool func()
 		{
-			const auto log = RE::ConsoleLog::GetSingleton();
-			if (log && RE::ConsoleLog::IsConsoleMode()) {
+			if (const auto log = RE::ConsoleLog::GetSingleton(); log && RE::ConsoleLog::IsConsoleMode()) {
 				log->Print("God Mode disabled");
 			}
 			return true;
 		}
-		static inline constexpr std::size_t size{ 0x4C };
+		static constexpr std::size_t size{ 0x4C };
 
 		static void Install()
 		{
@@ -26,13 +25,12 @@ namespace Tweaks::NoCheatMode
 	{
 		static bool func()
 		{
-			const auto log = RE::ConsoleLog::GetSingleton();
-			if (log && RE::ConsoleLog::IsConsoleMode()) {
+			if (const auto log = RE::ConsoleLog::GetSingleton(); log && RE::ConsoleLog::IsConsoleMode()) {
 				log->Print("Immortal Mode disabled");
 			}
 			return true;
 		}
-		static inline constexpr std::size_t size{ 0x4C };
+		static constexpr std::size_t size{ 0x4C };
 
 		static void Install()
 		{

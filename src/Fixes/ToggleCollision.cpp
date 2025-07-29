@@ -3,8 +3,6 @@
 //adds selective collision toggle on console reference
 namespace Fixes::ToggleCollision
 {
-	constexpr auto no_collision_flag = static_cast<std::uint32_t>(RE::CFilter::Flag::kNoCollision);
-
 	struct ToggleCollision
 	{
 		struct detail
@@ -13,7 +11,7 @@ namespace Fixes::ToggleCollision
 			{
 				using func_t = decltype(&ToggleGlobalCollision);
 				static REL::Relocation<func_t> func{ RELOCATION_ID(13224, 13375) };
-				return func();
+				func();
 			}
 
 			static bool GetCollisionState()
@@ -21,59 +19,50 @@ namespace Fixes::ToggleCollision
 				REL::Relocation<bool*> collision_state{ RELOCATION_ID(514184, 400334) };
 				return *collision_state;
 			}
+
+			static void ToggleRefCollision(RE::TESObjectREFR* a_ref, bool a_disable)
+			{
+				if (const auto root = a_ref->Get3D(); root) {
+					const auto cell = a_ref->GetParentCell();
+
+					if (const auto world = cell ? cell->GetbhkWorld() : nullptr) {
+						RE::BSWriteLockGuard locker(world->worldLock);
+
+						RE::BSVisit::TraverseScenegraphCollision(root, [&](RE::bhkNiCollisionObject* a_col) -> RE::BSVisit::BSVisitControl {
+							if (auto hkpBody = a_col->body ? static_cast<RE::hkpWorldObject*>(a_col->body->referencedObject.get()) : nullptr; hkpBody) {
+								hkpBody->collidable.broadPhaseHandle.collisionFilterInfo.SetNoCollision(a_disable);
+							}
+							return RE::BSVisit::BSVisitControl::kContinue;
+						});
+					}
+				}
+			}
 		};
 
 		static bool func(void*, void*, RE::TESObjectREFR* a_ref)
 		{
 			if (a_ref) {
-				bool hasCollision = a_ref->HasCollision();
-
-				if (a_ref->IsNot(RE::FormType::ActorCharacter)) {
-					if (const auto root = a_ref->Get3D(); root) {
-						const auto cell = a_ref->GetParentCell();
-						const auto world = cell ? cell->GetbhkWorld() : nullptr;
-
-						if (world) {
-							RE::BSWriteLockGuard locker(world->worldLock);
-
-							RE::BSVisit::TraverseScenegraphCollision(root, [&](RE::bhkNiCollisionObject* a_col) -> RE::BSVisit::BSVisitControl {
-								if (auto hkpBody = a_col->body ? static_cast<RE::hkpWorldObject*>(a_col->body->referencedObject.get()) : nullptr; hkpBody) {
-									auto& filter = hkpBody->collidable.broadPhaseHandle.collisionFilterInfo;
-									if (hasCollision) {
-										filter |= no_collision_flag;
-									} else {
-										filter &= ~no_collision_flag;
-									}
-								}
-								return RE::BSVisit::BSVisitControl::kContinue;
-							});
-						}
-					}
-				}
-
+				const bool hasCollision = a_ref->HasCollision();
+				detail::ToggleRefCollision(a_ref, hasCollision);
 				a_ref->SetCollision(!hasCollision);
 
-				const auto log = RE::ConsoleLog::GetSingleton();
-				if (log && RE::ConsoleLog::IsConsoleMode()) {
-					const char* result = hasCollision ? "off" : "on";
-					log->Print("%s collision is now %s", a_ref->GetDisplayFullName(), result);
+				if (const auto log = RE::ConsoleLog::GetSingleton(); log && RE::ConsoleLog::IsConsoleMode()) {
+					log->Print("%s collision -> %s", a_ref->GetDisplayFullName(), !a_ref->HasCollision() ? "Off" : "On");
 				}
 			} else {
 				detail::ToggleGlobalCollision();
 
-				const auto log = RE::ConsoleLog::GetSingleton();
-				if (log && RE::ConsoleLog::IsConsoleMode()) {
-					const char* result = detail::GetCollisionState() ? "Off" : "On";
-					log->Print("Collision -> %s", result);
+				if (const auto log = RE::ConsoleLog::GetSingleton(); log && RE::ConsoleLog::IsConsoleMode()) {
+					log->Print("Collision -> %s", detail::GetCollisionState() ? "Off" : "On");
 				}
 			}
 
 			return true;
 		}
-		static inline constexpr std::size_t size{ 0x83 };
+		static constexpr std::size_t size{ 0x83 };
 	};
 
-	struct ApplyMovementDelta
+	struct Actor_UpdateMovement_Primary
 	{
 		struct detail
 		{
@@ -90,7 +79,7 @@ namespace Fixes::ToggleCollision
 				}
 
 				auto& filter = bumpedColObj->collidable.broadPhaseHandle.collisionFilterInfo;
-				if (filter & no_collision_flag) {
+				if (filter.QNoCollision()) {
 					return false;
 				}
 
@@ -98,11 +87,11 @@ namespace Fixes::ToggleCollision
 					return false;
 				}
 
-				filter |= no_collision_flag;
+				filter.SetNoCollision(true);
 
 				func(a_actor, a_delta);
 
-				filter &= ~no_collision_flag;
+				filter.SetNoCollision(false);
 
 				return true;
 			}
@@ -111,7 +100,7 @@ namespace Fixes::ToggleCollision
 		static void thunk(RE::Actor* a_actor, float a_delta)
 		{
 			if (!detail::should_disable_collision(a_actor, a_delta)) {
-				return func(a_actor, a_delta);
+				func(a_actor, a_delta);
 			}
 		}
 		static inline REL::Relocation<decltype(thunk)> func;
@@ -119,8 +108,8 @@ namespace Fixes::ToggleCollision
 
 	void Install()
 	{
-		REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(36359, 37350), OFFSET(0xF0, 0xFB) };
-		stl::write_thunk_call<ApplyMovementDelta>(target.address());
+		REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(36359, 37350), OFFSET(0xF0, 0xFB) };  // Actor::UpdateMovement
+		stl::write_thunk_call<Actor_UpdateMovement_Primary>(target.address());
 
 		REL::Relocation<std::uintptr_t> func{ RELOCATION_ID(22350, 22825) };
 		stl::asm_replace<ToggleCollision>(func.address());
