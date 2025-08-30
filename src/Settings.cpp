@@ -72,7 +72,7 @@ void Settings::Fixes::Load(CSimpleIniA& a_ini)
 	get_value(a_ini, firstPersonAlpha, section, "First Person SetAlpha Fix", ";Fixes SetAlpha function making hands invisible for first person");
 	get_value(a_ini, wornRestrictionsForWeapons, section, "Worn Restrictions For Weapons", ";Enable enchantment 'Worn Restrictions' feature on weapons");
 	get_value(a_ini, magicItemFindKeywordFunctorCrash, section, "MagicItemFindKeywordFunctor Crash", ";Fixes a game function crash when attempting to lookup keywords on effects with missing magic effects");
-	get_value(a_ini, leftHandedWeaponEnchantmentNodeFix, section, "Left Handed Weapon Visuals", ";Fix enchantments using the vanilla node for left handed weapons when XMPSE/HDT-SMP is installed");
+	get_value(a_ini, leftHandedWeaponEnchantmentNodeFix, section, "Left Handed Weapon Enchantment Node Fix", ";Fix enchantments using the vanilla node for left handed weapons when XMPSE/HDT-SMP is installed");
 #ifdef SKYRIMVR
 	get_value(a_ini, fixVRCrosshairRefEvent, section, "VR CrosshairRefEvent Fix", "; Trigger CrossHairRefEvent with hand selection (normally requires game controller to enable crosshair events)");
 #endif
