@@ -21,14 +21,14 @@ namespace Fixes::LeftHandedWeaponEnchantmentNodeFix
 			}
 		}
 	};
-	
+
 	struct GetTorchNode
 	{
 		static RE::NiAVObject* func(RE::AIProcess* a_this, const RE::BSTSmartPointer<RE::BipedAnim>& a_biped)
 		{
 			if (a_this->middleHigh && a_biped) {
 				auto weapEntry = a_this->GetCurrentWeapon(true);
-				if (auto weapon = weapEntry && weapEntry->object ? weapEntry->object->As<RE::TESObjectWEAP>(): nullptr) {
+				if (auto weapon = weapEntry && weapEntry->object ? weapEntry->object->As<RE::TESObjectWEAP>() : nullptr) {
 					return a_biped->root->GetObjectByName(detail::GetWeaponNode(weapon));
 				}
 				return a_biped->root->GetObjectByName(RE::FixedStrings::GetSingleton()->shield);
