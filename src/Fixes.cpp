@@ -78,6 +78,12 @@ void Fixes::PostLoad::Install()
 	if (fixes.magicItemFindKeywordFunctorCrash) {
 		MagicItemFindKeywordFunctorCrash::Install();
 	}
+	if (fixes.leftHandedWeaponEnchantmentNodeFix) {
+		if (GetModuleHandle(L"hdtSMP64") || std::filesystem::exists("Data\\XPMSE.esp")) {
+			logger::info("\t\tDetected XMPSE/HDT-SMP, installing LeftHandedWeaponEnchantmentNodeFix"sv);
+			LeftHandedWeaponEnchantmentNodeFix::Install();
+		}
+	}
 	//UnderWaterCamera::Install(); tbd
 }
 

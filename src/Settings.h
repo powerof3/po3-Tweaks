@@ -30,6 +30,7 @@ public:
 		bool          firstPersonAlpha{ true };
 		bool          wornRestrictionsForWeapons{ true };
 		bool          magicItemFindKeywordFunctorCrash{ true };
+		bool          leftHandedWeaponEnchantmentNodeFix{ true };
 #ifdef SKYRIMVR
 		bool fixVRCrosshairRefEvent{ true };
 #endif
