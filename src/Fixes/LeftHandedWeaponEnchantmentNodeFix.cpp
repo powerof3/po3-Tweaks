@@ -1,27 +1,8 @@
 #include "Fixes.h"
 
-//use XMPSE nodes for left handed weapon enchantment
+//use correct node for left handed weapon enchantment (XMPSE node in third person/SHIELD in first)
 namespace Fixes::LeftHandedWeaponEnchantmentNodeFix
 {
-	struct detail
-	{
-		static std::string_view GetWeaponNode(RE::TESObjectWEAP* a_weapon)
-		{
-			switch (a_weapon->weaponData.animationType.get()) {
-			case RE::WEAPON_TYPE::kOneHandSword:
-				return "WeaponSwordLeft";
-			case RE::WEAPON_TYPE::kOneHandDagger:
-				return "WeaponDaggerLeft";
-			case RE::WEAPON_TYPE::kOneHandAxe:
-				return "WeaponAxeLeft";
-			case RE::WEAPON_TYPE::kOneHandMace:
-				return "WeaponMaceLeft";
-			default:
-				return "Shield"sv;
-			}
-		}
-	};
-
 	struct GetTorchNode
 	{
 		static RE::NiAVObject* func(RE::AIProcess* a_this, const RE::BSTSmartPointer<RE::BipedAnim>& a_biped)
@@ -29,7 +10,23 @@ namespace Fixes::LeftHandedWeaponEnchantmentNodeFix
 			if (a_this->middleHigh && a_biped) {
 				auto weapEntry = a_this->GetCurrentWeapon(true);
 				if (auto weapon = weapEntry && weapEntry->object ? weapEntry->object->As<RE::TESObjectWEAP>() : nullptr) {
-					return a_biped->root->GetObjectByName(detail::GetWeaponNode(weapon));
+					RE::NiAVObject* node = nullptr;
+
+					char buf[1024];
+					weapon->GetNodeName(buf);
+					RE::BSFixedString weaponNodeName(buf);
+
+					RE::BSVisit::TraverseScenegraphObjects(a_biped->root, [&](RE::NiAVObject* a_obj) -> RE::BSVisit::BSVisitControl {
+						if (a_obj->name == weaponNodeName && a_obj->parent && a_obj->parent->name != RE::FixedStrings::GetSingleton()->weapon) {
+							node = a_obj->parent;
+							return RE::BSVisit::BSVisitControl::kStop;
+						}
+						return RE::BSVisit::BSVisitControl::kContinue;
+					});
+
+					if (node) {
+						return node;
+					}
 				}
 				return a_biped->root->GetObjectByName(RE::FixedStrings::GetSingleton()->shield);
 			}
