@@ -77,6 +77,11 @@ namespace Fixes
 		void Install();
 	}
 
+	namespace LeftHandedWeaponEnchantmentNodeFix
+	{
+		void Install();
+	}
+
 	namespace MagicItemFindKeywordFunctorCrash
 	{
 		void Install();
