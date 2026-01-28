@@ -66,7 +66,11 @@ namespace Tweaks
 		class CheckShouldEquip
 		{
 		public:
+#ifndef SKYRIMVR
 			static void Install(REL::ID a_vtable_id)
+#else
+			static void Install(REL::VariantID a_vtable_id)
+#endif
 			{
 				REL::Relocation<std::uintptr_t> vtbl{ a_vtable_id };
 				func = vtbl.write_vfunc(0xF, thunk);

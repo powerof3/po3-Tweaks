@@ -10,11 +10,7 @@ namespace Fixes::DistantRefLoadCrash
 			const auto root = a_ref->Get3D();
 
 			if (const auto fadeNode = root ? root->AsFadeNode() : nullptr) {
-#ifndef SKYRIMVR
 				fadeNode->unk144 = 0;
-#else
-				fadeNode->unk16C = 0;
-#endif
 			}
 		}
 		static constexpr std::size_t size{ 0x2D };
