@@ -42,18 +42,19 @@ git submodule update
 
 ### SSE
 ```
-cmake --preset vs2022-windows-vcpkg-se
+cmake --preset vs2022-se # for vs2026 use vs2026-ae
 cmake --build build --config Release
 ```
 ### AE
 ```
-cmake --preset vs2022-windows-vcpkg-ae
-cmake --build build --config Release
+cmake --preset vs2022-ae # for vs2026 use vs2026-ae
+cmake --build buildae --config Release
 ```
 ### VR
 ```
-cmake --preset vs2022-windows-vcpkg-vr
+cmake --preset vs2022-vr # for vs2026 use vs2026-vr
 cmake --build buildvr --config Release
 ```
+
 ## License
 [MIT](LICENSE)

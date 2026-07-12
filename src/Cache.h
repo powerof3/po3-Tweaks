@@ -15,10 +15,35 @@ namespace Cache
 		using Lock = std::mutex;
 		using Locker = std::scoped_lock<Lock>;
 
-		mutable Lock                 _lock;
-		Map<RE::FormID, std::string> _formIDToEditorIDMap;
+		mutable Lock                     _lock;
+		FlatMap<RE::FormID, std::string> _formIDToEditorIDMap;
 	};
 
 	const std::string& GetEditorID(RE::FormID a_formID);
 	const std::string& GetEditorID(const RE::TESForm* a_form);
+
+	template <class T>
+	struct SetFormEditorID
+	{
+		static bool thunk(T* a_this, const char* a_str)
+		{
+			if (!string::is_empty(a_str) && !a_this->IsDynamicForm()) {
+				const auto& [map, lock] = RE::TESForm::GetAllFormsByEditorID();
+				const RE::BSWriteLockGuard locker{ lock };
+				if (map) {
+					map->emplace(a_str, a_this);
+				}
+				EditorID::GetSingleton()->CacheEditorID(a_this, a_str);
+			}
+			return func(a_this, a_str);
+		}
+		static inline REL::Relocation<decltype(thunk)> func;
+		static constexpr std::size_t                   idx{ 0x33 };
+	};
+
+	template <class T, std::size_t offset = 0>
+	void write_editorID_vfunc()
+	{
+		stl::write_vfunc<T, offset, SetFormEditorID<T>>();
+	}
 }

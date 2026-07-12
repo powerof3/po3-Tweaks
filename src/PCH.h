@@ -7,7 +7,8 @@
 #include "REX/REX/Singleton.h"
 #include "SKSE/SKSE.h"
 
-#include <ankerl/unordered_dense.h>
+#include <boost/unordered/unordered_flat_map.hpp>
+#include <boost/unordered/unordered_flat_set.hpp>
 #include <spdlog/sinks/basic_file_sink.h>
 #include <xbyak/xbyak.h>
 
@@ -20,24 +21,34 @@ namespace ini = clib_util::ini;
 
 using namespace std::literals;
 
-template <class K, class D>
-using Map = ankerl::unordered_dense::map<K, D>;
-template <class K>
-using Set = ankerl::unordered_dense::set<K>;
+template <class K, class D, class H = boost::hash<K>, class KEqual = std::equal_to<K>>
+using FlatMap = boost::unordered_flat_map<K, D, H, KEqual>;
+
+template <class K, class H = boost::hash<K>, class KEqual = std::equal_to<K>>
+using FlatSet = boost::unordered_flat_set<K, H, KEqual>;
 
 struct string_hash
 {
-	using is_transparent = void;  // enable heterogeneous overloads
-	using is_avalanching = void;  // mark class as high quality avalanching hash
+	using is_transparent = void;
 
-	[[nodiscard]] std::uint64_t operator()(std::string_view str) const noexcept
+	std::size_t operator()(const char* str) const
 	{
-		return ankerl::unordered_dense::hash<std::string_view>{}(str);
+		return boost::hash<std::string_view>{}(str);
+	}
+
+	std::size_t operator()(std::string_view str) const
+	{
+		return boost::hash<std::string_view>{}(str);
+	}
+
+	std::size_t operator()(const std::string& str) const
+	{
+		return boost::hash<std::string>{}(str);
 	}
 };
 
 template <class D>
-using StringMap = ankerl::unordered_dense::map<std::string, D, string_hash, std::equal_to<>>;
+using StringMap = FlatMap<std::string, D, string_hash, std::equal_to<>>;
 
 namespace stl
 {
@@ -51,14 +62,14 @@ namespace stl
 		asm_replace(a_from, T::size, reinterpret_cast<std::uintptr_t>(T::func));
 	}
 
-	template <class T, size_t N = 5>
+	template <class T, std::size_t N = 5>
 	void write_thunk_call(std::uintptr_t a_src)
 	{
 		auto& trampoline = SKSE::GetTrampoline();
 		T::func = trampoline.write_call<N>(a_src, T::thunk);
 	}
 
-	template <class F, size_t offset, class T>
+	template <class F, std::size_t offset, class T>
 	void write_vfunc()
 	{
 		REL::Relocation<std::uintptr_t> vtbl{ F::VTABLE[offset] };

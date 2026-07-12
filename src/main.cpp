@@ -1,3 +1,4 @@
+#include "Cache.h"
 #include "Compatibility.h"
 #include "Experimental.h"
 #include "Fixes.h"

@@ -5,7 +5,7 @@ namespace Experimental::CleanupOrphanedActiveEffects
 {
 	struct detail
 	{
-		static void init_ability_perk_map(Map<RE::SpellItem*, Set<RE::BGSPerk*>>& a_map)
+		static void init_ability_perk_map(FlatMap<RE::SpellItem*, FlatSet<RE::BGSPerk*>>& a_map)
 		{
 			const auto dataHandler = RE::TESDataHandler::GetSingleton();
 			if (!dataHandler) {
@@ -31,7 +31,7 @@ namespace Experimental::CleanupOrphanedActiveEffects
 			func(a_this, a_buf);
 
 			if (a_this && !a_this->IsPlayerRef()) {
-				static Map<RE::SpellItem*, Set<RE::BGSPerk*>> abilityPerkMap;
+				static FlatMap<RE::SpellItem*, FlatSet<RE::BGSPerk*>> abilityPerkMap;
 				if (abilityPerkMap.empty()) {
 					detail::init_ability_perk_map(abilityPerkMap);
 				}

@@ -12,8 +12,12 @@ concurrency:
 jobs:
   run:
     if: github.repository_owner == 'powerof3'
-    uses: adya/pack-skse-mod/.github/workflows/pack.yml@main
+    uses: powerof3/pack-skse-mod/.github/workflows/pack.yml@main-vs2022
     with:
+      CMAKE_SE_CONFIG_PRESET: 'vs2022-se'
+      CMAKE_SE_BUILD_PRESET: 'vs2022-se'
+      CMAKE_AE_CONFIG_PRESET: 'vs2022-ae'
+      CMAKE_AE_BUILD_PRESET: 'vs2022-ae'
       CMAKE_VR_CONFIG_PRESET: ''
       CMAKE_VR_BUILD_PRESET: ''
       FOMOD_INCLUDE_PDB: true
@@ -26,4 +30,3 @@ jobs:
       FOMOD_AE_MIN_GAME_VERSION: '1.6'
       FOMOD_REQUIRED_INSTALLATION_DIR: "Skyrim/Data"
       PUBLISH_ARCHIVE_TYPE: '7z'
-      VCPKG_COMMIT_ID: 'f2e1c41da38c71be74ef48684666991929b45418'

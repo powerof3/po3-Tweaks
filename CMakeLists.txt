@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 set(NAME "po3_Tweaks" CACHE STRING "")
-set(VERSION 1.15.1 CACHE STRING "")
+set(VERSION 1.16.0 CACHE STRING "")
 set(AE_VERSION 1)
 set(VR_VERSION 1)
 
@@ -131,7 +131,7 @@ else()
 	)
 endif()
 
-find_package(unordered_dense CONFIG REQUIRED)
+find_package(boost_unordered CONFIG REQUIRED)
 find_path(CLIB_UTIL_INCLUDE_DIRS "ClibUtil/utils.hpp")
 
 # ---- Add source files ----
@@ -189,7 +189,7 @@ target_link_libraries(
 	${PROJECT_NAME}
 	PRIVATE
 	${CommonLibName}::${CommonLibName}
-	unordered_dense::unordered_dense
+	Boost::unordered
 )
 
 target_precompile_headers(
