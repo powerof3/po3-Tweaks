@@ -16,7 +16,7 @@ namespace Tweaks::NoPoisonPrompt
 	{
 		static void thunk(char* a_message, void (*PoisonWeapon)(std::uint8_t a_result), std::uint8_t a_result, std::uint32_t, std::int32_t, char*, char*)
 		{
-			RE::DebugNotification(a_message, "UIMenuCancel");
+			RE::SendHUDMessage::ShowHUDMessage(a_message, "UIMenuCancel");
 			PoisonWeapon(a_result);
 		}
 		static inline REL::Relocation<decltype(thunk)> func;

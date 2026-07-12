@@ -75,7 +75,7 @@ namespace Fixes::WornRestrictionsForWeapons
 				if (a_showNotification) {
 					static const auto setting = RE::GameSettingCollection::GetSingleton()->GetSetting("sEnchantArmorIncompatible");
 					if (setting) {
-						RE::DebugNotification(setting->GetString());
+						RE::SendHUDMessage::ShowHUDMessage(setting->GetString());
 					}
 				}
 				return false;
