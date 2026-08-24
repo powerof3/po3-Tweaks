@@ -8,8 +8,8 @@ namespace Fixes::EffectShaderZBuffer
 		REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(501401, 360087), 0x1C };
 
 		constexpr std::uint8_t zeroes[] = { 0x0, 0x0, 0x0, 0x0 };
-		REL::safe_write(target.address(), zeroes, 4);
+		REL::WriteSafe(target.address(), zeroes, 4);
 
-		logger::info("\t\tInstalled effect shader z buffer fix"sv);
+		REX::INFO("\t\tInstalled effect shader z buffer fix"sv);
 	}
 }

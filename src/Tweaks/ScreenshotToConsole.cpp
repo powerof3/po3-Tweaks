@@ -19,6 +19,6 @@ namespace Tweaks::ScreenshotToConsole
 		REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(35882, 36853), OFFSET(0xA8, 0x9E) };
 		stl::write_thunk_call<DebugNotification>(target.address());
 
-		logger::info("\t\tInstalled screenshot to console tweak"sv);
+		REX::INFO("\t\tInstalled screenshot to console tweak"sv);
 	}
 }

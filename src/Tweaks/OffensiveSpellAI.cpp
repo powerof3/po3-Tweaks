@@ -42,6 +42,6 @@ namespace Tweaks::OffensiveSpellAI
 		CombatInventoryMagic::Install();
 		CombatMagicCaster::Install();
 
-		logger::info("\t\tInstalled offensive spell AI tweak"sv);
+		REX::INFO("\t\tInstalled offensive spell AI tweak"sv);
 	}
 }

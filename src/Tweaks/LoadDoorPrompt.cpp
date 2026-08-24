@@ -57,14 +57,14 @@ namespace Tweaks::LoadDoorPrompt
 
 		static std::string_view GetDoorLabel(CELL_TYPE a_type, const char* a_default)
 		{
-			auto& [type, enter, exit] = Settings::GetSingleton()->GetTweaks().loadDoorPrompt;
+			static auto& [type, enter, exit] = Settings::GetSingleton()->GetTweaks().loadDoorPrompt;
 			if (a_type == kExterior) {
-				return enter;
+				return enter.GetValue();
 			}
 			if (a_type == kInterior) {
 				return type == kReplaceCellAndPrompt ?
-				           exit :
-				           enter;
+				           exit.GetValue() :
+				           enter.GetValue();
 			}
 			return a_default;
 		}
@@ -100,6 +100,6 @@ namespace Tweaks::LoadDoorPrompt
 		stl::write_thunk_call<Locked>(target.address() + 0x140);
 		stl::write_thunk_call<Normal>(target.address() + 0x168);
 
-		logger::info("\t\tInstalled load door activate prompt tweak"sv);
+		REX::INFO("\t\tInstalled load door activate prompt tweak"sv);
 	}
 }

@@ -23,6 +23,6 @@ namespace Fixes::FirstPersonAlpha
 		REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(37777, 38722), 0x55 };
 		stl::write_thunk_call<FirstPersonAlpha, 6>(target.address());
 
-		logger::info("\t\tInstalled first person alpha fix"sv);
+		REX::INFO("\t\tInstalled first person alpha fix"sv);
 	}
 }

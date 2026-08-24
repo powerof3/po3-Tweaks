@@ -15,6 +15,6 @@ namespace Fixes::MagicItemFindKeywordFunctorCrash
 	void Install()
 	{
 		stl::write_vfunc<RE::MagicItemFindKeywordFunctor, MatchCondition>();
-		logger::info("\t\tInstalled MagicItemFindKeywordFunctor crash fix"sv);
+		REX::INFO("\t\tInstalled MagicItemFindKeywordFunctor crash fix"sv);
 	}
 }

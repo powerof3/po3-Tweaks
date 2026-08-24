@@ -27,7 +27,7 @@ namespace Fixes::RestoreJumpingBonus
 			Patch patch{ reinterpret_cast<std::uintptr_t>(SetJumpHeight) };
 			patch.ready();
 
-			auto& trampoline = SKSE::GetTrampoline();
+			auto& trampoline = REL::GetTrampoline();
 			_SetJumpHeight = trampoline.write_call<5>(target.address(), trampoline.allocate(patch));
 		}
 
@@ -46,6 +46,6 @@ namespace Fixes::RestoreJumpingBonus
 	{
 		SetJumpHeightPatch::Install();
 
-		logger::info("\t\tInstalled jumping bonus fix"sv);
+		REX::INFO("\t\tInstalled jumping bonus fix"sv);
 	}
 }

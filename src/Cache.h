@@ -2,7 +2,7 @@
 
 namespace Cache
 {
-	class EditorID : public REX::Singleton<EditorID>
+	class EditorID : public REX::TSingleton<EditorID>
 	{
 	public:
 		void CacheEditorID(RE::FormID a_formID, const char* a_editorID);
@@ -27,7 +27,7 @@ namespace Cache
 	{
 		static bool thunk(T* a_this, const char* a_str)
 		{
-			if (!string::is_empty(a_str) && !a_this->IsDynamicForm()) {
+			if (!REX::STR::IS_EMPTY(a_str) && !a_this->IsDynamicForm()) {
 				const auto& [map, lock] = RE::TESForm::GetAllFormsByEditorID();
 				const RE::BSWriteLockGuard locker{ lock };
 				if (map) {

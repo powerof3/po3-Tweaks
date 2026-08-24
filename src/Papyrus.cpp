@@ -11,15 +11,15 @@ namespace Papyrus
 	bool Bind(VM* a_vm)
 	{
 		if (!a_vm) {
-			logger::critical("couldn't get VM State"sv);
+			REX::CRITICAL("couldn't get VM State"sv);
 			return false;
 		}
 
-		logger::info("{:*^50}", "FUNCTIONS"sv);
+		REX::INFO("{:*^50}", "FUNCTIONS"sv);
 
 		a_vm->RegisterFunction("IsTweakInstalled"sv, "po3_Tweaks"sv, IsTweakInstalled, true);
 
-		logger::info("Registered IsTweakInstalled"sv);
+		REX::INFO("Registered IsTweakInstalled"sv);
 
 		return true;
 	}

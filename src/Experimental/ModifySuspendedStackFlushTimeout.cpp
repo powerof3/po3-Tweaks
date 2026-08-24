@@ -18,7 +18,7 @@ namespace Experimental::ModifySuspendedStackFlushTimeout
 
 					push(rax);
 
-					mov(rax, stl::unrestricted_cast<std::uintptr_t>(std::addressof(VAL)));
+					mov(rax, REX::UNRESTRICTED_CAST<std::uintptr_t>(std::addressof(VAL)));
 					mulss(xmm0, ptr[rax]);
 
 					pop(rax);
@@ -31,12 +31,12 @@ namespace Experimental::ModifySuspendedStackFlushTimeout
 			StackDumpTimeout_Code code(target.address(), a_milliseconds);
 			code.ready();
 
-			auto& trampoline = SKSE::GetTrampoline();
-			trampoline.write_branch<6>(
+			auto& trampoline = REL::GetTrampoline();
+			trampoline.write_jmp<6>(
 				target.address(),
 				trampoline.allocate(code));
 
-			logger::info("set timeout on suspended stack flush to {} seconds"sv, a_milliseconds / 1000.0);
+			REX::INFO("set timeout on suspended stack flush to {} seconds"sv, a_milliseconds / 1000.0);
 		}
 	}
 
@@ -45,9 +45,9 @@ namespace Experimental::ModifySuspendedStackFlushTimeout
 		void Install()
 		{
 			static REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(53209, 54020), OFFSET(0x8B, 0x152) };
-			REL::safe_write(target.address(), static_cast<std::uint8_t>(0xEB));  // swap jle 0x7e for jmp 0xeb
+			REL::WriteSafeData(target.address(), static_cast<std::uint8_t>(0xEB));  // swap jle 0x7e for jmp 0xeb
 
-			logger::info("Removed timeout check on suspended stack flush"sv);
+			REX::INFO("Removed timeout check on suspended stack flush"sv);
 		}
 	}
 

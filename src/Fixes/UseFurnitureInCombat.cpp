@@ -14,7 +14,7 @@ namespace Fixes::UseFurnitureInCombat
 			{
 				Patch()
 				{
-					call(qword[rax + 0x830]);
+					call(ptr[rax + 0x830]);
 				}
 			};
 
@@ -23,8 +23,8 @@ namespace Fixes::UseFurnitureInCombat
 
 			static REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(17034, 17420) };  // TESFurniture::Activate
 
-			REL::safe_write(target.address() + OFFSET_3(0x81, 0x81, 0x5a), std::span{ patch.getCode(), patch.getSize() });
-			REL::safe_write(target.address() + OFFSET_3(0x1B1, 0x1B2, 0x18a), std::span{ patch.getCode(), patch.getSize() });
+			REL::WriteSafe(target.address() + OFFSET_3(0x81, 0x81, 0x5A), std::span{ patch.getCode(), patch.getSize() });
+			REL::WriteSafe(target.address() + OFFSET_3(0x1B1, 0x1B2, 0x18A), std::span{ patch.getCode(), patch.getSize() });
 		}
 	}
 
@@ -48,8 +48,6 @@ namespace Fixes::UseFurnitureInCombat
 		{
 			REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(37672, 38626), OFFSET(0x485, 0x480) };
 			stl::write_thunk_call<StopInteractingQuick>(target.address());
-
-			logger::info("\t\tInstalled use furniture in combat fix"sv);
 		}
 	}
 
@@ -57,5 +55,7 @@ namespace Fixes::UseFurnitureInCombat
 	{
 		UseInCombat::Install();
 		PreventKickOut::Install();
+		
+		REX::INFO("\t\tInstalled use furniture in combat fix"sv);
 	}
 }

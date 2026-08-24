@@ -82,6 +82,6 @@ namespace Tweaks::GameTimeAffectsSounds
 		BSSoundHandle_Play::Install();
 		BSSoundHandle_PlayAfter::Install();
 
-		logger::info("\t\tInstalled sound - time sync tweak"sv);
+		REX::INFO("\t\tInstalled sound - time sync tweak"sv);
 	}
 }

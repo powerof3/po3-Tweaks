@@ -45,6 +45,6 @@ namespace Experimental::UpdateGameTimers
 		REL::Relocation<std::uintptr_t> func{ RELOCATION_ID(55352, 55923) };
 		stl::asm_replace<Papyrus_SetGlobal>(func.address());
 
-		logger::info("\t\tInstalled game hour timer fix"sv);
+		REX::INFO("\t\tInstalled game hour timer fix"sv);
 	}
 }

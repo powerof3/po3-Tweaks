@@ -3,19 +3,18 @@
   "version-string": "1.16.0",
   "description": "Collection of bug fixes and tweaks for Skyrim SE/AE/VR",
   "homepage": "https://github.com/powerof3/po3-Tweaks/",
-  "license": "MIT",
+  "license": "GPL-3.0-or-later",
   "dependencies": [
     "boost-unordered",
-    "clib-util",
-    "rsm-binary-io",
+    {
+      "name": "commonlib-shared",
+      "features": [
+        "xbyak",
+        "ini"
+      ]
+    },
     "spdlog",
     "xbyak"
   ],
-  "builtin-baseline": "32305df7d0b9a308e6ac454dd98ebfe550342c09",
-  "overrides": [
-    {
-      "name": "xbyak",
-      "version": "7.23.1"
-    }
-  ]
+  "builtin-baseline": "7f3781e19cc7d4e4882a4caec01668c6f7b5c163"
 }

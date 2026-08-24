@@ -11,7 +11,7 @@ namespace Fixes::ReapplyAddedSpells
 		{
 			static RE::ExtraAliasInstanceArray* thunk(RE::ExtraDataList* a_list)
 			{
-				auto* actor = stl::adjust_pointer<RE::Character>(a_list, -0x70);
+				auto* actor = REX::ADJUST_POINTER<RE::Character>(a_list, -0x70);
 
 				if (auto* caster = actor && !actor->IsPlayerRef() && !actor->addedSpells.empty() ?
 				                       actor->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant) :
@@ -49,7 +49,7 @@ namespace Fixes::ReapplyAddedSpells
 		{
 			static RE::ExtraAliasInstanceArray* thunk(RE::ExtraDataList* a_list)
 			{
-				auto* actor = stl::adjust_pointer<RE::Character>(a_list, -0x70);
+				auto* actor = REX::ADJUST_POINTER<RE::Character>(a_list, -0x70);
 
 				if (actor && !actor->IsPlayerRef() && !actor->addedSpells.empty()) {
 					if (const auto magicTarget = actor->GetMagicTarget()) {
@@ -141,6 +141,6 @@ namespace Fixes::ReapplyNoDeathDispelSpells
 		REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(36198, 37177), OFFSET(0x12, 0xD) };
 		stl::write_thunk_call<Load3D>(target.address());
 
-		logger::info("\t\tInstalled no death dispel spell reapply fix"sv);
+		REX::INFO("\t\tInstalled no death dispel spell reapply fix"sv);
 	}
 }

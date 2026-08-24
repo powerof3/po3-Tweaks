@@ -36,7 +36,7 @@ namespace Tweaks::DynamicSnowMaterial
 
 			if (matObject) {  //statics
 				const auto editorID = Cache::EditorID::GetSingleton()->GetEditorID(matObject);
-				result = string::icontains(editorID, "snow"sv) && stat->data.materialThresholdAngle >= 90.0f;
+				result = REX::STR::ICONTAINS(editorID, "snow"sv) && stat->data.materialThresholdAngle >= 90.0f;
 			}
 
 			if (!result && !matObject) {                                          // snow variants
@@ -91,7 +91,7 @@ namespace Tweaks::DynamicSnowMaterial
 			Patch patch{ reinterpret_cast<std::uintptr_t>(GetMaterialID) };
 			patch.ready();
 
-			auto& trampoline = SKSE::GetTrampoline();
+			auto& trampoline = REL::GetTrampoline();
 			_GetMaterialID = trampoline.write_call<5>(target.address(), trampoline.allocate(patch));
 		}
 
@@ -113,6 +113,6 @@ namespace Tweaks::DynamicSnowMaterial
 	{
 		GetMaterialIDPatch::Install();
 
-		logger::info("\t\tInstalled dynamic snow material tweak"sv);
+		REX::INFO("\t\tInstalled dynamic snow material tweak"sv);
 	}
 }

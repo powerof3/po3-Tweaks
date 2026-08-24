@@ -27,6 +27,6 @@ namespace Fixes::ProjectileRange
 		REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(43030, 44222), OFFSET_3(0x3CB, 0x79D, 0x3A8) };
 		stl::write_thunk_call<UpdateCombatThreat>(target.address());
 
-		logger::info("\t\tInstalled projectile range fix"sv);
+		REX::INFO("\t\tInstalled projectile range fix"sv);
 	}
 }

@@ -8,11 +8,11 @@ namespace Compatibility
 		{
 			const REL::Relocation<std::uintptr_t> attachHitEffectArt_ID{ RELOCATION_ID(37804, 38753), 0x6F };
 
-			if (REL::make_pattern<"24 F8">().match(attachHitEffectArt_ID.address())) {
-				logger::info("Scrambled Bugs : AttachHitEffect patch is enabled");
+			if (REL::Pattern<"24 F8">().match(attachHitEffectArt_ID.address())) {
+				REX::INFO("Scrambled Bugs : AttachHitEffect patch is enabled");
 				attachHitEffectArt = true;
 			} else {
-				logger::info("Scrambled Bugs : AttachHitEffect patch not enabled or found");
+				REX::INFO("Scrambled Bugs : AttachHitEffect patch not enabled or found");
 			}
 		}
 	}

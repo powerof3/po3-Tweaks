@@ -46,6 +46,6 @@ namespace Fixes::UnderWaterCamera
 	void Install()
 	{
 		stl::write_vfunc<RE::PlayerCharacter, ProcessInWater>();
-		logger::info("\t\tInstalled underwater camera fix"sv);
+		REX::INFO("\t\tInstalled underwater camera fix"sv);
 	}
 }

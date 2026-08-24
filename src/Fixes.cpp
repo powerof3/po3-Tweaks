@@ -4,7 +4,7 @@
 void Fixes::PreLoad::Install([[maybe_unused]] std::uint32_t a_skse_version)
 {
 #ifdef SKYRIMVR
-	logger::info("\t[FIXES]");
+	REX::INFO("\t[FIXES]");
 	const auto& fixes = Settings::GetSingleton()->GetFixes();
 	if (fixes.fixVRCrosshairRefEvent) {
 		CrosshairRefEventVR::Install(a_skse_version);
@@ -16,14 +16,14 @@ void Fixes::PostLoad::Install()
 {
 	const auto& fixes = Settings::GetSingleton()->GetFixes();
 
-	logger::info("\t[FIXES]");
+	REX::INFO("\t[FIXES]");
 
 	if (fixes.distantRefLoadCrash) {
 		DistantRefLoadCrash::Install();
 	}
 	if (fixes.mapMarker) {
 		if (GetModuleHandle(L"DisableFastTravel")) {
-			logger::info("\t\tDetected DisableFastTravel, skipping mapMarker fix."sv);
+			REX::INFO("\t\tDetected DisableFastTravel, skipping mapMarker fix."sv);
 		} else {
 			MapMarkerPlacement::Install();
 		}
@@ -70,7 +70,7 @@ void Fixes::PostLoad::Install()
 	}
 	if (fixes.wornRestrictionsForWeapons) {
 		if (GetModuleHandle(L"AmmoEnchanting")) {
-			logger::info("\t\tDetected AmmoEnchanting, skipping ExpandedWornRestrictions patch."sv);
+			REX::INFO("\t\tDetected AmmoEnchanting, skipping ExpandedWornRestrictions patch."sv);
 		} else {
 			WornRestrictionsForWeapons::Install();
 		}
@@ -79,8 +79,9 @@ void Fixes::PostLoad::Install()
 		MagicItemFindKeywordFunctorCrash::Install();
 	}
 	if (fixes.leftHandedWeaponEnchantmentNodeFix) {
-		if (GetModuleHandle(L"hdtSMP64") || std::filesystem::exists("Data\\XPMSE.esp")) {
-			logger::info("\t\tDetected XMPSE/HDT-SMP, installing LeftHandedWeaponEnchantmentNodeFix"sv);
+		std::error_code ec;
+		if (GetModuleHandle(L"hdtSMP64") || std::filesystem::exists("Data\\XPMSE.esp", ec)) {
+			REX::INFO("\t\tDetected XMPSE/HDT-SMP, installing LeftHandedWeaponEnchantmentNodeFix"sv);
 			LeftHandedWeaponEnchantmentNodeFix::Install();
 		}
 	}
@@ -89,7 +90,7 @@ void Fixes::PostLoad::Install()
 
 void Fixes::PostPostLoad::Install()
 {
-	logger::info("\t[FIXES]");
+	REX::INFO("\t[FIXES]");
 	const auto& fixes = Settings::GetSingleton()->GetFixes();
 	if (fixes.addedSpell) {
 		ReapplyAddedSpells::Install();
@@ -101,7 +102,7 @@ void Fixes::PostPostLoad::Install()
 
 void Fixes::DataLoaded::Install()
 {
-	logger::info("\t[FIXES]");
+	REX::INFO("\t[FIXES]");
 	const auto& fixes = Settings::GetSingleton()->GetFixes();
 
 	FlagSpellsAsNoAbsorb::Install();

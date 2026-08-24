@@ -25,6 +25,6 @@ namespace Fixes::DistantRefLoadCrash
 		REL::Relocation<std::uintptr_t> func{ RELOCATION_ID(18642, 19116) };
 		stl::asm_replace<LoadedVisibleDistantRef>(func.address());
 
-		logger::info("\t\tInstalled distant ref load crash fix"sv);
+		REX::INFO("\t\tInstalled distant ref load crash fix"sv);
 	}
 }

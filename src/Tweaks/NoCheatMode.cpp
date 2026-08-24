@@ -58,6 +58,6 @@ namespace Tweaks::NoCheatMode
 			break;
 		}
 
-		logger::info("\t\tInstalled no cheat mode"sv);
+		REX::INFO("\t\tInstalled no cheat mode"sv);
 	}
 }

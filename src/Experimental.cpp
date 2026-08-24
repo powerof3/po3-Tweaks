@@ -5,7 +5,7 @@ void Experimental::Install()
 {
 	const auto& experimental = Settings::GetSingleton()->GetExperimental();
 
-	logger::info("\t[EXPERIMENTAL]");
+	REX::INFO("\t[EXPERIMENTAL]");
 
 	ScriptSpeedup::Install();
 

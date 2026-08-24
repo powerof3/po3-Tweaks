@@ -41,6 +41,6 @@ namespace Fixes::ToggleGlobalAI
 		REL::Relocation<std::uintptr_t> func{ RELOCATION_ID(40317, 41327) };
 		stl::asm_replace<ToggleAI>(func.address());
 
-		logger::info("\t\tInstalled toggle global AI fix"sv);
+		REX::INFO("\t\tInstalled toggle global AI fix"sv);
 	}
 }

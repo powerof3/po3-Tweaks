@@ -11,7 +11,7 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_message)
 	switch (a_message->type) {
 	case SKSE::MessagingInterface::kPostLoad:
 		{
-			logger::info("{:*^50}", "POST LOAD PATCH"sv);
+			REX::INFO("{:*^50}", "POST LOAD PATCH"sv);
 
 #ifndef SKYRIMVR
 			Settings::GetSingleton()->Load();
@@ -25,18 +25,18 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_message)
 		break;
 	case SKSE::MessagingInterface::kPostPostLoad:
 		{
-			logger::info("{:*^50}", "PLUGIN COMPATIBILITY CHECK"sv);
+			REX::INFO("{:*^50}", "PLUGIN COMPATIBILITY CHECK"sv);
 
 			Compatibility::DoCheck();
 
-			logger::info("{:*^50}", "POST POST LOAD PATCH"sv);
+			REX::INFO("{:*^50}", "POST POST LOAD PATCH"sv);
 
 			Fixes::PostPostLoad::Install();
 		}
 		break;
 	case SKSE::MessagingInterface::kDataLoaded:
 		{
-			logger::info("{:*^50}", "DATA LOADED PATCH"sv);
+			REX::INFO("{:*^50}", "DATA LOADED PATCH"sv);
 
 			Fixes::DataLoaded::Install();
 			Tweaks::DataLoaded::Install();
@@ -47,11 +47,11 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_message)
 	}
 }
 
-#ifdef SKYRIM_AE
-extern "C" DLLEXPORT constinit auto SKSEPlugin_Version = []() {
+#ifdef SKYRIM_SUPPORT_AE
+SKSE_PLUGIN_VERSION = []() {
 	SKSE::PluginVersionData v;
-	v.PluginVersion(Version::MAJOR);
-	v.PluginName(Version::PROJECT);
+	v.PluginVersion(REL::Version{ Version::MAJOR, Version::MINOR, Version::PATCH });
+	v.PluginName("powerofthree's Tweaks");
 	v.AuthorName("powerofthree");
 	v.UsesAddressLibrary();
 	v.UsesUpdatedStructs();
@@ -60,26 +60,19 @@ extern "C" DLLEXPORT constinit auto SKSEPlugin_Version = []() {
 	return v;
 }();
 #else
-extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Query(const SKSE::QueryInterface* a_skse, SKSE::PluginInfo* a_info)
+SKSE_PLUGIN_QUERY(const SKSE::QueryInterface* a_skse, SKSE::PluginInfo* a_info)
 {
 	a_info->infoVersion = SKSE::PluginInfo::kVersion;
-	a_info->name = Version::PROJECT.data();
+	a_info->name = "powerofthree's Tweaks";
 	a_info->version = Version::MAJOR;
 
 	if (a_skse->IsEditor()) {
-		logger::critical("Loaded in editor, marking as incompatible"sv);
+		REX::CRITICAL("Loaded in editor, marking as incompatible");
 		return false;
 	}
 
-	const auto ver = a_skse->RuntimeVersion();
-	if (ver <
-#	ifdef SKYRIMVR
-		SKSE::RUNTIME_VR_1_4_15
-#	else
-		SKSE::RUNTIME_SSE_1_5_39
-#	endif
-	) {
-		logger::critical(FMT_STRING("Unsupported runtime version {}"), ver.string());
+	if (const auto ver = a_skse->RuntimeVersion(); ver < SKSE::RUNTIME_SSE_1_5_39) {
+		REX::CRITICAL("Unsupported runtime version {}", ver);
 		return false;
 	}
 
@@ -87,37 +80,14 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Query(const SKSE::QueryInterface* a
 }
 #endif
 
-void InitializeLog()
+SKSE_PLUGIN_LOAD(const SKSE::LoadInterface* a_skse)
 {
-	auto path = logger::log_directory();
-	if (!path) {
-		stl::report_and_fail("Failed to find standard logging directory"sv);
-	}
+	SKSE::Init(a_skse, { .log = true,
+						   .logName = Version::PROJECT.data(),
+						   .trampoline = true,
+						   .trampolineSize = 450 });
 
-	*path /= Version::PROJECT;
-	*path += ".log"sv;
-	auto sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(path->string(), true);
-
-	auto log = std::make_shared<spdlog::logger>("global log"s, std::move(sink));
-
-	log->set_level(spdlog::level::info);
-	log->flush_on(spdlog::level::info);
-
-	spdlog::set_default_logger(std::move(log));
-	spdlog::set_pattern("[%H:%M:%S:%e] %v"s);
-
-	logger::info(FMT_STRING("{} v{}"), Version::PROJECT, Version::NAME);
-}
-
-extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_skse)
-{
-	InitializeLog();
-
-	logger::info("Game version : {}", a_skse->RuntimeVersion());
-
-	SKSE::Init(a_skse, false);
-
-	SKSE::AllocTrampoline(450);  // max trampoline space need + an extra thunk_call
+	REX::INFO("Game version : {}", a_skse->RuntimeVersion());
 
 #ifdef SKYRIMVR
 	try {
@@ -126,7 +96,7 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 		logger::error("Exception caught when loading settings! Default settings will be used");
 	}
 
-	logger::info("{:*^50}", "PRELOAD PATCH"sv);
+	REX::INFO("{:*^50}", "PRELOAD PATCH"sv);
 
 	Fixes::PreLoad::Install(a_skse->SKSEVersion());
 #endif

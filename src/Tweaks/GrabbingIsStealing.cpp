@@ -4,7 +4,7 @@
 namespace Tweaks::GrabbingIsStealing
 {
 	class GrabReleaseHandler final :
-		public REX::Singleton<GrabReleaseHandler>,
+		public REX::TSingleton<GrabReleaseHandler>,
 		public RE::BSTEventSink<RE::TESGrabReleaseEvent>
 	{
 	public:
@@ -35,7 +35,7 @@ namespace Tweaks::GrabbingIsStealing
 	{
 		if (auto scripts = RE::ScriptEventSourceHolder::GetSingleton()) {
 			scripts->AddEventSink(GrabReleaseHandler::GetSingleton());
-			logger::info("\t\tInstalled Grabbing Is Stealing tweak"sv);
+			REX::INFO("\t\tInstalled Grabbing Is Stealing tweak"sv);
 		}
 	}
 }

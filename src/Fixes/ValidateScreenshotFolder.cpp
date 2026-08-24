@@ -38,7 +38,7 @@ namespace Fixes::ValidateScreenshotFolder
 			std::string           newBaseName{};
 
 			auto folder = setting->GetString();
-			bool emptyPath = string::is_empty(folder);
+			bool emptyPath = REX::STR::IS_EMPTY(folder);
 
 			if (emptyPath) {
 				screenshotFolder = gameDirectory;
@@ -70,12 +70,12 @@ namespace Fixes::ValidateScreenshotFolder
 				}
 				RE::ConsoleLog::GetSingleton()->Print(std::format("[po3 Tweaks] Defaulting to {} folder\n", gameDirectory.string()).c_str());
 				if (emptyPath) {
-					logger::info("\t\t[Screenshot Location Fix] '' -> {}"sv, screenshotFolder.string());
+					REX::INFO("\t\t[Screenshot Location Fix] '' -> {}"sv, screenshotFolder.string());
 				} else {
-					logger::info("\t\t[Screenshot Location Fix] {} -> {}"sv, screenshotFolder.string(), gameDirectory.string());
+					REX::INFO("\t\t[Screenshot Location Fix] {} -> {}"sv, screenshotFolder.string(), gameDirectory.string());
 				}
 			} else {
-				logger::info("\t\t[Screenshot Location Fix] No fixes required ({})"sv, folder);
+				REX::INFO("\t\t[Screenshot Location Fix] No fixes required ({})"sv, folder);
 			}
 		}
 	}

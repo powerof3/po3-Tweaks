@@ -77,6 +77,6 @@ namespace Tweaks::FactionStealing
 		REL::Relocation<std::uintptr_t> func{ RELOCATION_ID(39584, 40670) };
 		stl::asm_replace<IsFriendAnOwner>(func.address());
 
-		logger::info("\t\tInstalled faction stealing tweak"sv);
+		REX::INFO("\t\tInstalled faction stealing tweak"sv);
 	}
 }

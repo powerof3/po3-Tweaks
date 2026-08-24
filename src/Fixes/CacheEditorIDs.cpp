@@ -33,7 +33,7 @@ namespace Fixes::CacheFormEditorIDs
 		{
 			auto result = func(a_this, ptr, a_chunkSize);
 			if (result) {
-				if (auto str = static_cast<const char* const>(ptr); !string::is_empty(str) && a_this->currentform.formID != 0) {
+				if (auto str = static_cast<const char* const>(ptr); !REX::STR::IS_EMPTY(str) && a_this->currentform.formID != 0) {
 					Cache::EditorID::GetSingleton()->CacheEditorID(a_this->currentform.formID, str);
 				}
 			}
@@ -216,10 +216,10 @@ namespace Fixes::CacheFormEditorIDs
 			REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(0, 20396), 0x403 };  //TESWeather::Load
 			stl::write_thunk_call<TESFile_GetChunkData>(target.address());
 
-			logger::info("\t\tInstalled TESWeather editorID patch"sv);
+			REX::INFO("\t\tInstalled TESWeather editorID patch"sv);
 		}
 #endif
 
-		logger::info("\t\tInstalled editorID cache"sv);
+		REX::INFO("\t\tInstalled editorID cache"sv);
 	}
 }

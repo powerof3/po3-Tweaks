@@ -25,7 +25,7 @@ namespace Tweaks::SitToWait
 			const auto result = CanSleepWait(a_player, a_furniture);
 			if (result && a_player->GetSitSleepState() != RE::SIT_SLEEP_STATE::kIsSitting) {
 				static auto& message = Settings::GetSingleton()->GetTweaks().sitToWait.message;
-				RE::SendHUDMessage::ShowHUDMessage(message.c_str(), "UIMenuCancel");
+				RE::SendHUDMessage::ShowHUDMessage(message.GetValue().c_str(), "UIMenuCancel");
 				return false;
 			}
 			return result;
@@ -52,6 +52,6 @@ namespace Tweaks::SitToWait
 		REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(51400, 52249), OFFSET_3(0x394, 0x379, 0x681) };
 		stl::write_thunk_call<HandleWaitRequest>(target.address());
 
-		logger::info("\t\tInstalled sit to wait tweak"sv);
+		REX::INFO("\t\tInstalled sit to wait tweak"sv);
 	}
 }

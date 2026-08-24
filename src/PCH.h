@@ -2,22 +2,16 @@
 
 #define WIN32_LEAN_AND_MEAN
 #define NOMMNOSOUND
+#define NOMINMAX
 
 #include "RE/Skyrim.h"
-#include "REX/REX/Singleton.h"
+#include "REX/REX.h"
 #include "SKSE/SKSE.h"
 
 #include <boost/unordered/unordered_flat_map.hpp>
 #include <boost/unordered/unordered_flat_set.hpp>
 #include <spdlog/sinks/basic_file_sink.h>
 #include <xbyak/xbyak.h>
-
-#include <ClibUtil/simpleINI.hpp>
-#include <ClibUtil/string.hpp>
-
-namespace logger = SKSE::log;
-namespace string = clib_util::string;
-namespace ini = clib_util::ini;
 
 using namespace std::literals;
 
@@ -52,8 +46,6 @@ using StringMap = FlatMap<std::string, D, string_hash, std::equal_to<>>;
 
 namespace stl
 {
-	using namespace SKSE::stl;
-
 	void asm_replace(std::uintptr_t a_from, std::size_t a_size, std::uintptr_t a_to);
 
 	template <class T>
@@ -65,7 +57,7 @@ namespace stl
 	template <class T, std::size_t N = 5>
 	void write_thunk_call(std::uintptr_t a_src)
 	{
-		auto& trampoline = SKSE::GetTrampoline();
+		auto& trampoline = REL::GetTrampoline();
 		T::func = trampoline.write_call<N>(a_src, T::thunk);
 	}
 

@@ -23,6 +23,6 @@ namespace Fixes::CombatDialogue
 		REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(43571, 44803), 0x135 };
 		stl::write_thunk_call<SayCombatDialogue>(target.address());
 
-		logger::info("\t\tInstalled combat dialogue fix"sv);
+		REX::INFO("\t\tInstalled combat dialogue fix"sv);
 	}
 }

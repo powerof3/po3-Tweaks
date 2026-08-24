@@ -4,7 +4,7 @@
 namespace Fixes::BreathingSounds
 {
 	class CellAttachDetachHandler final :
-		public REX::Singleton<CellAttachDetachHandler>,
+		public REX::TSingleton<CellAttachDetachHandler>,
 		public RE::BSTEventSink<RE::TESCellAttachDetachEvent>
 	{
 	protected:
@@ -43,7 +43,7 @@ namespace Fixes::BreathingSounds
 	{
 		if (auto scripts = RE::ScriptEventSourceHolder::GetSingleton()) {
 			scripts->AddEventSink(CellAttachDetachHandler::GetSingleton());
-			logger::info("\t\tInstalled breathing sound fix"sv);
+			REX::INFO("\t\tInstalled breathing sound fix"sv);
 		}
 	}
 }

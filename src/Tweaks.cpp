@@ -5,7 +5,7 @@ void Tweaks::PostLoad::Install()
 {
 	const auto& tweaks = Settings::GetSingleton()->GetTweaks();
 
-	logger::info("\t[TWEAKS]");
+	REX::INFO("\t[TWEAKS]");
 
 	if (tweaks.factionStealing) {
 		FactionStealing::Install();
@@ -55,7 +55,7 @@ void Tweaks::PostLoad::Install()
 
 void Tweaks::DataLoaded::Install()
 {
-	logger::info("\t[TWEAKS]");
+	REX::INFO("\t[TWEAKS]");
 
 	const auto& tweaks = Settings::GetSingleton()->GetTweaks();
 	if (tweaks.grabbingIsStealing) {

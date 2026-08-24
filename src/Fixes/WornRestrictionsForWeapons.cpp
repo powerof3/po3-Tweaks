@@ -124,6 +124,6 @@ namespace Fixes::WornRestrictionsForWeapons
 		REL::Relocation<std::uintptr_t> func{ RELOCATION_ID(50569, 51461) };
 		stl::asm_replace<CanSelectEnchantmentEntry>(func.address());
 
-		logger::info("\t\tInstalled worn restrictions for weapons patch"sv);
+		REX::INFO("\t\tInstalled worn restrictions for weapons patch"sv);
 	}
 }

@@ -22,7 +22,7 @@ namespace Tweaks::NoCritSneakMessages
 		if (a_type == 3) {
 			for (const auto& [start, end] : id) {
 				for (auto i = start; i < end; ++i) {
-					REL::safe_write(target.address() + i, REL::NOP);
+					REL::WriteSafeData(target.address() + i, REL::NOP);
 				}
 			}
 		} else {
@@ -30,10 +30,10 @@ namespace Tweaks::NoCritSneakMessages
 
 			const auto& [start, end] = id[idx];
 			for (auto i = start; i < end; ++i) {
-				REL::safe_write(target.address() + i, REL::NOP);
+				REL::WriteSafeData(target.address() + i, REL::NOP);
 			}
 		}
 
-		logger::info("\t\tInstalled crit/sneak message tweak"sv);
+		REX::INFO("\t\tInstalled crit/sneak message tweak"sv);
 	}
 }
