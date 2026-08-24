@@ -102,9 +102,9 @@ SKSE_PLUGIN_LOAD(const SKSE::LoadInterface* a_skse)
 	if constexpr (SKSE::RUNTIME_SSE_LATEST < MIN_ADDRESS_LIBRARY_V5_RUNTIME) {
 		if (runtimeVersion >= MIN_ADDRESS_LIBRARY_V5_RUNTIME) {
 			REX::FAIL(
-				"You are using a newer version of Skyrim than this version of {} supports.\n"
-				"Install the correct version of {} for your game version.\n"
-				"Runtime: {}\n"
+				"You are using a newer version of Skyrim than this version of {0} supports.\n"
+				"Install the correct version of {0} for your game version.\n"
+				"Runtime: {1}\n"
 				"Supported: 1.6.1170 (Steam) / 1.6.1179 (GOG)",
 				Version::PROJECT, runtimeVersion);
 		}
