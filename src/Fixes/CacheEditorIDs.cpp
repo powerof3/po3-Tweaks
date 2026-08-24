@@ -4,29 +4,6 @@
 //Cache skipped formEditorIDs
 namespace Fixes::CacheFormEditorIDs
 {
-	struct detail
-	{
-		static const char* GetGameVersionImpl()
-		{
-			using func_t = decltype(&GetGameVersionImpl);
-			static REL::Relocation<func_t> func{ RELOCATION_ID(15485, 15650) };
-			return func();
-		}
-
-		static REL::Version GetGameVersion()
-		{
-			std::stringstream            ss(GetGameVersionImpl());
-			std::string                  token;
-			std::array<std::uint16_t, 4> version{};
-
-			for (std::size_t i = 0; i < 4 && std::getline(ss, token, '.'); ++i) {
-				version[i] = static_cast<std::uint16_t>(std::stoi(token));
-			}
-
-			return REL::Version(version);
-		}
-	};
-
 	struct TESFile_GetChunkData
 	{
 		static bool thunk(RE::TESFile* a_this, void* ptr, std::uint32_t a_chunkSize)
@@ -212,7 +189,7 @@ namespace Fixes::CacheFormEditorIDs
 		Cache::write_editorID_vfunc<RE::BGSVolumetricLighting>();
 
 #ifdef SKYRIM_AE
-		if (detail::GetGameVersion() >= SKSE::RUNTIME_SSE_LATEST) {
+		if (Runtime::version >= SKSE::RUNTIME_SSE_LATEST) {
 			REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(0, 20396), 0x403 };  //TESWeather::Load
 			stl::write_thunk_call<TESFile_GetChunkData>(target.address());
 

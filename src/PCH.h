@@ -75,6 +75,19 @@ namespace stl
 	}
 }
 
+namespace Runtime
+{
+	inline constexpr REL::Version SSE_1_7_99(1, 7, 99, 0);
+	inline constexpr REL::Version MIN_ADDRESS_LIBRARY_V5 = SSE_1_7_99;
+
+	inline REL::Version version{};
+
+	[[nodiscard]] inline bool IsAtLeast1_7_99() noexcept
+	{
+		return version >= Runtime::SSE_1_7_99;
+	}
+}
+
 #ifdef SKYRIM_AE
 #	define RELOCATION_ID(se, ae) REL::ID(ae)
 #	define OFFSET(se, ae) ae
@@ -87,6 +100,15 @@ namespace stl
 #	define RELOCATION_ID(se, ae) REL::ID(se)
 #	define OFFSET(se, ae) se
 #	define OFFSET_3(se, ae, vr) se
+#endif
+
+#ifdef SKYRIM_AE
+#	define OFFSET_VERSIONED(se, ae, ae1799, vr) \
+		(Runtime::IsAtLeast1_7_99() ? ae1799 : ae)
+#elif SKYRIMVR
+#	define OFFSET_VERSIONED(se, ae, ae1799, vr) vr
+#else
+#	define OFFSET_VERSIONED(se, ae, ae1799, vr) se
 #endif
 
 #define DLLEXPORT __declspec(dllexport)
