@@ -55,7 +55,7 @@ namespace Fixes::UseFurnitureInCombat
 	{
 		UseInCombat::Install();
 		PreventKickOut::Install();
-		
+
 		REX::INFO("\t\tInstalled use furniture in combat fix"sv);
 	}
 }
