@@ -25,6 +25,9 @@ jobs:
       FOMOD_MOD_AUTHOR: "powerofthree"
       FOMOD_MOD_NEXUS_ID: "51073"
       FOMOD_SE_MIN_GAME_VERSION: '1.5'
+      AE_353_BRANCH: master
+      AE_353_COMMON_LIB_BRANCH: dev-1.6.1170
+      FOMOD_AE353_PATH: 'AE1170/SKSE/Plugins'
       FOMOD_AE353_NAME:  'SSE/AE v1.6.1170 ("Anniversary/Special Edition")'
       FOMOD_AE353_DESCR: 'Select this if you are using Skyrim Anniversary Edition/Special Edition v1.6.1170.'
       FOMOD_AE353_MIN_GAME_VERSION: '1.6.1170'
