@@ -47,6 +47,8 @@ void MessageHandler(SKSE::MessagingInterface::Message* a_message)
 	}
 }
 
+constexpr REL::Version MIN_ADDRESS_LIBRARY_V5_RUNTIME{ 1, 7, 99, 0 };
+
 #ifdef SKYRIM_SUPPORT_AE
 SKSE_PLUGIN_VERSION = []() {
 	SKSE::PluginVersionData v;
@@ -57,7 +59,7 @@ SKSE_PLUGIN_VERSION = []() {
 	v.UsesUpdatedStructs();
 	v.CompatibleVersions({ SKSE::RUNTIME_SSE_LATEST });
 
-	if constexpr (SKSE::RUNTIME_SSE_LATEST < REL::Version{ 1, 7, 99, 0 }) {
+	if constexpr (SKSE::RUNTIME_SSE_LATEST < MIN_ADDRESS_LIBRARY_V5_RUNTIME) {
 		v.MinimumRequiredXSEVersion(REL::Version{ 2, 2, 5 });
 	} else {
 		v.MinimumRequiredXSEVersion(REL::Version{ 2, 3, 0 });
@@ -93,14 +95,18 @@ SKSE_PLUGIN_LOAD(const SKSE::LoadInterface* a_skse)
 						   .trampoline = true,
 						   .trampolineSize = 450 });
 
-	REX::INFO("Game version : {}", a_skse->RuntimeVersion());
+	const auto runtimeVersion = a_skse->RuntimeVersion();
+	
+	REX::INFO("Game version : {}", runtimeVersion);
 
-	if constexpr (SKSE::RUNTIME_SSE_LATEST < REL::Version{ 1, 7, 99, 0 }) {
-		if (const auto runtimeVersion = a_skse->RuntimeVersion(); runtimeVersion >= REL::Version{ 1, 7, 99, 0 }) {
+	if constexpr (SKSE::RUNTIME_SSE_LATEST < MIN_ADDRESS_LIBRARY_V5_RUNTIME) {
+		if (runtimeVersion >= MIN_ADDRESS_LIBRARY_V5_RUNTIME) {
 			REX::FAIL(
-				"This version supports Skyrim 1.6.1170 (Steam) / 1.6.1179 (GOG) only and cannot run on {}.\n"
-				"Install the correct version of {} for {}.",
-				runtimeVersion, Version::PROJECT, runtimeVersion);
+				"You are using a newer version of Skyrim than this version of {} supports.\n"
+				"Install the correct version of {} for your game version.\n"
+				"Runtime: {}\n"
+				"Supported: 1.6.1170 (Steam) / 1.6.1179 (GOG)",
+				Version::PROJECT, runtimeVersion);
 		}
 	}
 
