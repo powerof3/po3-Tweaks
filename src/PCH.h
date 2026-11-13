@@ -80,11 +80,15 @@ namespace Runtime
 	inline constexpr REL::Version SSE_1_7_99(1, 7, 99, 0);
 	inline constexpr REL::Version MIN_ADDRESS_LIBRARY_V5 = SSE_1_7_99;
 
-	inline REL::Version version{};
+	[[nodiscard]] inline REL::Version GetVersion()
+	{
+		return REX::FModule::GetExecutingModule().GetFileVersion();
+	}
 
 	[[nodiscard]] inline bool IsAtLeast1_7_99() noexcept
 	{
-		return version >= Runtime::SSE_1_7_99;
+		static bool result = GetVersion() >= Runtime::SSE_1_7_99;
+		return result;
 	}
 }
 

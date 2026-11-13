@@ -189,12 +189,10 @@ namespace Fixes::CacheFormEditorIDs
 		Cache::write_editorID_vfunc<RE::BGSVolumetricLighting>();
 
 #ifdef SKYRIM_AE
-		if (Runtime::version >= SKSE::RUNTIME_SSE_LATEST) {
-			REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(0, 20396), 0x403 };  //TESWeather::Load
-			stl::write_thunk_call<TESFile_GetChunkData>(target.address());
+		REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(0, 20396), 0x403 };  //TESWeather::Load
+		stl::write_thunk_call<TESFile_GetChunkData>(target.address());
 
-			REX::INFO("\t\tInstalled TESWeather editorID patch"sv);
-		}
+		REX::INFO("\t\tInstalled TESWeather editorID patch"sv);
 #endif
 
 		REX::INFO("\t\tInstalled editorID cache"sv);
