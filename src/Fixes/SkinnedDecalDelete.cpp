@@ -10,9 +10,7 @@ namespace Fixes::SkinnedDecalDelete
 			RE::NiPointer<RE::BSTempEffect>*&              a_return,
 			RE::NiPointer<RE::BSTempEffect>*&              a_item)
 		{
-			auto& result = func(a_this, a_return, a_item);
-
-			if (a_item && (*a_item)->initialized) {
+			if (a_item && *a_item && (*a_item)->initialized) {
 				const auto decal = (*a_item)->As<RE::BSTempEffectGeometryDecal>();
 				const auto decalNode = decal ? decal->decalNode : nullptr;
 				if (decalNode && decalNode->parent) {
@@ -24,7 +22,7 @@ namespace Fixes::SkinnedDecalDelete
 				}
 			}
 
-			return result;
+			return func(a_this, a_return, a_item);
 		}
 		static inline REL::Relocation<decltype(thunk)> func;
 	};
