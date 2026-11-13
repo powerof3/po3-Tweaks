@@ -32,7 +32,7 @@ jobs:
       FOMOD_AE353_DESCR: 'Select this if you are using Skyrim Anniversary Edition/Special Edition v1.6.1170.'
       FOMOD_AE353_MIN_GAME_VERSION: '1.6.1170'
       FOMOD_AE_NAME: 'SSE/AE v1.7.99+ ("Anniversary/Special Edition")'
-      FOMOD_AE_DESCR: 'Select this if you are using Skyrim Anniversary Edition/Special Edition v1.7.99 or higher (latest update).'
+      FOMOD_AE_DESCR: 'Select this if you are using Skyrim Anniversary Edition/Special Edition v1.7.104 or higher (latest update).'
       FOMOD_AE_MIN_GAME_VERSION: '1.7'
       FOMOD_REQUIRED_INSTALLATION_DIR: "Skyrim/Data"
       PUBLISH_ARCHIVE_TYPE: '7z'
