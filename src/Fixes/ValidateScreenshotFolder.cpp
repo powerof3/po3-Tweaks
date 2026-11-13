@@ -66,9 +66,9 @@ namespace Fixes::ValidateScreenshotFolder
 				if (emptyPath) {
 					RE::ConsoleLog::GetSingleton()->Print("[po3 Tweaks] sScreenShotBaseName:Display ini setting is empty");
 				} else {
-					RE::ConsoleLog::GetSingleton()->Print(std::format("[po3 Tweaks] Screenshot folder (%s) does not exist", screenshotFolder.string()).c_str());
+					RE::ConsoleLog::GetSingleton()->Print("[po3 Tweaks] Screenshot folder (%s) does not exist", screenshotFolder.string().c_str());
 				}
-				RE::ConsoleLog::GetSingleton()->Print(std::format("[po3 Tweaks] Defaulting to %s folder\n", gameDirectory.string()).c_str());
+				RE::ConsoleLog::GetSingleton()->Print("[po3 Tweaks] Defaulting to %s folder\n", gameDirectory.string().c_str());
 				if (emptyPath) {
 					REX::INFO("\t\t[Screenshot Location Fix] '' -> {}"sv, screenshotFolder.string());
 				} else {
