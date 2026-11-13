@@ -33,8 +33,8 @@ namespace Fixes::WornRestrictionsForWeapons
 			});
 
 			if (!valid) {
-				if (const auto defaultKeyword = keywordForm->GetDefaultKeyword(); defaultKeyword && wornRestrictionList->HasForm(defaultKeyword)) {
-					valid = true;
+				if (const auto defaultKeyword = keywordForm->GetDefaultKeyword()) {
+					valid = wornRestrictionList->HasForm(defaultKeyword);
 				}
 			}
 

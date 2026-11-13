@@ -8,7 +8,7 @@ namespace Experimental::ModifySuspendedStackFlushTimeout
 	{
 		void Install(double a_milliseconds)
 		{
-			static REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(53209, 54020), OFFSET(0x3D, 0x10D) };
+			static REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(53209, 54006), OFFSET(0x3D, 0x10D) };
 
 			struct StackDumpTimeout_Code : Xbyak::CodeGenerator
 			{
@@ -44,7 +44,7 @@ namespace Experimental::ModifySuspendedStackFlushTimeout
 	{
 		void Install()
 		{
-			static REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(53209, 54020), OFFSET(0x8B, 0x152) };
+			static REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(53209, 54006), OFFSET(0x8B, 0x152) };
 			REL::WriteSafeData(target.address(), static_cast<std::uint8_t>(0xEB));  // swap jle 0x7e for jmp 0xeb
 
 			REX::INFO("Removed timeout check on suspended stack flush"sv);
