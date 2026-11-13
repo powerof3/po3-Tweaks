@@ -32,6 +32,12 @@ namespace Fixes::WornRestrictionsForWeapons
 				return RE::BSContainer::ForEachResult::kContinue;
 			});
 
+			if (!valid) {
+				if (const auto defaultKeyword = keywordForm->GetDefaultKeyword(); defaultKeyword && wornRestrictionList->HasForm(defaultKeyword)) {
+					valid = true;
+				}
+			}
+
 			return valid;
 		}
 	};
