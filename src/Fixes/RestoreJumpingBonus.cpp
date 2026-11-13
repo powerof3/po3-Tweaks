@@ -34,10 +34,8 @@ namespace Fixes::RestoreJumpingBonus
 	private:
 		static void SetJumpHeight(RE::bhkCharacterController* a_controller, float a_jumpHeight, RE::Actor* a_actor)
 		{
-			const auto jumpingBonus = 1.0f + (a_actor->GetActorValue(RE::ActorValue::kJumpingBonus) / 100.0f);
-			const auto newJumpHeight = a_jumpHeight * jumpingBonus;
-
-			_SetJumpHeight(a_controller, newJumpHeight);
+			const auto jumpingBonus = std::max(0.0f, 1.0f + (a_actor->GetActorValue(RE::ActorValue::kJumpingBonus) / 100.0f));
+			_SetJumpHeight(a_controller, a_jumpHeight * jumpingBonus);
 		}
 		static inline REL::Relocation<void(RE::bhkCharacterController*, float)> _SetJumpHeight;
 	};
