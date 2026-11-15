@@ -3,85 +3,49 @@
 //shift pitch with time mult
 namespace Tweaks::GameTimeAffectsSounds
 {
-	// Default Sound
-	struct BSSoundHandle_Play
+	inline RE::BGSSoundCategory*                masterCategory;
+	inline std::array<RE::BGSSoundCategory*, 2> excludedCategories;
+
+	struct SetFrequency
 	{
-		static bool func(RE::BSSoundHandle& a_handle)
+		static void thunk(RE::BSSoundCategoryHandle* a_handle, float a_frequency)
 		{
-			const auto soundID = a_handle.soundID;
-			if (soundID == -1) {
-				return false;
+			if (masterCategory && a_handle->category == masterCategory) {
+				masterCategory->SetCategoryFrequency(a_frequency);
+				// noise cancellation
+				for (const auto category : excludedCategories) {
+					if (category) {
+						const auto parent = category->parentCategory;
+						category->SetCategoryFrequency(1.0f / std::max(parent ? parent->GetCategoryFrequency() : 1.0f, 0.01f));
+					}
+				}
+			} else {
+				func(a_handle, a_frequency);
 			}
-
-			a_handle.state = RE::BSSoundHandle::AssumedState::kPlaying;
-
-			if (const auto timeMult = RE::BSTimer::QGlobalTimeMultiplier(); timeMult != 1.0f) {
-				a_handle.SetFrequency(timeMult);
-			}
-
-			Play(RE::BSAudioManager::GetSingleton(), soundID);
-
-			return true;
 		}
-		static constexpr std::size_t size{ 0x33 };
-
-		static void Install()
-		{
-			REL::Relocation<std::uintptr_t> func{ RELOCATION_ID(66355, 67616) };
-			stl::asm_replace<BSSoundHandle_Play>(func.address());
-		}
-
-	private:
-		static void Play(RE::BSAudioManager* a_manager, std::uint32_t a_soundID)
-		{
-			using func_t = decltype(&Play);
-			static REL::Relocation<func_t> func{ RELOCATION_ID(66408, 67671) };
-			func(a_manager, a_soundID);
-		}
-	};
-
-	// Dialogue
-	struct BSSoundHandle_PlayAfter
-	{
-		static bool func(RE::BSSoundHandle& a_handle, std::uint32_t a_delay)
-		{
-			const auto soundID = a_handle.soundID;
-			if (soundID == -1) {
-				return false;
-			}
-
-			a_handle.state = RE::BSSoundHandle::AssumedState::kPlaying;
-
-			if (const auto timeMult = RE::BSTimer::QGlobalTimeMultiplier(); timeMult != 1.0f) {
-				a_handle.SetFrequency(timeMult);
-			}
-
-			PlayAfter(RE::BSAudioManager::GetSingleton(), soundID, a_delay);
-
-			return true;
-		}
-		static constexpr std::size_t size{ 0x46 };
-
-		static void Install()
-		{
-			REL::Relocation<std::uintptr_t> func{ RELOCATION_ID(66356, 67617) };
-			stl::asm_replace<BSSoundHandle_PlayAfter>(func.address());
-		}
-
-	private:
-		static void PlayAfter(RE::BSAudioManager* a_manager, std::int32_t a_soundID, std::uint32_t a_delay)
-		{
-			using func_t = decltype(&PlayAfter);
-			static REL::Relocation<func_t> func{ RELOCATION_ID(66409, 67672) };
-			func(a_manager, a_soundID, a_delay);
-		}
+		static inline REL::Relocation<decltype(thunk)> func;
 	};
 
 	void Install()
 	{
-		BSSoundHandle_Play::Install();
-		BSSoundHandle_PlayAfter::Install();
+		REL::Relocation<std::uintptr_t> target{ RELOCATION_ID(34304, 35125), OFFSET(0x74, 0x69) };  //TESAudio::UpdateTimeSensitiveAudio
+		stl::write_thunk_call<SetFrequency>(target.address());
 
-		REX::INFO("\t\tInstalled sound - time sync tweak"sv);
+		REX::INFO("\t\tInstalled sound - time sync tweak (hook)"sv);
+	}
+
+	void InstallOnDataLoad()
+	{
+		masterCategory = RE::TESForm::LookupByID<RE::BGSSoundCategory>(0x000EB803);
+		if (masterCategory) {
+			excludedCategories[0] = RE::TESForm::LookupByID<RE::BGSSoundCategory>(0x00071E64);  // AudioCategoryMUS
+			excludedCategories[1] = RE::TESForm::LookupByID<RE::BGSSoundCategory>(0x00064451);  // AudioCategoryUI
+
+			const auto dobjMgr = RE::BGSDefaultObjectManager::GetSingleton();
+			dobjMgr->objects[RE::DEFAULT_OBJECT::kTimeSensitiveSoundCategory] = masterCategory;
+			dobjMgr->objectInit[RE::DEFAULT_OBJECT::kTimeSensitiveSoundCategory] = true;
+
+			REX::INFO("\t\tInstalled sound - time sync tweak (category)"sv);
+		}
 	}
 }

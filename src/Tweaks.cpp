@@ -61,4 +61,7 @@ void Tweaks::DataLoaded::Install()
 	if (tweaks.grabbingIsStealing) {
 		GrabbingIsStealing::Install();
 	}
+	if (tweaks.gameTimeAffectsSounds) {
+		GameTimeAffectsSounds::InstallOnDataLoad();
+	}
 }

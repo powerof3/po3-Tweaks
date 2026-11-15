@@ -28,6 +28,7 @@ namespace Tweaks
 	namespace GameTimeAffectsSounds
 	{
 		void Install();
+		void InstallOnDataLoad();
 	}
 
 	namespace GrabbingIsStealing
